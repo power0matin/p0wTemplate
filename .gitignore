@@ -15,3 +15,5 @@ themes/neo-dashboard/
 node_modules/
 build_temp/
 test_extract/
+package.json
+package-lock.json

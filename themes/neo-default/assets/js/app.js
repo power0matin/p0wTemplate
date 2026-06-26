@@ -282,3 +282,23 @@ function renderConfigs() {
     }
     container.innerHTML = html;
 }
+/**
+ * Public Helper: Show QR code in modal
+ */
+window.showQR = function(link, name) {
+    const modal = document.getElementById('qr-modal');
+    const title = document.getElementById('qr-title');
+    const canvas = document.getElementById('qr-canvas');
+    if (!modal || !title || !canvas) return;
+    
+    title.innerText = name;
+    new QRious({
+        element: canvas,
+        value: link,
+        size: 200,
+        background: 'transparent',
+        foreground: 'black'
+    });
+    
+    modal.style.display = 'flex';
+};

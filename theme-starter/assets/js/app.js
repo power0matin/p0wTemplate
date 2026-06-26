@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    initThemeToggle();
+    initThemeToggle(); renderConfigs();
     initTrafficStats();
     initDaysStats();
 });
@@ -134,4 +134,49 @@ function showQR(link, name) {
     });
     
     modal.classList.add('open');
+}
+function renderConfigs() {
+    var container = document.getElementById('configs-container');
+    var rawLinksContainer = document.getElementById('raw-links-container');
+    if (!container || !rawLinksContainer) return;
+
+    var rawLinkEls = rawLinksContainer.querySelectorAll('.raw-link');
+    var rawLinks = [];
+    for (var i = 0; i < rawLinkEls.length; i++) {
+        var t = rawLinkEls[i].innerText.trim();
+        if (t.length > 0) rawLinks.push(t);
+    }
+    
+    if (rawLinks.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding: 24px; opacity:0.5;">No configs available</div>';
+        return;
+    }
+
+    var html = '';
+    for (var j = 0; j < rawLinks.length; j++) {
+        var link = rawLinks[j];
+        var name = "Config " + (j + 1);
+        var protocol = "vpn";
+        try {
+            var hashIndex = link.indexOf('#');
+            if (hashIndex !== -1) {
+                name = decodeURIComponent(link.substring(hashIndex + 1));
+            }
+            var protoIndex = link.indexOf('://');
+            if (protoIndex !== -1) {
+                protocol = link.substring(0, protoIndex).toLowerCase();
+            }
+        } catch (e) {}
+        
+        var safeName = name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        var safeLink = link.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        
+        html += '<div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;">';
+        html += '<div style="font-weight: 500; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;">' + safeName + '</div>';
+        html += '<div style="display: flex; gap: 8px;">';
+        html += '<button class="btn btn-small" onclick="copyToClipboard(\'' + safeLink + '\', \'Config Copied!\')">Copy</button>';
+        html += '<button class="btn btn-small btn-primary" onclick="showQR(\'' + safeLink + '\', \'' + safeName + '\')">QR</button>';
+        html += '</div></div>';
+    }
+    container.innerHTML = html;
 }

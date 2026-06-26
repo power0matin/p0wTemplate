@@ -24,7 +24,7 @@
         <!-- Header -->
         <header class="header">
             <div>
-                <h1 style="font-size: 1.25rem;">{{ .email }}</h1>
+                <h1 style="font-size: 1.25rem;">{{ range $i, $e := .emails }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}</h1>
                 <p style="font-size: 0.875rem; color: var(--text-secondary);">Subscription Profile</p>
             </div>
             <button id="theme-toggle" class="btn-icon">🌓</button>
@@ -83,19 +83,13 @@
         <!-- Configurations List -->
         <section style="margin-top: 24px;">
             <h2 style="font-size: 1rem; margin-bottom: 12px;">Configurations</h2>
-            <div class="config-list" style="display: flex; flex-direction: column; gap: 12px;">
-                {{ range .proxies }}
-                <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;">
-                    <div style="font-weight: 500; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;">
-                        {{ .Name }}
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-small" onclick="copyToClipboard('{{ .Link }}', 'Config Copied!')">Copy</button>
-                        <button class="btn btn-small btn-primary" onclick="showQR('{{ .Link }}', '{{ .Name }}')">QR</button>
-                    </div>
-                </div>
+            <!-- Hidden raw links for JS to parse -->
+            <div id="raw-links-container" style="display:none;">
+                {{ range .links }}
+                <div class="raw-link">{{ . }}</div>
                 {{ end }}
             </div>
+            <div id="configs-container" class="config-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
         </section>
 
         <footer class="footer" style="padding-bottom: 80px;">
@@ -120,10 +114,10 @@
             <button class="btn btn-primary" style="margin-bottom: 12px; width: 100%;" onclick="copyToClipboard('{{ .subUrl }}', 'Subscription Link Copied!')">
                 Copy Subscription Link
             </button>
-            <a class="btn" style="text-decoration:none; text-align:center; display:block; margin-bottom: 12px; width: 100%;" href="v2rayng://install-sub?url={{ .subUrl }}&name={{ .email }}">
+            <a class="btn" style="text-decoration:none; text-align:center; display:block; margin-bottom: 12px; width: 100%;" href="v2rayng://install-sub?url={{ .subUrl }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}">
                 Import to V2RayNG / v2rayN
             </a>
-            <a class="btn" style="text-decoration:none; text-align:center; display:block; width: 100%;" href="v2ray://install-sub?url={{ .subUrl }}&name={{ .email }}">
+            <a class="btn" style="text-decoration:none; text-align:center; display:block; width: 100%;" href="v2ray://install-sub?url={{ .subUrl }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}">
                 Import to Shadowrocket / iOS
             </a>
         </div>
