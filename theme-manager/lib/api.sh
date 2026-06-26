@@ -14,7 +14,8 @@ fetch_repository() {
 download_theme() {
     local theme_url="$1"
     local output_file="$2"
-    curl -sSL "$theme_url" -o "$output_file"
+    local timestamp=$(date +%s)
+    curl -sSL "${theme_url}?t=${timestamp}" -o "$output_file"
     if [[ $? -ne 0 ]]; then
         log_error "Failed to download theme."
         return 1
