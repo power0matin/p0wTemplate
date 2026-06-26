@@ -20,10 +20,11 @@
         
         <!-- Header Section -->
         <header class="header">
+            <h1 class="brand-title" style="font-size:1.25rem; font-weight:700; color:var(--text-primary); margin:0;">{{ .subTitle }}</h1>
             <div class="user-profile">
                 <!-- Fallback to 'A' if email is empty (JS will replace this with first letter of subTitle) -->
                 <div class="avatar" id="user-avatar">U</div>
-                <h2 style="margin:0; font-size: 1rem;" id="display-name">{{ .subTitle }}</h2>
+                <h2 style="margin:0; font-size: 1rem;" id="display-name">{{ .emails }}</h2>
             </div>
             <button id="theme-toggle" class="btn-icon" aria-label="Toggle Theme">
                 <!-- Sun/Moon Icon -->
@@ -179,6 +180,10 @@
             <button class="btn-copy" style="margin-bottom: 12px; display:flex; justify-content:center;" onclick="copyToClipboard('{{ .subUrl }}', 'URL Copied!')">Copy Subscription Link</button>
             <a href="v2rayng://install-sub?url={{ .subUrl }}&name={{ .subTitle }}" class="btn-copy" style="margin-bottom: 12px; background:var(--card-bg); color:var(--text-main); text-decoration:none; display:flex; justify-content:center;">Import to V2RayNG / v2rayN</a>
             <a href="v2ray://install-sub?url={{ .subUrl }}&name={{ .subTitle }}" class="btn-copy" style="background:var(--card-bg); color:var(--text-main); text-decoration:none; display:flex; justify-content:center;">Import to Shadowrocket / iOS</a>
+            <a class="modal-btn" style="text-decoration:none; background: var(--success); color: white; margin-top: 12px;" href="{{ .subSupportUrl }}" target="_blank">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Contact Support
+            </a>
         </div>
     </div>
 

@@ -43,7 +43,7 @@ themes.forEach(theme => {
         let htmlContent = fs.readFileSync(htmlPath, 'utf8');
         
         // Inline CSS
-        htmlContent = htmlContent.replace(/<link rel="stylesheet" href="([^"]+)">/g, (match, href) => {
+        htmlContent = htmlContent.replace(/<link\s+rel=["']stylesheet["']\s+href=["']([^"']+)["']\s*\/?>/gi, (match, href) => {
             const cssPath = path.join(themeBuildPath, href);
             if (fs.existsSync(cssPath)) {
                 const cssContent = fs.readFileSync(cssPath, 'utf8');
@@ -53,7 +53,7 @@ themes.forEach(theme => {
         });
         
         // Inline JS
-        htmlContent = htmlContent.replace(/<script src="([^"]+)"><\/script>/g, (match, src) => {
+        htmlContent = htmlContent.replace(/<script\s+src=["']([^"']+)["']><\/script>/gi, (match, src) => {
             // Ignore external URLs
             if (src.startsWith('http')) return match;
             

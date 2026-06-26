@@ -362,7 +362,7 @@ svg {
         
         <!-- Header Section -->
         <header class="header">
-            <h1 class="logo">Neo Default</h1>
+            <h1 class="logo">{{ .subTitle }}</h1>
             <!-- Theme Switcher Button -->
             <button id="theme-toggle" class="btn-icon" aria-label="Toggle Dark Mode">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -382,7 +382,7 @@ svg {
             </div>
             <div class="card-body">
                 <p class="label">Email / Identifier</p>
-                <p class="value primary-text">{{ .client.Email }}</p>
+                <p class="value primary-text">{{ .emails }}</p>
             </div>
         </section>
 
@@ -451,6 +451,7 @@ svg {
                 </button>
                 <div class="accordion-content">
                     <p style="margin-top:8px;">Import this link into V2ray, Shadowrocket, NekoBox, or your preferred client to access the proxy network.</p>
+<a href="{{ .subSupportUrl }}" style="display:block; margin-top:12px; color:var(--primary); font-weight:600; text-decoration:none;" target="_blank">Contact Support &rarr;</a>
                 </div>
             </div>
         </section>
@@ -678,6 +679,21 @@ window.showNotification = function(message, type = 'success') {
         }, 300); // match CSS transition duration
     }, 3000);
 };
+
+function timeAgo(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+    if (interval > 1) return interval + " years ago";
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) return interval + " months ago";
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) return interval + " days ago";
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) return interval + " hours ago";
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) return interval + " minutes ago";
+    return Math.floor(seconds) + " seconds ago";
+}
 
 </script>
 </body>

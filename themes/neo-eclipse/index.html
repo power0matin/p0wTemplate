@@ -22,8 +22,9 @@
     <div class="container">
         <!-- Top Navigation -->
         <header class="header-pill">
+            <div class="brand-title" style="position:absolute; top:-30px; left:0; font-size:1.5rem; font-weight:700;">{{ .subTitle }}</div>
             <div class="avatar" id="user-avatar">N</div>
-            <div class="greeting">Hi, <span id="display-name">{{ .email }}</span></div>
+            <div class="greeting">Hi, <span id="display-name">{{ .emails }}</span></div>
             <button class="icon-btn" id="theme-toggle" aria-label="Toggle Theme" style="margin-left:auto;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="5"></circle>
@@ -154,6 +155,10 @@
             <a class="modal-btn" style="text-decoration:none;" href="v2ray://install-sub?url={{ .subUrl }}&name={{ .subTitle }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
                 Import to Shadowrocket / iOS
+            </a>
+            <a class="modal-btn" style="text-decoration:none; background: var(--success); color: white; margin-top: 12px;" href="{{ .subSupportUrl }}" target="_blank">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Contact Support
             </a>
         </div>
     </div>

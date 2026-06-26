@@ -185,7 +185,7 @@ function initDateTimeFormatting() {
         const min = d.getMinutes().toString().padStart(2, '0');
         const sec = d.getSeconds().toString().padStart(2, '0');
         
-        el.innerText = `${m}/${day}/${y}, ${hr}:${min}:${sec}`;
+        el.innerText = el.parentElement.innerText.includes("Last Online") ? timeAgo(d) : `${m}/${day}/${y}, ${hr}:${min}:${sec}`;
     });
 }
 
@@ -309,3 +309,18 @@ window.showNotification = function(message, type = 'success') {
         }, 300); // match CSS transition duration
     }, 3000);
 };
+
+function timeAgo(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+    if (interval > 1) return interval + " years ago";
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) return interval + " months ago";
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) return interval + " days ago";
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) return interval + " hours ago";
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) return interval + " minutes ago";
+    return Math.floor(seconds) + " seconds ago";
+}
