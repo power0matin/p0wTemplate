@@ -476,6 +476,24 @@ document.addEventListener('click', function(e) {
 
     function injectAssets() {
         if (!document.getElementById('rtl-styles')) {
+            // 1. Preload Vazirmatn font-face files
+            const linkPreload1 = document.createElement('link');
+            linkPreload1.rel = 'preload';
+            linkPreload1.href = 'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2';
+            linkPreload1.as = 'font';
+            linkPreload1.type = 'font/woff2';
+            linkPreload1.crossOrigin = 'anonymous';
+            document.head.appendChild(linkPreload1);
+
+            const linkPreload2 = document.createElement('link');
+            linkPreload2.rel = 'preload';
+            linkPreload2.href = 'https://unpkg.com/vazirmatn@33.0.3/fonts/webfonts/Vazirmatn-Regular.woff2';
+            linkPreload2.as = 'font';
+            linkPreload2.type = 'font/woff2';
+            linkPreload2.crossOrigin = 'anonymous';
+            document.head.appendChild(linkPreload2);
+
+            // 2. Inject Stylesheet with @font-face and overrides
             const style = document.createElement('style');
             style.id = 'rtl-styles';
             style.innerHTML = `
@@ -511,6 +529,12 @@ document.addEventListener('click', function(e) {
                 }
             `;
             document.head.appendChild(style);
+
+            // 3. Create a hidden element to trigger immediate download of Vazirmatn font
+            const fontLoader = document.createElement('div');
+            fontLoader.style.cssText = 'font-family: "Vazirmatn"; position: absolute; top: -9999px; left: -9999px; opacity: 0; pointer-events: none;';
+            fontLoader.innerText = 'فونت وزیر';
+            document.body.appendChild(fontLoader);
         }
     }
 
