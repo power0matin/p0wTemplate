@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
 
-const themesDir = path.join(__dirname, 'themes');
+const themesDir = path.join(__dirname, 'build_temp');
 const packagesDir = path.join(__dirname, 'packages');
 
 if (!fs.existsSync(packagesDir)) {

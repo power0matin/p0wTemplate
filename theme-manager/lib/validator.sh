@@ -13,10 +13,7 @@ validate_theme_structure() {
         return 1
     fi
     
-    if [[ ! -d "$theme_dir/assets" ]]; then
-        log_error "assets directory missing."
-        return 1
-    fi
+
     
     # Check if manifest is valid JSON
     if ! jq -e . "$theme_dir/manifest.json" >/dev/null 2>&1; then
