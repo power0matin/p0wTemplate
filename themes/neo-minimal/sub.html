@@ -33,7 +33,7 @@
         <div class="widget-card">
             
             <div class="widget-header">
-                <span class="widget-title">{{ range $i, $e := .emails }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}</span>
+                <span class="widget-title">{{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}</span>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <!-- Info Icon for Advanced Details -->
                     <button class="icon-btn" onclick="document.getElementById('adv-modal').classList.add('open')">

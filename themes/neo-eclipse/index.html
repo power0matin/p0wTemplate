@@ -42,7 +42,7 @@
             <div class="avatar" id="user-avatar" style="min-width: 48px; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.25rem; background: var(--accent); color: white;">N</div>
             <div style="overflow: hidden; flex: 1;">
                 <div style="font-size: 0.8rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.05em;">Client Profile</div>
-                <div class="greeting" style="font-size: 1.1rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Hi, <span id="display-name">{{ range $i, $e := .emails }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}</span></div>
+                <div class="greeting" style="font-size: 1.1rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Hi, <span id="display-name">{{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}</span></div>
             </div>
         </div>
 

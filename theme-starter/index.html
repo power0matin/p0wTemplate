@@ -24,7 +24,7 @@
         <!-- Header -->
         <header class="header">
             <div>
-                <h1 style="font-size: 1.25rem;">{{ range $i, $e := .emails }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}</h1>
+                <h1 style="font-size: 1.25rem;">{{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}</h1>
                 <p style="font-size: 0.875rem; color: var(--text-secondary);">Subscription Profile</p>
             </div>
             <button id="theme-toggle" class="btn-icon">🌓</button>

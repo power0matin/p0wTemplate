@@ -43,7 +43,7 @@
             </div>
             <div class="card-body">
                 <p class="label">Email / Identifier</p>
-                <p class="value primary-text">{{ range $i, $e := .emails }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}</p>
+                <p class="value primary-text">{{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}</p>
             </div>
         </section>
 
