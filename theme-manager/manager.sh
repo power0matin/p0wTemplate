@@ -67,10 +67,30 @@ while true; do
     read -p "Select an option: " choice
     case "$choice" in
         1)
-            # Remove automatic sync, just ask for package
-            read -p "Enter package ID to install (e.g., glass@latest): " package_id
-            if [[ -n "$package_id" ]]; then
-                install_package "$package_id" "$CONFIG_FILE"
+            echo "Fetching available themes..."
+            registry_file=$(fetch_registry "$CONFIG_FILE")
+            if [[ -n "$registry_file" && -f "$registry_file" ]]; then
+                mapfile -t pkg_ids < <(jq -r '.packages[].id' "$registry_file")
+                mapfile -t pkg_names < <(jq -r '.packages[].name' "$registry_file")
+                mapfile -t pkg_desc < <(jq -r '.packages[].description' "$registry_file")
+                
+                echo ""
+                for i in "${!pkg_names[@]}"; do
+                    echo "  $((i+1))) ${pkg_names[$i]} - ${pkg_desc[$i]}"
+                done
+                echo ""
+                
+                read -p "Select a theme to install (1-${#pkg_names[@]}): " selection
+                if [[ "$selection" =~ ^[0-9]+$ ]] && [ "$selection" -ge 1 ] && [ "$selection" -le "${#pkg_names[@]}" ]; then
+                    selected_idx=$((selection-1))
+                    package_id="${pkg_ids[$selected_idx]}@latest"
+                    echo "Installing ${pkg_names[$selected_idx]}..."
+                    install_package "$package_id" "$CONFIG_FILE"
+                else
+                    echo "Invalid selection or cancelled."
+                fi
+            else
+                echo "Failed to load themes from registry. Please check your internet connection."
             fi
             read -p "Press enter to continue..."
             ;;
