@@ -276,6 +276,39 @@ body {
     border: none;
 }
 
+/* --- Action Grid (Apps & Actions) --- */
+.action-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.action-btn {
+    background: var(--pill-bg);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: var(--radius-pill);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: left;
+    width: 100%;
+}
+.action-btn:hover {
+    background: var(--pill-hover);
+}
+
+.action-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
 /* --- Transaction/Config Pills --- */
 .config-list {
     display: flex;
