@@ -1,0 +1,42 @@
+# Development & Internal files
+docs/
+drafts/
+planning/
+architecture/
+brain/
+scratch/
+.system_generated/
+*.tmp
+*.log
+
+# Design & Prototyping
+design/
+prototype/
+experimental/
+tests/
+screenshots/
+*.psd
+*.fig
+
+# Temporary & Caches
+cache/
+extracted/
+.temp/
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# Backups
+backups/
+*.bak
+*.old

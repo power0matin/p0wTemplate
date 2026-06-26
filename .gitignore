@@ -1,0 +1,15 @@
+# Development tools
+preview/
+*.bat
+fix_preview.js
+fix_preview2.js
+mock-data.json
+
+# Excluded Templates
+themes/neo-dashboard/
+
+# OS and IDE
+.DS_Store
+.idea/
+.vscode/
+*.zip

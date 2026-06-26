@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoTemplate SDK - Subscription</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- QRious for QR Codes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+</head>
+<body class="theme-light">
+    <!-- Raw Data for JS injection -->
+    <div id="raw-data" style="display:none;" 
+        data-up="{{ .uploadByte }}" 
+        data-down="{{ .downloadByte }}" 
+        data-total="{{ .totalByte }}"
+        data-expire="{{ .expire }}"></div>
+
+    <!-- Notification Toast -->
+    <div id="toast" style="display:none;" class="toast"></div>
+
+    <main class="container">
+        
+        <!-- Header -->
+        <header class="header">
+            <div>
+                <h1 style="font-size: 1.25rem;">{{ .email }}</h1>
+                <p style="font-size: 0.875rem; color: var(--text-secondary);">Subscription Profile</p>
+            </div>
+            <button id="theme-toggle" class="btn-icon">🌓</button>
+        </header>
+
+        <!-- Primary Traffic Card (Emphasis on Remaining) -->
+        <section class="card">
+            <div class="card-header">
+                <h2>Remaining Traffic</h2>
+                <span class="badge {{ if .enabled }}badge-success{{ else }}badge-danger{{ end }}">
+                    {{ if .enabled }}Active{{ else }}Disabled{{ end }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="traffic-hero">
+                    <span id="hero-rem-val" style="font-size: 2.5rem; font-weight: bold;">-</span>
+                    <span id="hero-rem-unit" style="font-size: 1.25rem;"></span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-track">
+                        <!-- Width set by JS to show used percentage -->
+                        <div id="progress-bar" class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <div>
+                        <p class="sub-text">Total Used</p>
+                        <p style="font-weight: 600;">{{ .used }}</p>
+                    </div>
+                    <div>
+                        <p class="sub-text">Days Left</p>
+                        <p id="days-left" style="font-weight: 600;">-</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Information Accordion -->
+        <section class="accordion" style="margin-top: 16px;">
+            <div class="accordion-item" id="advanced-accordion">
+                <button class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
+                    Advanced Information <span class="accordion-icon">▼</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="stat-row"><span>Status</span> <b>{{ if .enabled }}Active{{ else }}Disabled{{ end }}</b></div>
+                    <div class="stat-row"><span>Max Allowed</span> <b>{{ .total }}</b></div>
+                    <div class="stat-row"><span>Total Uploaded</span> <b>{{ .upload }}</b></div>
+                    <div class="stat-row"><span>Total Downloaded</span> <b>{{ .download }}</b></div>
+                    <div class="stat-row"><span>Expiration Date</span> <b id="adv-expiry">{{ .expire }}</b></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Configurations List -->
+        <section style="margin-top: 24px;">
+            <h2 style="font-size: 1rem; margin-bottom: 12px;">Configurations</h2>
+            <div class="config-list" style="display: flex; flex-direction: column; gap: 12px;">
+                {{ range .proxies }}
+                <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;">
+                    <div style="font-weight: 500; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;">
+                        {{ .Name }}
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-small" onclick="copyToClipboard('{{ .Link }}', 'Config Copied!')">Copy</button>
+                        <button class="btn btn-small btn-primary" onclick="showQR('{{ .Link }}', '{{ .Name }}')">QR</button>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+        </section>
+
+        <footer class="footer" style="padding-bottom: 80px;">
+            <p>{{ .subTitle }} &bull; Powered by NeoTemplate SDK</p>
+        </footer>
+
+    </main>
+
+    <!-- Global Quick Actions Pill -->
+    <div class="quick-actions-pill" onclick="document.getElementById('action-modal').classList.add('open')">
+        <span>⚡ Quick Actions</span>
+    </div>
+
+    <!-- Quick Actions Modal -->
+    <div class="modal-overlay" id="action-modal">
+        <div class="modal-content card">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                <h2 style="font-size: 1.25rem;">Quick Actions</h2>
+                <button class="btn-icon" onclick="document.getElementById('action-modal').classList.remove('open')">✖</button>
+            </div>
+            
+            <button class="btn btn-primary" style="margin-bottom: 12px; width: 100%;" onclick="copyToClipboard('{{ .subUrl }}', 'Subscription Link Copied!')">
+                Copy Subscription Link
+            </button>
+            <a class="btn" style="text-decoration:none; text-align:center; display:block; margin-bottom: 12px; width: 100%;" href="v2rayng://install-sub?url={{ .subUrl }}&name={{ .email }}">
+                Import to V2RayNG / v2rayN
+            </a>
+            <a class="btn" style="text-decoration:none; text-align:center; display:block; width: 100%;" href="v2ray://install-sub?url={{ .subUrl }}&name={{ .email }}">
+                Import to Shadowrocket / iOS
+            </a>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal-overlay" id="qr-modal">
+        <div class="modal-content card" style="text-align: center; align-items: center; display: flex; flex-direction: column;">
+            <h3 id="qr-title" style="margin-bottom: 16px; font-size: 1rem; word-break: break-all;"></h3>
+            <div style="background: white; padding: 16px; border-radius: 8px;">
+                <canvas id="qr-canvas"></canvas>
+            </div>
+            <button class="btn" style="margin-top: 24px; width: 100%;" onclick="document.getElementById('qr-modal').classList.remove('open')">Close</button>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

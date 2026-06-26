@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo Default Theme - Subscription</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body class="theme-light">
+    
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <main class="container">
+        
+        <!-- Header Section -->
+        <header class="header">
+            <h1 class="logo">Neo Default</h1>
+            <!-- Theme Switcher Button -->
+            <button id="theme-toggle" class="btn-icon" aria-label="Toggle Dark Mode">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Simple crescent moon icon -->
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Profile Card Section -->
+        <section class="card profile-card">
+            <div class="card-header">
+                <h2>Profile</h2>
+                <span class="badge {{ if .obj.Enable }}badge-success{{ else }}badge-danger{{ end }}">
+                    {{ if .obj.Enable }}Active{{ else }}Inactive{{ end }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p class="label">Email / Identifier</p>
+                <p class="value primary-text">{{ .client.Email }}</p>
+            </div>
+        </section>
+
+        <!-- Traffic Usage Section -->
+        <section class="card traffic-card">
+            <div class="card-header">
+                <h2>Data Usage</h2>
+            </div>
+            
+            <div class="traffic-stats">
+                <div class="stat-item">
+                    <span class="label">Uploaded</span>
+                    <span class="value" data-bytes="{{ .obj.Up }}">{{ .obj.Up }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Downloaded</span>
+                    <span class="value" data-bytes="{{ .obj.Down }}">{{ .obj.Down }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Total Limit</span>
+                    <span class="value" data-bytes="{{ .obj.Total }}">{{ if eq .obj.Total 0 }}Unlimited{{ else }}{{ .obj.Total }}{{ end }}</span>
+                </div>
+            </div>
+
+            <!-- Progress Animation Container -->
+            <div class="progress-container">
+                <div class="progress-track">
+                    <div id="traffic-progress-bar" class="progress-fill" data-up="{{ .obj.Up }}" data-down="{{ .obj.Down }}" data-total="{{ .obj.Total }}"></div>
+                </div>
+                <p id="traffic-percentage" class="progress-text">0% Used</p>
+            </div>
+        </section>
+
+        <!-- Expiration Section -->
+        <section class="card expiry-card">
+            <div class="card-header">
+                <h2>Expiration Date</h2>
+            </div>
+            <div class="card-body">
+                <p class="value date-value" data-timestamp="{{ .obj.ExpiryTime }}" style="font-weight:600; font-size:1.125rem;">
+                    {{ if eq .obj.ExpiryTime 0 }}Never Expires{{ else }}{{ .obj.ExpiryTime }}{{ end }}
+                </p>
+                <p id="days-remaining" class="sub-text" style="margin-top:4px;"></p>
+            </div>
+        </section>
+
+        <!-- Actions Section -->
+        <section class="actions">
+            <button class="btn btn-primary" onclick="copyToClipboard(window.location.href, 'Link Copied!')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy Subscription
+            </button>
+        </section>
+
+        <!-- Accordion Section -->
+        <section class="accordion">
+            <div class="accordion-item">
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    Help & Support 
+                    <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <div class="accordion-content">
+                    <p style="margin-top:8px;">Import this link into V2ray, Shadowrocket, NekoBox, or your preferred client to access the proxy network.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by NeoTemplate</p>
+        </footer>
+
+    </main>
+
+    <!-- JavaScript Dependencies -->
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

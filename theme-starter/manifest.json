@@ -1,0 +1,17 @@
+{
+  "id": "theme.starter",
+  "type": "theme",
+  "name": "NeoTemplate SDK",
+  "version": "1.0.0",
+  "author": "NeoTemplate Team",
+  "description": "The official NeoTemplate developer toolkit and starter theme.",
+  "minPanelVersion": "2.0.0",
+  "license": "MIT",
+  "preview": "assets/images/preview.png",
+  "features": [
+    "dark-mode",
+    "responsive",
+    "clipboard",
+    "animations"
+  ]
+}

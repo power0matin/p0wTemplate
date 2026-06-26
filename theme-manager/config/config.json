@@ -1,0 +1,7 @@
+{
+  "repositoryUrl": "https://raw.githubusercontent.com/HMray/3x-ui-themes/main/registry.json",
+  "installDirectory": "/etc/3x-ui/sub_templates",
+  "cacheDirectory": "/tmp/3x-ui-theme-manager/cache",
+  "autoUpdate": false,
+  "language": "en"
+}
