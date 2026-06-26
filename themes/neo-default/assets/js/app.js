@@ -180,6 +180,7 @@ function fallbackCopy(text, callback) {
     textArea.value = text;
     textArea.style.position = "fixed";
     textArea.style.left = "-9999px";
+    textArea.setAttribute('readonly', '');
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();

@@ -30,4 +30,25 @@ bash <(curl -Ls https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/m
 *(After installation, simply run `neotemplate` to launch the Theme Manager menu where you can easily install or update your favorite themes)*
 
 ---
+
+## 📸 Screenshots
+
+<details>
+<summary>Click to view theme screenshots / برای مشاهده عکس قالب‌ها کلیک کنید</summary>
+
+### Neo Vibrant
+![Neo Vibrant](themes/preview/vibrant.jpg)
+
+### Neo Eclipse
+![Neo Eclipse](themes/preview/eclipse.jpg)
+
+### Neo Minimal
+![Neo Minimal](themes/preview/minimal.jpg)
+
+### Neo Glass
+![Neo Glass](themes/preview/glass.jpg)
+
+</details>
+
+---
 *Built with ❤️ for the 3x-ui community.*
