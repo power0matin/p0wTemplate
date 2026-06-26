@@ -33,10 +33,8 @@ mkdir -p "$CONFIG_DIR"
 echo "Copying files to $INSTALL_DIR..."
 cp -r "$TMP_DIR/theme-manager/"* "$INSTALL_DIR/"
 
-# Setup default configuration
-if [[ ! -f "$CONFIG_DIR/config.json" ]]; then
-    cp "$INSTALL_DIR/config/config.json" "$CONFIG_DIR/config.json"
-fi
+# Setup default configuration (Force update for now)
+cp "$INSTALL_DIR/config/config.json" "$CONFIG_DIR/config.json"
 
 # Make scripts executable
 chmod +x "$INSTALL_DIR/manager.sh"
