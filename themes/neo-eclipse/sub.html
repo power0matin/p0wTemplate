@@ -22,8 +22,8 @@
     <div class="container">
         <!-- Top Navigation -->
         <header class="header-pill" style="width: 100%; max-width: 100%; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; padding: 8px 16px; height: auto; border-radius: var(--radius-pill); position: relative; margin-bottom: 8px;">
-            <div class="brand-title" style="font-size:1.25rem; font-weight:700; color: var(--text-main); margin-left: 8px;">{{ if .subTitle }}{{ .subTitle }}{{ else }}{{ .sId }}{{ end }}</div>
-            <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="brand-title" style="font-size:1.25rem; font-weight:700; color: var(--text-main); margin-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; padding-right: 8px;">{{ if .subTitle }}{{ .subTitle }}{{ else }}{{ .sId }}{{ end }}</div>
+            <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
                 <a href="{{ .subSupportUrl }}" target="_blank" style="display:flex; align-items:center; gap:6px; background:var(--accent); color:white; text-decoration:none; padding:8px 16px; border-radius:var(--radius-pill); font-weight:600; font-size:0.875rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                     Support
@@ -153,12 +153,12 @@
                 Copy Subscription Link
             </button>
             
-            <a class="modal-btn" style="text-decoration:none;" href="v2rayng://install-sub?url={{ .subUrl }}&name={{ .subTitle }}">
+            <a class="modal-btn" style="text-decoration:none;" href="v2rayng://install-sub?url={{ .subUrl }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
                 Import to V2RayNG / v2rayN
             </a>
             
-            <a class="modal-btn" style="text-decoration:none;" href="v2ray://install-sub?url={{ .subUrl }}&name={{ .subTitle }}">
+            <a class="modal-btn" style="text-decoration:none;" href="v2ray://install-sub?url={{ .subUrl }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
                 Import to Shadowrocket / iOS
             </a>

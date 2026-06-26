@@ -29,11 +29,11 @@
     <div class="container">
         
         <header class="header glass-pane">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="user-info">
-                    <span style="font-weight: 700; font-size: 1.25rem; color: var(--text-main);">{{ if .subTitle }}{{ .subTitle }}{{ else }}{{ .sId }}{{ end }}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%;">
+                <div class="user-info" style="flex: 1; min-width: 0;">
+                    <span style="font-weight: 700; font-size: 1.25rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">{{ if .subTitle }}{{ .subTitle }}{{ else }}{{ .sId }}{{ end }}</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
                     <a href="{{ .subSupportUrl }}" target="_blank" style="display:flex; align-items:center; gap:6px; background:var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); color:var(--text-main); text-decoration:none; padding:8px 16px; border-radius:var(--radius-md); font-weight:500; font-size:0.875rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                         Support

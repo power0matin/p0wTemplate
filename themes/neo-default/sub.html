@@ -22,10 +22,10 @@
     <main class="container">
         
         <!-- Header Section -->
-        <header class="header">
-            <h1 class="logo">{{ .subTitle }}</h1>
+        <header class="header" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%;">
+            <h1 class="logo" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; margin-right: 8px;">{{ if .subTitle }}{{ .subTitle }}{{ else }}{{ .sId }}{{ end }}</h1>
             <!-- Theme Switcher Button -->
-            <button id="theme-toggle" class="btn-icon" aria-label="Toggle Dark Mode">
+            <button id="theme-toggle" class="btn-icon" aria-label="Toggle Dark Mode" style="flex-shrink: 0;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <!-- Simple crescent moon icon -->
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
