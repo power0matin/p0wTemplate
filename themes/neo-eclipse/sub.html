@@ -21,21 +21,30 @@
 
     <div class="container">
         <!-- Top Navigation -->
-        <header class="header-pill">
-            <div class="brand-title" style="position:absolute; top:-30px; left:0; font-size:1.5rem; font-weight:700;">{{ .subTitle }}</div>
-            <div class="avatar" id="user-avatar">N</div>
-            <div class="greeting">Hi, <span id="display-name">{{ range $i, $e := .emails }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}</span></div>
-            <a href="{{ .subSupportUrl }}" target="_blank" style="display:flex; align-items:center; gap:6px; background:var(--accent); color:white; text-decoration:none; padding:8px 16px; border-radius:var(--radius-pill); font-weight:600; font-size:0.875rem; margin-left:auto; margin-right:12px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                Support
-            </a>
-            <button class="icon-btn" id="theme-toggle" aria-label="Toggle Theme">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-                </svg>
-            </button>
+        <header class="header-pill" style="width: 100%; max-width: 100%; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; padding: 8px 16px; height: auto; border-radius: var(--radius-pill); position: relative; margin-bottom: 8px;">
+            <div class="brand-title" style="font-size:1.25rem; font-weight:700; color: var(--text-main); margin-left: 8px;">{{ if .subTitle }}{{ .subTitle }}{{ else }}{{ .sId }}{{ end }}</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <a href="{{ .subSupportUrl }}" target="_blank" style="display:flex; align-items:center; gap:6px; background:var(--accent); color:white; text-decoration:none; padding:8px 16px; border-radius:var(--radius-pill); font-weight:600; font-size:0.875rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Support
+                </a>
+                <button class="icon-btn" id="theme-toggle" aria-label="Toggle Theme" style="margin-left:0;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                    </svg>
+                </button>
+            </div>
         </header>
+
+        <!-- Client Profile Section -->
+        <div class="profile-card" style="display: flex; align-items: center; gap: 16px; padding: 16px 24px; background: var(--pill-bg); border-radius: var(--radius-inner, 24px); margin-bottom: 8px;">
+            <div class="avatar" id="user-avatar" style="min-width: 48px; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.25rem; background: var(--accent); color: white;">N</div>
+            <div style="overflow: hidden; flex: 1;">
+                <div style="font-size: 0.8rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.05em;">Client Profile</div>
+                <div class="greeting" style="font-size: 1.1rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Hi, <span id="display-name">{{ range $i, $e := .emails }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}</span></div>
+            </div>
+        </div>
 
         <!-- Black Hero Card -->
         <section class="hero-card" style="margin-top: 24px;">

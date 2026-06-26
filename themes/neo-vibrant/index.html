@@ -19,20 +19,14 @@
     <main class="container">
         
         <!-- Header Section -->
-        <header class="header">
-            <h1 class="brand-title" style="font-size:1.25rem; font-weight:700; color:var(--text-primary); margin:0;">{{ .subTitle }}</h1>
-            <div class="user-profile">
-                <!-- Fallback to 'A' if email is empty (JS will replace this with first letter of subTitle) -->
-                <div class="avatar" id="user-avatar">U</div>
-                <h2 style="margin:0; font-size: 1rem;" id="display-name"><span style="opacity:0.6; font-size:0.8rem; font-weight:400; margin-right:4px;">Client:</span>{{ range $i, $e := .emails }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}</h2>
-            </div>
-            
-            <a href="{{ .subSupportUrl }}" target="_blank" style="display:flex; align-items:center; gap:6px; background:var(--primary); color:white; text-decoration:none; padding:8px 16px; border-radius:12px; font-weight:600; font-size:0.875rem; margin-right:12px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                Support
-            </a>
-            
-            <button id="theme-toggle" class="btn-icon" aria-label="Toggle Theme">
+        <header class="header" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 16px;">
+            <h1 class="brand-title" style="font-size:1.25rem; font-weight:700; color:var(--text-primary); margin:0;">{{ if .subTitle }}{{ .subTitle }}{{ else }}{{ .sId }}{{ end }}</h1>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <a href="{{ .subSupportUrl }}" target="_blank" style="display:flex; align-items:center; gap:6px; background:var(--primary); color:white; text-decoration:none; padding:8px 16px; border-radius:12px; font-weight:600; font-size:0.875rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Support
+                </a>
+                <button id="theme-toggle" class="btn-icon" aria-label="Toggle Theme">
                 <!-- Sun/Moon Icon -->
                 <svg class="theme-icon-light" style="display:none;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="5"></circle>
@@ -50,6 +44,15 @@
                 </svg>
             </button>
         </header>
+
+        <!-- Client Profile Section -->
+        <div class="profile-card" style="display: flex; align-items: center; gap: 16px; padding: 16px 24px; background: var(--bg-card); border: var(--card-border); border-radius: var(--radius-card); margin-top: 16px; margin-bottom: 8px;">
+            <div class="avatar" id="user-avatar" style="min-width: 48px; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.25rem; background: var(--primary); color: white;">U</div>
+            <div style="overflow: hidden; flex: 1;">
+                <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Client Profile</div>
+                <div id="display-name" style="font-size: 1.1rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">{{ range $i, $e := .emails }}{{ if $i }}, {{ end }}{{ $e }}{{ end }}</div>
+            </div>
+        </div>
 
         <!-- Status Badge -->
         <div style="display:flex; justify-content: space-between; align-items:center;">

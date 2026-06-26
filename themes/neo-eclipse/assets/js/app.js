@@ -275,3 +275,23 @@ function renderConfigs() {
     }
     container.innerHTML = html;
 }
+
+// Close modals on clicking outside overlay
+document.addEventListener('click', function(e) {
+    var actionModal = document.getElementById('action-modal');
+    var qrModal = document.getElementById('qr-modal');
+    var advModal = document.getElementById('adv-modal');
+    
+    if (e.target === actionModal) {
+        actionModal.classList.remove('open');
+        actionModal.style.display = 'none';
+    }
+    if (e.target === qrModal) {
+        qrModal.classList.remove('open');
+        qrModal.style.display = 'none';
+    }
+    if (e.target === advModal) {
+        advModal.classList.remove('open');
+        advModal.style.display = 'none';
+    }
+});
