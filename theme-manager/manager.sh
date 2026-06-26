@@ -63,7 +63,8 @@ fi
 
 # Interactive TUI routing
 while true; do
-    choice=$(show_menu)
+    show_menu
+    read -p "Select an option: " choice
     case "$choice" in
         1)
             # Remove automatic sync, just ask for package

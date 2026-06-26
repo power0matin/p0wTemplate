@@ -8,16 +8,14 @@ draw_header() {
 
 show_menu() {
     draw_header
-    echo "1 Install Package"
-    echo "2 Upgrade Packages"
-    echo "3 Installed Packages"
-    echo "4 Remove Package"
-    echo "5 View Registry URL"
-    echo "6 Self-Update Manager"
-    echo "7 Exit"
+    echo "1) Install Package"
+    echo "2) Upgrade Packages"
+    echo "3) Installed Packages"
+    echo "4) Remove Package"
+    echo "5) View Registry URL"
+    echo "6) Self-Update Manager"
+    echo "7) Exit"
     echo
-    read -p "Select an option: " choice
-    echo "$choice"
 }
 
 draw_progress() {
