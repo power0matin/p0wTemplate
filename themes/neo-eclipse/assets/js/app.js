@@ -458,7 +458,7 @@ document.addEventListener('click', function(e) {
                     font-style: normal;
                     font-display: swap;
                 }
-                [dir="rtl"] {
+                [dir="rtl"], [dir="rtl"] * {
                     font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif !important;
                 }
                 [dir="rtl"] .accordion-icon, [dir="rtl"] .acc-icon {
