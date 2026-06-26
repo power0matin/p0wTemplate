@@ -6,6 +6,7 @@ echo "Installing 3x-ui Theme Manager..."
 
 INSTALL_DIR="/opt/3x-ui-theme-manager"
 CONFIG_DIR="/etc/3x-ui-theme-manager"
+REPO_URL="https://github.com/neoauroraproject/NeoTemplate.git"
 
 # Check root privileges
 if [[ $EUID -ne 0 ]]; then
@@ -13,12 +14,24 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+# Install dependencies if missing
+if ! command -v git &> /dev/null; then
+    echo "Installing git..."
+    apt-get update && apt-get install -y git
+fi
+
+# Clone repository to a temporary directory
+TMP_DIR=$(mktemp -d)
+echo "Downloading NeoTemplate repository..."
+git clone --depth 1 "$REPO_URL" "$TMP_DIR"
+
 # Create directories
 mkdir -p "$INSTALL_DIR"
 mkdir -p "$CONFIG_DIR"
 
-# Assuming the current directory contains the source code for the manager
-cp -r ./* "$INSTALL_DIR/"
+# Copy theme-manager files
+echo "Copying files to $INSTALL_DIR..."
+cp -r "$TMP_DIR/theme-manager/"* "$INSTALL_DIR/"
 
 # Setup default configuration
 if [[ ! -f "$CONFIG_DIR/config.json" ]]; then
@@ -32,6 +45,9 @@ chmod +x "$INSTALL_DIR/lib/"*.sh
 
 # Create symlink for easy access
 ln -sf "$INSTALL_DIR/manager.sh" "/usr/local/bin/3x-ui-theme"
+
+# Clean up
+rm -rf "$TMP_DIR"
 
 echo "Installation complete!"
 echo "You can now run '3x-ui-theme' to start the manager."
