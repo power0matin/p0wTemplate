@@ -53,4 +53,14 @@ bash <(curl -Ls https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/m
 </details>
 
 ---
+
+## 💖 Donation (حمایت مالی)
+
+If you find this project helpful and want to support its development, you can donate us via:
+اگر این پروژه برای شما مفید بوده و تمایل به حمایت از توسعه‌ی آن دارید، می‌توانید از طریق زیر از ما حمایت کنید:
+
+* **USDT (BEP20):**
+  `0xacA935a5955a756BedaE4738304274EdeE0223D5`
+
+---
 *Built with ❤️ for the 3x-ui community.*
