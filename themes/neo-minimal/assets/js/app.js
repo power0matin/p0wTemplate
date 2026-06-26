@@ -57,16 +57,47 @@ function initDaysStats() {
     }
 }
 
-function copyToClipboard(text, successMsg) {
+function copyToClipboard(text, msg) {
     if (!text) return;
-    navigator.clipboard.writeText(text).then(() => {
-        const toast = document.getElementById('toast');
+    
+    var showToast = function() {
+        var toast = document.getElementById('toast');
         if (toast) {
-            toast.innerText = successMsg || 'Copied!';
+            toast.innerText = msg || 'Copied!';
             toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+            toast.style.opacity = '1';
+            setTimeout(function() { 
+                toast.style.display = 'none'; 
+            }, 2000);
+        } else if (typeof showNotification === 'function') {
+            showNotification(msg || 'Copied!');
         }
-    });
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(showToast).catch(function() {
+            fallbackCopy(text, showToast);
+        });
+    } else {
+        fallbackCopy(text, showToast);
+    }
+}
+
+function fallbackCopy(text, callback) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        callback();
+    } catch (err) {
+        console.error('Fallback copy failed', err);
+    }
+    document.body.removeChild(textArea);
 }
 
 function showQR(link, name) {

@@ -20,6 +20,14 @@
         data-expire="{{ .expire }}"></div>
 
     <div class="container">
+        <!-- Header -->
+        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; padding: 0 8px; margin-top: 8px;">
+            <h1 style="font-size: 1.25rem; font-weight: 700; margin: 0; color: var(--text-main);">{{ .subTitle }}</h1>
+            <a href="{{ .subSupportUrl }}" target="_blank" style="display:flex; align-items:center; gap:6px; background:var(--accent-green); color:black; text-decoration:none; padding:8px 16px; border-radius:99px; font-weight:600; font-size:0.875rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Support
+            </a>
+        </header>
         
         <!-- Main Battery Widget -->
         <div class="widget-card">

@@ -262,29 +262,47 @@ function initThemeToggle() {
 /**
  * Public Helper: Copy text to clipboard and show notification.
  */
-window.copyToClipboard = function(text, successMessage = 'Copied!') {
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-            showNotification(successMessage);
-        }).catch(err => {
-            console.error('Could not copy text: ', err);
-            showNotification('Failed to copy', 'error');
+window.copyToClipboard = function copyToClipboard(text, msg) {
+    if (!text) return;
+    
+    var showToast = function() {
+        var toast = document.getElementById('toast');
+        if (toast) {
+            toast.innerText = msg || 'Copied!';
+            toast.style.display = 'block';
+            toast.style.opacity = '1';
+            setTimeout(function() { 
+                toast.style.display = 'none'; 
+            }, 2000);
+        } else if (typeof showNotification === 'function') {
+            showNotification(msg || 'Copied!');
+        }
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(showToast).catch(function() {
+            fallbackCopy(text, showToast);
         });
     } else {
-        // Fallback
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        try {
-            document.execCommand('copy');
-            showNotification(successMessage);
-        } catch (err) {
-            console.error('Fallback: Oops, unable to copy', err);
-        }
-        document.body.removeChild(textArea);
+        fallbackCopy(text, showToast);
     }
+}
+
+function fallbackCopy(text, callback) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        callback();
+    } catch (err) {
+        console.error('Fallback copy failed', err);
+    }
+    document.body.removeChild(textArea);
 };
 
 /**
