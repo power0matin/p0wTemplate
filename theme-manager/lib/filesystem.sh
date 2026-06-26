@@ -8,9 +8,7 @@ safe_create_dir() {
 }
 
 safe_copy() {
-    local src="$1"
-    local dest="$2"
-    cp -r "$src" "$dest"
+    cp -r "$@"
 }
 
 safe_remove_dir() {
@@ -30,6 +28,7 @@ backup_theme() {
     local current_dir="$1"
     local backup_dir="$2"
     if [[ -d "$current_dir" ]]; then
+        safe_create_dir "$backup_dir"
         local timestamp=$(date +%s)
         safe_copy "$current_dir" "${backup_dir}/backup_${timestamp}"
         log_info "Backed up current theme to ${backup_dir}/backup_${timestamp}"
