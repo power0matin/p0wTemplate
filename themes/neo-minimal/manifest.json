@@ -1,5 +1,5 @@
 {
-  "id": "theme.neo.minimal",
+  "id": "neo-minimal",
   "type": "theme",
   "name": "Neo Minimal",
   "version": "1.0.0",
@@ -11,5 +11,7 @@
     "High Contrast Typography"
   ],
   "previewImage": "preview.png",
-  "compatibleVersions": [">=1.0.0"]
+  "compatibleVersions": [
+    ">=1.0.0"
+  ]
 }

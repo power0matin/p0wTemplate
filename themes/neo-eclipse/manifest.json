@@ -1,5 +1,5 @@
 {
-  "id": "theme.neo.eclipse",
+  "id": "neo-eclipse",
   "type": "theme",
   "name": "Neo Eclipse",
   "version": "1.0.0",
@@ -12,5 +12,7 @@
     "Responsive Layout"
   ],
   "previewImage": "preview.png",
-  "compatibleVersions": [">=1.0.0"]
+  "compatibleVersions": [
+    ">=1.0.0"
+  ]
 }

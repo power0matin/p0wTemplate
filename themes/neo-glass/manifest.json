@@ -1,5 +1,5 @@
 {
-  "id": "theme.neo.glass",
+  "id": "neo-glass",
   "type": "theme",
   "name": "Neo Glass",
   "version": "1.0.0",
@@ -11,5 +11,7 @@
     "Modern iOS Aesthetics"
   ],
   "previewImage": "preview.png",
-  "compatibleVersions": [">=1.0.0"]
+  "compatibleVersions": [
+    ">=1.0.0"
+  ]
 }
