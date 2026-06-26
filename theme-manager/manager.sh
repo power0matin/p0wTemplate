@@ -111,14 +111,6 @@ while true; do
             read -p "Press enter to continue..."
             ;;
         5)
-            echo "Registry URL: $(get_config_val "repositoryUrl" "$CONFIG_FILE")"
-            read -p "Press enter to continue..."
-            ;;
-        6)
-            self_update "$CONFIG_FILE"
-            read -p "Press enter to continue..."
-            ;;
-        7)
             echo "Exiting..."
             exit 0
             ;;

@@ -12,9 +12,7 @@ show_menu() {
     echo "2) Upgrade Packages"
     echo "3) Installed Packages"
     echo "4) Remove Package"
-    echo "5) View Registry URL"
-    echo "6) Self-Update Manager"
-    echo "7) Exit"
+    echo "5) Exit"
     echo
 }
 
@@ -51,7 +49,7 @@ show_install_success_message() {
     echo ""
     echo "Paste the following path:"
     echo ""
-    echo "$install_path"
+    echo "${install_path}/"
     echo ""
     echo "Save the settings."
     echo ""
