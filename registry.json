@@ -1,0 +1,40 @@
+{
+  "version": "1.0.0",
+  "packages": [
+    {
+      "id": "neo-default",
+      "name": "Neo Default",
+      "description": "Clean, official reference template for Sanaei Panel.",
+      "latest": "1.0.0",
+      "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/themes/neo-default/manifest.json"
+    },
+    {
+      "id": "neo-eclipse",
+      "name": "Neo Eclipse",
+      "description": "Dark, structured, and professional fintech app aesthetic.",
+      "latest": "1.0.0",
+      "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/themes/neo-eclipse/manifest.json"
+    },
+    {
+      "id": "neo-glass",
+      "name": "Neo Glass",
+      "description": "iOS 18 frosted glassmorphism with dynamic glowing orbs.",
+      "latest": "1.0.0",
+      "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/themes/neo-glass/manifest.json"
+    },
+    {
+      "id": "neo-minimal",
+      "name": "Neo Minimal",
+      "description": "High contrast, big typography, and absolute simplicity.",
+      "latest": "1.0.0",
+      "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/themes/neo-minimal/manifest.json"
+    },
+    {
+      "id": "neo-vibrant",
+      "name": "Neo Vibrant",
+      "description": "Energetic, glowing neon colors on dark backgrounds.",
+      "latest": "1.0.0",
+      "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/themes/neo-vibrant/manifest.json"
+    }
+  ]
+}
