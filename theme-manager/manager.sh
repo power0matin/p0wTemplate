@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# Resolve base directory of the script
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Resolve base directory of the script (works with symlinks)
+SCRIPT_PATH=$(readlink -f "${BASH_SOURCE[0]}")
+DIR="$( cd "$( dirname "$SCRIPT_PATH" )" && pwd )"
 CONFIG_FILE="/etc/3x-ui-theme-manager/config.json"
 
 # Fallback to local config if /etc doesn't exist (for dev/testing)

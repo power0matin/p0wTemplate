@@ -51,4 +51,6 @@ ln -sf "$INSTALL_DIR/manager.sh" "/usr/local/bin/3x-ui-theme" # Keep old alias j
 rm -rf "$TMP_DIR"
 
 echo "Installation complete!"
-echo "You can now run 'neotemplate' to start the manager."
+echo "Starting NeoTemplate Manager..."
+echo "----------------------------------------"
+neotemplate < /dev/tty
