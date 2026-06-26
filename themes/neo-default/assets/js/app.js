@@ -341,3 +341,244 @@ document.addEventListener('click', function(e) {
         advModal.style.display = 'none';
     }
 });
+// === LANG ENHANCER START ===
+(function() {
+    const themeKeys = ['neo-theme', 'neo-dashboard-theme', 'neo-eclipse-theme', 'neo-glass-theme'];
+    const hasSavedTheme = themeKeys.some(k => localStorage.getItem(k));
+    if (!hasSavedTheme) {
+        const hour = new Date().getHours();
+        const isNight = hour >= 18 || hour < 6;
+        const initialThemeClass = isNight ? 'theme-dark' : 'theme-light';
+        themeKeys.forEach(k => localStorage.setItem(k, initialThemeClass));
+        if (document.body) {
+            document.body.className = initialThemeClass;
+        } else {
+            document.addEventListener('DOMContentLoaded', () => {
+                document.body.className = initialThemeClass;
+            });
+        }
+    }
+
+    const translations = {
+        "Remaining Traffic": "ترافیک باقی‌مانده",
+        "Used": "مصرف شده",
+        "Total Used": "کل مصرف",
+        "Days Left": "روزهای باقی‌مانده",
+        "Days Remaining": "روزهای باقی‌مانده",
+        "Days": "روز",
+        "Advanced Information": "اطلاعات پیشرفته",
+        "Advanced Info": "اطلاعات پیشرفته",
+        "Status": "وضعیت",
+        "Max Allowed": "حجم کلی",
+        "Total Limit": "حجم کلی",
+        "Total Quota": "حجم کلی",
+        "Uploaded": "آپلود",
+        "Downloaded": "دانلود",
+        "Expiration": "تاریخ انقضا",
+        "Expiration Date": "تاریخ انقضا",
+        "Configurations": "کانفیگ‌ها",
+        "Your Configurations": "کانفیگ‌های شما",
+        "Powered by NeoTemplate": "قدرت گرفته از NeoTemplate",
+        "Quick Actions": "عملیات سریع",
+        "Copy Subscription Link": "کپی لینک سابسکریپشن",
+        "Copy Subscription": "کپی لینک سابسکریپشن",
+        "Import to V2RayNG / v2rayN": "ورود به V2RayNG / v2rayN",
+        "Import to Shadowrocket / iOS": "ورود به Shadowrocket / iOS",
+        "Support": "پشتیبانی",
+        "Contact Support": "ارتباط با پشتیبانی",
+        "Help & Support": "راهنما و پشتیبانی",
+        "Client Profile": "پروفایل کاربر",
+        "Profile": "پروفایل",
+        "Email / Identifier": "ایمیل / شناسه",
+        "Data Usage": "مصرف داده",
+        "Unlimited": "نامحدود",
+        "Never Expires": "بدون انقضا",
+        "Close": "بستن",
+        "Config": "کانفیگ",
+        "Copy": "کپی",
+        "QR": "کد QR",
+        "Hi, ": "سلام، ",
+        "Remaining Data": "ترافیک باقی‌مانده",
+        "Active": "فعال",
+        "Disabled": "غیرفعال",
+        "Inactive": "غیرفعال",
+        "No configs available": "کانفیگی در دسترس نیست",
+        "Config Copied!": "کانفیگ کپی شد!",
+        "URL Copied!": "لینک کپی شد!",
+        "Link Copied!": "لینک کپی شد!",
+        "Copy Link": "کپی لینک",
+        "Dark Mode": "حالت تاریک",
+        "Light Mode": "حالت روشن",
+        "Days Remaining": "روزهای باقی‌مانده",
+        "Never Expires": "بدون انقضا",
+        "Contact Support →": "ارتباط با پشتیبانی ←",
+        "Contact Support &rarr;": "ارتباط با پشتیبانی &rarr;"
+    };
+
+    const reverseTranslations = {};
+    for (const k in translations) {
+        reverseTranslations[translations[k]] = k;
+    }
+
+    function shouldSkipNode(node) {
+        let parent = node.parentNode;
+        while (parent) {
+            if (parent.id === 'raw-links-container' || 
+                parent.id === 'display-name' || 
+                parent.classList.contains('raw-link') ||
+                parent.classList.contains('avatar') ||
+                parent.tagName === 'SCRIPT' || 
+                parent.tagName === 'STYLE') {
+                return true;
+            }
+            parent = parent.parentNode;
+        }
+        return false;
+    }
+
+    function translateDOM(lang) {
+        const map = lang === 'fa' ? translations : reverseTranslations;
+        const walk = document.createTreeWalker(document.body || document.documentElement, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while (node = walk.nextNode()) {
+            if (shouldSkipNode(node)) continue;
+            const text = node.nodeValue.trim();
+            if (!text) continue;
+            
+            if (map[text]) {
+                node.nodeValue = node.nodeValue.replace(text, map[text]);
+            } else {
+                for (const key in map) {
+                    if (text.includes(key) && key.length > 2) {
+                        node.nodeValue = node.nodeValue.replace(key, map[key]);
+                    }
+                }
+            }
+        }
+
+        if (lang === 'fa') {
+            document.documentElement.dir = 'rtl';
+            document.documentElement.lang = 'fa';
+        } else {
+            document.documentElement.dir = 'ltr';
+            document.documentElement.lang = 'en';
+        }
+    }
+
+    function injectAssets() {
+        if (!document.getElementById('vazir-font')) {
+            const link = document.createElement('link');
+            link.id = 'vazir-font';
+            link.href = 'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css';
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            document.head.appendChild(link);
+        }
+
+        if (!document.getElementById('rtl-styles')) {
+            const style = document.createElement('style');
+            style.id = 'rtl-styles';
+            style.innerHTML = `
+                [dir="rtl"] {
+                    font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif !important;
+                }
+                [dir="rtl"] .accordion-icon, [dir="rtl"] .acc-icon {
+                    transform: scaleX(-1);
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    function initLangButton() {
+        let target = document.getElementById('theme-toggle');
+        if (!target) {
+            target = document.querySelector('a[href*="Support"], a[href*="support"]');
+        }
+        if (!target || document.getElementById('lang-toggle')) return;
+
+        const btn = document.createElement('button');
+        btn.id = 'lang-toggle';
+        btn.className = target.className;
+        
+        btn.style.cssText = window.getComputedStyle(target).cssText;
+        btn.style.position = 'static';
+        btn.style.display = 'inline-flex';
+        btn.style.alignItems = 'center';
+        btn.style.justifyContent = 'center';
+        btn.style.marginRight = '8px';
+        btn.style.marginLeft = '8px';
+        btn.style.width = 'auto';
+        btn.style.height = 'auto';
+        btn.style.padding = '8px 12px';
+        btn.style.borderRadius = '99px';
+        btn.style.cursor = 'pointer';
+        
+        const currentLang = localStorage.getItem('neo-lang') || 'en';
+        btn.innerText = currentLang === 'en' ? 'FA' : 'EN';
+        
+        btn.addEventListener('click', () => {
+            const nextLang = localStorage.getItem('neo-lang') === 'fa' ? 'en' : 'fa';
+            localStorage.setItem('neo-lang', nextLang);
+            btn.innerText = nextLang === 'en' ? 'FA' : 'EN';
+            
+            translateDOM(nextLang);
+            
+            if (typeof window.renderConfigs === 'function') {
+                window.renderConfigs();
+            }
+        });
+
+        target.parentNode.insertBefore(btn, target);
+    }
+
+    const originalShowNotification = window.showNotification;
+    if (typeof originalShowNotification === 'function') {
+        window.showNotification = function(msg, type) {
+            const currentLang = localStorage.getItem('neo-lang') || 'en';
+            if (currentLang === 'fa' && translations[msg]) {
+                msg = translations[msg];
+            }
+            originalShowNotification(msg, type);
+        };
+    }
+    
+    const originalCopyToClipboard = window.copyToClipboard;
+    if (typeof originalCopyToClipboard === 'function') {
+        window.copyToClipboard = function(text, msg) {
+            const currentLang = localStorage.getItem('neo-lang') || 'en';
+            if (currentLang === 'fa' && translations[msg]) {
+                msg = translations[msg];
+            }
+            originalCopyToClipboard(text, msg);
+        };
+    }
+
+    function run() {
+        injectAssets();
+        initLangButton();
+        
+        const currentLang = localStorage.getItem('neo-lang') || 'en';
+        if (currentLang === 'fa') {
+            translateDOM('fa');
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', run);
+    } else {
+        run();
+    }
+    
+    const originalRenderConfigs = window.renderConfigs;
+    if (typeof originalRenderConfigs === 'function') {
+        window.renderConfigs = function() {
+            originalRenderConfigs();
+            const currentLang = localStorage.getItem('neo-lang') || 'en';
+            if (currentLang === 'fa') {
+                translateDOM('fa');
+            }
+        };
+    }
+})();
+// === LANG ENHANCER END ===
