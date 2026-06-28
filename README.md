@@ -75,4 +75,5 @@ If you find this project helpful and want to support its development, you can do
   `0xacA935a5955a756BedaE4738304274EdeE0223D5`
 
 ---
+Telegram Channels:  [NeoAurora](https://t.me/neoaurora) / [HMPanel](https://t.me/hmpanel)
 *Built with ❤️ for the 3x-ui community.*
