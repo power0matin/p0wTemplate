@@ -10,7 +10,6 @@
 
 [English](#installation) | [فارسی](README_FA.md)
 
----
 
 ## Features
 
@@ -22,7 +21,6 @@
 - QR code generation for config imports
 - Quick Actions: copy subscription link, import to V2RayNG / Shadowrocket / v2rayN
 
----
 
 ## Available Themes
 
@@ -35,7 +33,6 @@
 | **Neo Minimal** | Widget | Ultra-clean widget-style layout inspired by mobile OS battery widgets |
 | **Neo Default** | Classic | Clean, modern, and lightweight — the reliable all-rounder |
 
----
 
 ## Installation
 
@@ -64,7 +61,6 @@ This opens the Theme Manager menu where you can browse, install, and update them
 
 Your subscription links will now use the new theme.
 
----
 
 ## Screenshots
 
@@ -88,7 +84,6 @@ Your subscription links will now use the new theme.
 
 </details>
 
----
 
 ## Project Structure
 
@@ -105,7 +100,6 @@ p0wTemplate/
 └── theme-starter/       # Starter template for creating new themes
 ```
 
----
 
 ## Creating a Theme
 
@@ -118,7 +112,6 @@ Use the `theme-starter` directory as a starting point:
 
 See the [custom subscription templates docs](theme-manager/docs/custom-subscription-templates.md) for details.
 
----
 
 ## Support
 
@@ -127,7 +120,6 @@ If you find this project helpful, consider:
 - Sharing it with others
 - Contributing improvements
 
----
 
 Maintained by [power0matin](https://github.com/power0matin)
 *Built for the 3x-ui community.*
