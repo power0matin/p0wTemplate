@@ -1,58 +1,77 @@
 # p0wTemplate
 
 ![Views](https://komarev.com/ghpvc/?username=power0matin&repo=p0wTemplate&label=Views&color=orange&style=flat-square)
+![License](https://img.shields.io/github/license/power0matin/p0wTemplate?color=blue&style=flat-square)
+![Theme Count](https://img.shields.io/badge/themes-6-blueviolet?style=flat-square)
 
-**p0wTemplate** is a collection of modern, ultra-premium subscription page templates for [3x-ui](https://github.com/MHSanaei/3x-ui) / [Sanaei Panel](https://github.com/MHSanaei/3x-ui), maintained by [power0matin](https://github.com/power0matin).
+**p0wTemplate** is a collection of modern, ultra-premium subscription page templates for [3x-ui](https://github.com/MHSanaei/3x-ui) / Sanaei Panel, designed to give your users a polished, professional experience.
 
-Featuring **HyperSentry** — a signature deep-navy security theme built exclusively for this collection — alongside the full Neo* theme lineup.
+> Featuring **HyperSentry** — a signature deep-navy security theme — alongside the full Neo* theme lineup.
+
+[English](#installation) | [فارسی](README_FA.md)
 
 ---
 
-## 🇮🇷 راهنمای نصب (فارسی)
-سلام دوستان. 
-اینجا اومدیم و تعدادی قالب رو طراحی کردیم براتون که با استفاده از قابلیت Custom template خود پنل ثنایی این قالب ها رو به راحتی نصب و فعال کنید تا از تم بهتر و خاص تری برای ارائه به کاربرانتون استفاده کنید. 
-### چطوری نصبش کنیم؟
-خیلی سادهست! کافیه دستور زیر رو کپی کنید و توی ترمینال سرورتون اجرا کنید:
+## Features
+
+- 6 premium themes, each with a unique visual identity
+- One-click installation via the Theme Manager CLI
+- Full light/dark mode support with system preference detection
+- Bilingual English/Persian (RTL) with automatic language switching
+- Mobile-first responsive design
+- QR code generation for config imports
+- Quick Actions: copy subscription link, import to V2RayNG / Shadowrocket / v2rayN
+
+---
+
+## Available Themes
+
+| Theme | Style | Description |
+|-------|-------|-------------|
+| **HyperSentry** | Signature | Deep-navy glassmorphism with shield branding, animated scan line, and staggered entrance animations |
+| **Neo Vibrant** | Bold | Vibrant orange hero card on a deep navy background with pill-shaped config items |
+| **Neo Eclipse** | Minimalist | Fintech-inspired with extreme pill shapes and a segmented progress bar |
+| **Neo Glass** | iOS/VisionOS | Heavy frosted glassmorphism over colorful gradient blobs |
+| **Neo Minimal** | Widget | Ultra-clean widget-style layout inspired by mobile OS battery widgets |
+| **Neo Default** | Classic | Clean, modern, and lightweight — the reliable all-rounder |
+
+---
+
+## Installation
+
+### Quick Install
+
+Copy and paste this into your server terminal:
 
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/power0matin/p0wTemplate/main/theme-manager/install.sh)
 ```
-*(پس از اجرا، دستور `neotemplate` را بزنید تا منوی مدیریت قالبها باز شود و به راحتی بتوانید قالب دلخواهتون رو نصب یا آپدیت کنید)*
 
-### مرحله مهم: تنظیم قالب در پنل
-پس از نصب و فعال‌سازی موفق هر قالب در منوی مدیریت (`neotemplate`)، به شما یک مسیر (آدرس فایل) داده می‌شود. به عنوان مثال:
-`/etc/3x-ui/sub_templates/neo-vibrant/`
-
-**بسیار مهم:** شما باید این مسیر را کپی کرده و در تنظیمات پنل ثنایی (Panel Settings -> Subscription -> Profile -> Sub Theme Directory) دقیقاً در کادر مربوطه جای‌گذاری (Paste) کنید تا قالب روی لینک‌های اشتراک شما اعمال شود!
-
----
-
-## 🇬🇧 Installation Guide (English)
-Welcome to NeoTemplate! 
-This is a collection of the most modern and premium subscription page themes designed specifically for the Sanaei Panel (3x-ui).
-
-### How to Install?
-Installation is extremely simple. Just copy and paste the following command into your server's terminal:
+After installation, run:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/power0matin/p0wTemplate/main/theme-manager/install.sh)
+neotemplate
 ```
-*(After installation, simply run `neotemplate` to launch the Theme Manager menu where you can easily install or update your favorite themes)*
 
-### Important Step: Applying the Theme
-After successfully installing and activating a theme via the manager menu (`neotemplate`), you will be provided with a specific path. For example:
-`/etc/3x-ui/sub_templates/neo-vibrant/`
+This opens the Theme Manager menu where you can browse, install, and update themes.
 
-**Very Important:** You must copy this exact path and paste it into the Sanaei Panel settings (Panel Settings -> Subscription -> Profile -> Sub Theme Directory) to apply the theme to your subscription links!
+### Apply a Theme
+
+1. Install a theme via the Theme Manager (`neotemplate`)
+2. Copy the path it provides (e.g., `/etc/3x-ui/sub_templates/hyper-sentry/`)
+3. In your 3x-ui panel, go to: **Panel Settings → Subscription → Profile → Sub Theme Directory**
+4. Paste the path and save
+
+Your subscription links will now use the new theme.
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <details>
-<summary>Click to view theme screenshots / برای مشاهده عکس قالبها کلیک کنید</summary>
+<summary>Click to view theme previews</summary>
 
-### HyperSentry ✨ (Signature)
+### HyperSentry (Signature)
 ![HyperSentry](themes/hyper-sentry/assets/images/desktop-preview.png)
 
 ### Neo Vibrant
@@ -71,11 +90,44 @@ After successfully installing and activating a theme via the manager menu (`neot
 
 ---
 
-## 💖 Donation (حمایت مالی)
+## Project Structure
 
-If you find this project helpful and want to support its development, feel free to reach out.
-اگر این پروژه برای شما مفید بوده و تمایل به حمایت از توسعهی آن دارید، میتوانید با من در ارتباط باشید.
+```
+p0wTemplate/
+├── theme-manager/       # CLI tool for installing and managing themes
+├── themes/
+│   ├── hyper-sentry/    # Signature theme
+│   ├── neo-vibrant/
+│   ├── neo-eclipse/
+│   ├── neo-glass/
+│   ├── neo-minimal/
+│   └── neo-default/
+└── theme-starter/       # Starter template for creating new themes
+```
 
 ---
-Maintained by [power0matin](https://github.com/power0matin) · Originally based on the NeoTemplate SDK.
-*Built with ❤️ for the 3x-ui community.*
+
+## Creating a Theme
+
+Use the `theme-starter` directory as a starting point:
+
+1. Copy `theme-starter/` to `themes/your-theme-name/`
+2. Edit `manifest.json` with your theme metadata
+3. Customize `assets/css/main.css` and `assets/js/app.js`
+4. Update `index.html` and `sub.html` with your layout
+
+See the [custom subscription templates docs](theme-manager/docs/custom-subscription-templates.md) for details.
+
+---
+
+## Support
+
+If you find this project helpful, consider:
+- Starring the repo
+- Sharing it with others
+- Contributing improvements
+
+---
+
+Maintained by [power0matin](https://github.com/power0matin)
+*Built for the 3x-ui community.*
