@@ -9,10 +9,10 @@
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-default.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-default.zip"
         },
         "1.1.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-default.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-default.zip"
         }
       }
     },
@@ -24,10 +24,10 @@
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-eclipse.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-eclipse.zip"
         },
         "1.1.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-eclipse.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-eclipse.zip"
         }
       }
     },
@@ -39,10 +39,22 @@
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-glass.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-glass.zip"
         },
         "1.1.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-glass.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-glass.zip"
+        }
+      }
+    },
+    {
+      "id": "hyper-sentry",
+      "name": "HyperSentry",
+      "description": "Signature-tier deep-navy security theme with faceted shield motifs and glowing sentry accents.",
+      "type": "theme",
+      "latest": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/hyper-sentry.zip"
         }
       }
     },
@@ -54,10 +66,10 @@
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-minimal.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-minimal.zip"
         },
         "1.1.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-minimal.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-minimal.zip"
         }
       }
     },
@@ -69,10 +81,10 @@
       "latest": "1.1.0",
       "versions": {
         "1.0.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-vibrant.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-vibrant.zip"
         },
         "1.1.0": {
-          "url": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/packages/neo-vibrant.zip"
+          "url": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/packages/neo-vibrant.zip"
         }
       }
     }

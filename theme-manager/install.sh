@@ -6,7 +6,7 @@ echo "Installing 3x-ui Theme Manager..."
 
 INSTALL_DIR="/opt/3x-ui-theme-manager"
 CONFIG_DIR="/etc/3x-ui-theme-manager"
-REPO_URL="https://github.com/neoauroraproject/NeoTemplate.git"
+REPO_URL="https://github.com/power0matin/p0wTemplate.git"
 
 # Check root privileges
 if [[ $EUID -ne 0 ]]; then
@@ -39,7 +39,7 @@ else
     # Download repository archive to a temporary directory
     TMP_DIR=$(mktemp -d)
     echo "Downloading NeoTemplate repository..."
-    curl -sL "https://github.com/neoauroraproject/NeoTemplate/archive/refs/heads/main.tar.gz" | tar xz -C "$TMP_DIR" --strip-components=1
+    curl -sL "https://github.com/power0matin/p0wTemplate/archive/refs/heads/main.tar.gz" | tar xz -C "$TMP_DIR" --strip-components=1
 fi
 
 # Create directories

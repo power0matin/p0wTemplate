@@ -1,8 +1,10 @@
-# NeoTemplate
+# p0wTemplate
 
-![Views](https://komarev.com/ghpvc/?username=neoauroraproject&repo=NeoTemplate&label=Views&color=orange&style=flat-square)
+![Views](https://komarev.com/ghpvc/?username=power0matin&repo=p0wTemplate&label=Views&color=orange&style=flat-square)
 
-**NeoTemplate** is a collection of modern, ultra-premium subscription page templates for [3x-ui](https://github.com/MHSanaei/3x-ui) / [Sanaei Panel](https://github.com/MHSanaei/3x-ui).
+**p0wTemplate** is a collection of modern, ultra-premium subscription page templates for [3x-ui](https://github.com/MHSanaei/3x-ui) / [Sanaei Panel](https://github.com/MHSanaei/3x-ui), maintained by [power0matin](https://github.com/power0matin).
+
+Featuring **HyperSentry** — a signature deep-navy security theme built exclusively for this collection — alongside the full Neo* theme lineup.
 
 ---
 
@@ -13,7 +15,7 @@
 خیلی سادهست! کافیه دستور زیر رو کپی کنید و توی ترمینال سرورتون اجرا کنید:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/theme-manager/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/power0matin/p0wTemplate/main/theme-manager/install.sh)
 ```
 *(پس از اجرا، دستور `neotemplate` را بزنید تا منوی مدیریت قالبها باز شود و به راحتی بتوانید قالب دلخواهتون رو نصب یا آپدیت کنید)*
 
@@ -33,7 +35,7 @@ This is a collection of the most modern and premium subscription page themes des
 Installation is extremely simple. Just copy and paste the following command into your server's terminal:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/theme-manager/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/power0matin/p0wTemplate/main/theme-manager/install.sh)
 ```
 *(After installation, simply run `neotemplate` to launch the Theme Manager menu where you can easily install or update your favorite themes)*
 
@@ -49,6 +51,9 @@ After successfully installing and activating a theme via the manager menu (`neot
 
 <details>
 <summary>Click to view theme screenshots / برای مشاهده عکس قالبها کلیک کنید</summary>
+
+### HyperSentry ✨ (Signature)
+![HyperSentry](themes/hyper-sentry/assets/images/desktop-preview.png)
 
 ### Neo Vibrant
 ![Neo Vibrant](themes/preview/vibrant.jpg)
@@ -68,12 +73,9 @@ After successfully installing and activating a theme via the manager menu (`neot
 
 ## 💖 Donation (حمایت مالی)
 
-If you find this project helpful and want to support its development, you can donate us via:
-اگر این پروژه برای شما مفید بوده و تمایل به حمایت از توسعهی آن دارید، میتوانید از طریق زیر از ما حمایت کنید:
-
-* **USDT (BEP20):**
-  `0xacA935a5955a756BedaE4738304274EdeE0223D5`
+If you find this project helpful and want to support its development, feel free to reach out.
+اگر این پروژه برای شما مفید بوده و تمایل به حمایت از توسعهی آن دارید، میتوانید با من در ارتباط باشید.
 
 ---
-Telegram Channels:  [NeoAurora](https://t.me/neoaurora) / [HMPanel](https://t.me/hmpanel)
+Maintained by [power0matin](https://github.com/power0matin) · Originally based on the NeoTemplate SDK.
 *Built with ❤️ for the 3x-ui community.*

@@ -1,5 +1,5 @@
 {
-  "repositoryUrl": "https://raw.githubusercontent.com/neoauroraproject/NeoTemplate/main/registry.json",
+  "repositoryUrl": "https://raw.githubusercontent.com/power0matin/p0wTemplate/main/registry.json",
   "installDirectory": "/etc/3x-ui/sub_templates",
   "cacheDirectory": "/tmp/3x-ui-theme-manager/cache",
   "autoUpdate": false,
