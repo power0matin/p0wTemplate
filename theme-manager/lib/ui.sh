@@ -111,21 +111,21 @@ show_menu() {
     print_box_empty 56
 
     # Option 1 - Browse & Install
-    printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
+    print_box_empty 56
     printf "  ${DIM}${BOX_V}${RESET}  ${GREEN}${BOLD}[1]${RESET}  ${WHITE}Browse & Install${RESET}  ${DIM}|  ${LIGHT_GRAY}Discover and install themes${RESET}  ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
+    print_box_empty 56
 
     # Option 2 - Update All
     printf "  ${DIM}${BOX_V}${RESET}  ${YELLOW}${BOLD}[2]${RESET}  ${WHITE}Update All${RESET}       ${DIM}|  ${LIGHT_GRAY}Update installed themes${RESET}       ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
+    print_box_empty 56
 
     # Option 3 - View Installed
     printf "  ${DIM}${BOX_V}${RESET}  ${CYAN}${BOLD}[3]${RESET}  ${WHITE}View Installed${RESET}   ${DIM}|  ${LIGHT_GRAY}List all installed themes${RESET}     ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
+    print_box_empty 56
 
     # Option 4 - Remove
     printf "  ${DIM}${BOX_V}${RESET}  ${ORANGE}${BOLD}[4]${RESET}  ${WHITE}Remove Theme${RESET}    ${DIM}|  ${LIGHT_GRAY}Uninstall a theme${RESET}             ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
+    print_box_empty 56
 
     # Separator
     print_box_line "  ---------------------------------------------------" 56 "$DIM"
@@ -133,7 +133,7 @@ show_menu() {
 
     # Option 0 - Exit
     printf "  ${DIM}${BOX_V}${RESET}  ${RED}${BOLD}[0]${RESET}  ${WHITE}Exit${RESET}             ${DIM}|  ${LIGHT_GRAY}Close the manager${RESET}              ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
+    print_box_empty 56
 
     print_box_border 56 "$BOX_BL" "$BOX_BR"
     echo ""
