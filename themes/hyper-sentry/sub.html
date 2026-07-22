@@ -9,9 +9,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
+    <script>
+        // Detect device theme preference before first paint to prevent flash
+        (function() {
+            var saved = localStorage.getItem('hyper-sentry-theme');
+            if (saved) {
+                document.documentElement.className = saved;
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.documentElement.className = 'theme-light';
+            } else {
+                document.documentElement.className = 'theme-dark';
+            }
+        })();
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
-<body class="theme-dark">
+<body>
     <!-- Ambient Background -->
     <div class="ambient-bg"></div>
     <div class="facet-grid"></div>
@@ -47,7 +60,7 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                         Support
                     </a>
-                    <button id="theme-toggle" class="icon-btn">
+                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme">
                         <svg class="theme-icon-light" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                         <svg class="theme-icon-dark" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                     </button>
@@ -140,7 +153,7 @@
     </div>
 
     <!-- Quick Actions Pill -->
-    <div class="quick-actions-pill" onclick="document.getElementById('action-modal').classList.add('open')">
+    <div class="quick-actions-pill" role="button" tabindex="0" aria-label="Open quick actions" onclick="document.getElementById('action-modal').classList.add('open')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
         <span>Quick Actions</span>
     </div>
@@ -150,11 +163,11 @@
         <div class="modal-content glass-pane">
             <div class="modal-header">
                 <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0;">Quick Actions</h3>
-                <button class="icon-btn" onclick="document.getElementById('action-modal').classList.remove('open')">✕</button>
+                <button class="icon-btn" aria-label="Close" onclick="document.getElementById('action-modal').classList.remove('open')">✕</button>
             </div>
             <button class="btn btn-primary" style="margin-bottom: 12px; display:flex; justify-content:center;" onclick="copyToClipboard('{{ .subUrl }}', 'URL Copied!')">Copy Subscription Link</button>
-            <a href="v2rayng://install-sub?url={{ .subUrl }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}" class="btn glass-btn" style="margin-bottom: 12px; text-decoration:none; display:flex; justify-content:center;">Import to V2RayNG / v2rayN</a>
-            <a href="v2ray://install-sub?url={{ .subUrl }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}" class="btn glass-btn" style="text-decoration:none; display:flex; justify-content:center;">Import to Shadowrocket / iOS</a>
+            <a href="v2rayng://install-sub?url={{ .subUrl | urlquery }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e | urlquery }}{{ end }}{{ end }}" class="btn glass-btn" style="margin-bottom: 12px; text-decoration:none; display:flex; justify-content:center;">Import to V2RayNG / v2rayN</a>
+            <a href="v2ray://install-sub?url={{ .subUrl | urlquery }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e | urlquery }}{{ end }}{{ end }}" class="btn glass-btn" style="text-decoration:none; display:flex; justify-content:center;">Import to Shadowrocket / iOS</a>
             <a class="btn" style="text-decoration:none; background: var(--success); color: #041e14; margin-top: 12px; display:flex; justify-content:center; align-items:center; gap:8px;" href="{{ .subSupportUrl }}" target="_blank">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 Contact Support
@@ -167,7 +180,7 @@
         <div class="modal-content glass-pane" style="text-align:center; display:flex; flex-direction:column; align-items:center;">
             <h3 id="qr-title" style="margin-bottom:16px; font-size:1rem; word-break:break-all;"></h3>
             <div style="background:white; padding:16px; border-radius:24px;"><canvas id="qr-canvas"></canvas></div>
-            <button class="btn glass-btn" style="margin-top:24px; width:100%;" onclick="document.getElementById('qr-modal').classList.remove('open')">Close</button>
+            <button class="btn glass-btn" style="margin-top:24px; width:100%;" aria-label="Close QR modal" onclick="document.getElementById('qr-modal').classList.remove('open')">Close</button>
         </div>
     </div>
 

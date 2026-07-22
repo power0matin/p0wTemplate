@@ -12,6 +12,7 @@ themes/neo-dashboard/
 .vscode/
 *.zip
 *.js
+!themes/*/assets/js/*.js
 node_modules/
 build_temp/
 test_extract/
