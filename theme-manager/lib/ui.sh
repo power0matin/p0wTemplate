@@ -27,13 +27,13 @@ BG_YELLOW='\033[48;5;58m'
 
 RESET='\033[0m'
 
-# ─── Box Drawing Characters ──────────────────────────────────────────────────
-BOX_TL="╭"
-BOX_TR="╮"
-BOX_BL="╰"
-BOX_BR="╯"
-BOX_H="─"
-BOX_V="│"
+# ─── Box Drawing Characters (ASCII-safe) ─────────────────────────────────────
+BOX_TL="+"
+BOX_TR="+"
+BOX_BL="+"
+BOX_BR="+"
+BOX_H="-"
+BOX_V="|"
 
 # ─── Helper Functions ────────────────────────────────────────────────────────
 
@@ -91,7 +91,7 @@ print_box_line() {
 
 draw_header() {
     clear
-    
+
     # Title box
     print_box_border 56 "$BOX_TL" "$BOX_TR"
     print_box_empty 56
@@ -104,40 +104,40 @@ draw_header() {
 
 show_menu() {
     draw_header
-    
+
     # Menu card
     print_box_border 56 "$BOX_TL" "$BOX_TR"
     print_box_line "  ${BOLD}MANAGE THEMES${RESET}" 56 "$CYAN"
     print_box_empty 56
-    
+
     # Option 1 - Browse & Install
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}  ${GREEN}${BOLD}[1]${RESET}  ${WHITE}Browse & Install${RESET}  ${DIM}│  ${LIGHT_GRAY}Discover and install themes${RESET}  ${DIM}${BOX_V}${RESET}\n"
+    printf "  ${DIM}${BOX_V}${RESET}  ${GREEN}${BOLD}[1]${RESET}  ${WHITE}Browse & Install${RESET}  ${DIM}|  ${LIGHT_GRAY}Discover and install themes${RESET}  ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    
+
     # Option 2 - Update All
-    printf "  ${DIM}${BOX_V}${RESET}  ${YELLOW}${BOLD}[2]${RESET}  ${WHITE}Update All${RESET}       ${DIM}│  ${LIGHT_GRAY}Update installed themes${RESET}       ${DIM}${BOX_V}${RESET}\n"
+    printf "  ${DIM}${BOX_V}${RESET}  ${YELLOW}${BOLD}[2]${RESET}  ${WHITE}Update All${RESET}       ${DIM}|  ${LIGHT_GRAY}Update installed themes${RESET}       ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    
+
     # Option 3 - View Installed
-    printf "  ${DIM}${BOX_V}${RESET}  ${CYAN}${BOLD}[3]${RESET}  ${WHITE}View Installed${RESET}   ${DIM}│  ${LIGHT_GRAY}List all installed themes${RESET}     ${DIM}${BOX_V}${RESET}\n"
+    printf "  ${DIM}${BOX_V}${RESET}  ${CYAN}${BOLD}[3]${RESET}  ${WHITE}View Installed${RESET}   ${DIM}|  ${LIGHT_GRAY}List all installed themes${RESET}     ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    
+
     # Option 4 - Remove
-    printf "  ${DIM}${BOX_V}${RESET}  ${ORANGE}${BOLD}[4]${RESET}  ${WHITE}Remove Theme${RESET}    ${DIM}│  ${LIGHT_GRAY}Uninstall a theme${RESET}             ${DIM}${BOX_V}${RESET}\n"
+    printf "  ${DIM}${BOX_V}${RESET}  ${ORANGE}${BOLD}[4]${RESET}  ${WHITE}Remove Theme${RESET}    ${DIM}|  ${LIGHT_GRAY}Uninstall a theme${RESET}             ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    
+
     # Separator
-    print_box_line "  ──────────────────────────────────────────────────────" 56 "$DIM"
+    print_box_line "  ---------------------------------------------------" 56 "$DIM"
     print_box_empty 56
-    
-    # Option 5 - Exit
-    printf "  ${DIM}${BOX_V}${RESET}  ${RED}${BOLD}[5]${RESET}  ${WHITE}Exit${RESET}             ${DIM}│  ${LIGHT_GRAY}Close the manager${RESET}              ${DIM}${BOX_V}${RESET}\n"
+
+    # Option 0 - Exit
+    printf "  ${DIM}${BOX_V}${RESET}  ${RED}${BOLD}[0]${RESET}  ${WHITE}Exit${RESET}             ${DIM}|  ${LIGHT_GRAY}Close the manager${RESET}              ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    
+
     print_box_border 56 "$BOX_BL" "$BOX_BR"
     echo ""
-    
+
     # Footer hint
     printf "  ${DIM}Type ${LIGHT_GRAY}a number${DIM} and press Enter${RESET}\n"
     echo ""
@@ -150,27 +150,27 @@ show_theme_browser() {
     local -n names_ref=$2
     local -n descs_ref=$3
     local count=${#names_ref[@]}
-    
+
     echo ""
     print_box_border 56 "$BOX_TL" "$BOX_TR"
     print_box_line "  ${BOLD}AVAILABLE THEMES${RESET}" 56 "$GREEN"
-    print_box_line "  ──────────────────────────────────────────────────────" 56 "$DIM"
-    
+    print_box_line "  ---------------------------------------------------" 56 "$DIM"
+
     for i in "${!names_ref[@]}"; do
         local num=$((i+1))
         local name="${names_ref[$i]}"
         local desc="${descs_ref[$i]}"
-        
+
         # Truncate description if too long
         if [[ ${#desc} -gt 36 ]]; then
             desc="${desc:0:33}..."
         fi
-        
+
         printf "  ${DIM}${BOX_V}${RESET}  ${GREEN}${BOLD}[$num]${RESET}  ${WHITE}${BOLD}%s${RESET}\n" "$name"
         printf "  ${DIM}${BOX_V}${RESET}        ${DIM}%s${RESET}\n" "$desc"
         printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
     done
-    
+
     print_box_border 56 "$BOX_BL" "$BOX_BR"
     echo ""
     printf "  ${DIM}Select [1-$count] or ${LIGHT_GRAY}0${DIM} to go back${RESET}\n"
@@ -182,16 +182,16 @@ show_theme_browser() {
 draw_progress() {
     local text="$1"
     echo ""
-    printf "  ${YELLOW}⟳  %s${RESET}\n" "$text"
+    printf "  ${YELLOW}>  %s${RESET}\n" "$text"
     echo ""
 }
 
 draw_spinner() {
     local pid=$1
     local text=$2
-    local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+    local spin='|/-\'
     local i=0
-    
+
     while kill -0 "$pid" 2>/dev/null; do
         printf "\r  ${CYAN}%s${RESET} %s" "${spin:i++%${#spin}:1}" "$text"
         sleep 0.1
@@ -202,18 +202,18 @@ draw_spinner() {
 show_success() {
     local title="$1"
     local message="$2"
-    
+
     echo ""
     print_box_border 56 "$BOX_TL" "$BOX_TR"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}     ${GREEN}✓${RESET}  ${WHITE}${BOLD}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$title" $((54-${#title})) ''
+    printf "  ${DIM}${BOX_V}${RESET}     ${GREEN}OK${RESET}  ${WHITE}${BOLD}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$title" $((54-${#title})) ''
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    
+
     if [[ -n "$message" ]]; then
         printf "  ${DIM}${BOX_V}${RESET}     ${DIM}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$message" $((54-${#message})) ''
         printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
     fi
-    
+
     print_box_border 56 "$BOX_BL" "$BOX_BR"
     echo ""
 }
@@ -221,18 +221,18 @@ show_success() {
 show_error() {
     local title="$1"
     local message="$2"
-    
+
     echo ""
     print_box_border 56 "$BOX_TL" "$BOX_TR"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}     ${RED}✗${RESET}  ${WHITE}${BOLD}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$title" $((54-${#title})) ''
+    printf "  ${DIM}${BOX_V}${RESET}     ${RED}ERR${RESET} ${WHITE}${BOLD}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$title" $((53-${#title})) ''
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    
+
     if [[ -n "$message" ]]; then
         printf "  ${DIM}${BOX_V}${RESET}     ${DIM}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$message" $((54-${#message})) ''
         printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
     fi
-    
+
     print_box_border 56 "$BOX_BL" "$BOX_BR"
     echo ""
 }
@@ -240,18 +240,18 @@ show_error() {
 show_warning() {
     local title="$1"
     local message="$2"
-    
+
     echo ""
     print_box_border 56 "$BOX_TL" "$BOX_TR"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}     ${YELLOW}!${RESET}  ${WHITE}${BOLD}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$title" $((54-${#title})) ''
+    printf "  ${DIM}${BOX_V}${RESET}     ${YELLOW}!${RESET}   ${WHITE}${BOLD}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$title" $((53-${#title})) ''
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    
+
     if [[ -n "$message" ]]; then
         printf "  ${DIM}${BOX_V}${RESET}     ${DIM}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$message" $((54-${#message})) ''
         printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
     fi
-    
+
     print_box_border 56 "$BOX_BL" "$BOX_BR"
     echo ""
 }
@@ -261,31 +261,31 @@ show_warning() {
 show_install_success_message() {
     local theme_name="$1"
     local install_path="$2"
-    
+
     echo ""
     print_box_border 56 "$BOX_TL" "$BOX_TR"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}     ${GREEN}✓${RESET}  ${WHITE}${BOLD}THEME INSTALLED${RESET}%*s${DIM}${BOX_V}${RESET}\n" 34 ''
+    printf "  ${DIM}${BOX_V}${RESET}     ${GREEN}OK${RESET}  ${WHITE}${BOLD}THEME INSTALLED${RESET}%*s${DIM}${BOX_V}${RESET}\n" 35 ''
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}     ${DIM}Theme:${RESET} ${CYAN}%s${RESET}%*s${DIM}${BOX_V}${RESET}\n" "$theme_name" $((46-${#theme_name})) ''
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    print_box_line "  ──────────────────────────────────────────────────────" 56 "$DIM"
+    print_box_line "  ---------------------------------------------------" 56 "$DIM"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}     ${YELLOW}${BOLD}⚠  NEXT STEP REQUIRED${RESET}%*s${DIM}${BOX_V}${RESET}\n" 32 ''
+    printf "  ${DIM}${BOX_V}${RESET}     ${YELLOW}${BOLD}WARNING: NEXT STEP REQUIRED${RESET}%*s${DIM}${BOX_V}${RESET}\n" 26 ''
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}     ${DIM}Apply this theme in your 3x-ui panel:${RESET}           ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}     ${DIM}1.${RESET} Open your 3x-ui panel                          ${DIM}${BOX_V}${RESET}\n"
-    printf "  ${DIM}${BOX_V}${RESET}     ${DIM}2.${RESET} Go to: ${WHITE}Settings → Subscription${RESET}                 ${DIM}${BOX_V}${RESET}\n"
+    printf "  ${DIM}${BOX_V}${RESET}     ${DIM}2.${RESET} Go to: ${WHITE}Settings -> Subscription${RESET}                 ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}     ${DIM}3.${RESET} Paste the path below:                             ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
-    
+
     # Highlighted path box
     local path_display="${install_path}/"
     printf "  ${DIM}${BOX_V}${RESET}  ${BG_BLUE}                                                              ${RESET}  ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}  ${BG_BLUE}    ${WHITE}${BOLD}%-52s${RESET}  ${DIM}${BOX_V}${RESET}\n" "$path_display"
     printf "  ${DIM}${BOX_V}${RESET}  ${BG_BLUE}                                                              ${RESET}  ${DIM}${BOX_V}${RESET}\n"
-    
+
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}     ${DIM}Then click ${GREEN}Save${RESET} in the panel!                      ${DIM}${BOX_V}${RESET}\n"
     printf "  ${DIM}${BOX_V}${RESET}                                                                ${DIM}${BOX_V}${RESET}\n"
@@ -299,7 +299,7 @@ show_installed_list_header() {
     echo ""
     print_box_border 56 "$BOX_TL" "$BOX_TR"
     print_box_line "  ${BOLD}INSTALLED THEMES${RESET}" 56 "$CYAN"
-    print_box_line "  ──────────────────────────────────────────────────────" 56 "$DIM"
+    print_box_line "  ---------------------------------------------------" 56 "$DIM"
 }
 
 show_installed_item() {
@@ -307,7 +307,7 @@ show_installed_item() {
     local name="$2"
     local id="$3"
     local version="$4"
-    
+
     printf "  ${DIM}${BOX_V}${RESET}  ${GREEN}${BOLD}[%s]${RESET}  ${WHITE}%s${RESET}  ${DIM}(%s v%s)${RESET}%*s${DIM}${BOX_V}${RESET}\n" \
         "$index" "$name" "$id" "$version" $((42-${#name}-${#id}-${#version})) ''
 }
@@ -337,15 +337,15 @@ show_empty_state() {
 show_confirm() {
     local message="$1"
     local default="${2:-n}"
-    
+
     local hint="Y/n"
     [[ "$default" == "y" ]] && hint="y/N"
-    
+
     printf "\n  ${YELLOW}?${RESET}  ${WHITE}%s${RESET} ${DIM}[%s]${RESET} " "$message" "$hint"
     read -r response
-    
+
     [[ -z "$response" ]] && response="$default"
-    
+
     [[ "$response" =~ ^[Yy]$ ]]
 }
 
@@ -354,9 +354,9 @@ show_confirm() {
 show_loading() {
     local text="$1"
     local pid=$2
-    
+
     while kill -0 "$pid" 2>/dev/null; do
-        for frame in "⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏"; do
+        for frame in "|" "/" "-" "\\"; do
             printf "\r  ${CYAN}%s${RESET} ${DIM}%s${RESET}" "$frame" "$text"
             sleep 0.08
             kill -0 "$pid" 2>/dev/null || break
@@ -370,9 +370,9 @@ show_loading() {
 show_status_bar() {
     local version="$1"
     local themes_count="$2"
-    
+
     echo ""
-    printf "  ${DIM}p0wTemplate v%s │ %s themes installed${RESET}\n" "$version" "$themes_count"
+    printf "  ${DIM}p0wTemplate v%s | %s themes installed${RESET}\n" "$version" "$themes_count"
     echo ""
 }
 

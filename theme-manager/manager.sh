@@ -191,7 +191,7 @@ while true; do
             read -r
             ;;
         
-        5)
+        0)
             # Exit
             clear
             echo ""
@@ -199,9 +199,9 @@ while true; do
             echo ""
             exit 0
             ;;
-        
+
         *)
-            show_error "Invalid Option" "Please select 1-5"
+            show_error "Invalid Option" "Please select 1-4 or 0 to exit"
             sleep 1
             ;;
     esac
