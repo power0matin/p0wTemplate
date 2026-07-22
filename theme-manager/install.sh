@@ -38,7 +38,7 @@ else
 
     # Download repository archive to a temporary directory
     TMP_DIR=$(mktemp -d)
-    echo "Downloading NeoTemplate repository..."
+    echo "Downloading p0wTemplate repository..."
     curl -sL "https://github.com/power0matin/p0wTemplate/archive/refs/heads/main.tar.gz" | tar xz -C "$TMP_DIR" --strip-components=1
 fi
 
@@ -63,7 +63,7 @@ chmod +x "$INSTALL_DIR/install.sh"
 chmod +x "$INSTALL_DIR/lib/"*.sh
 
 # Create symlink for easy access
-ln -sf "$INSTALL_DIR/manager.sh" "/usr/local/bin/neotemplate"
+ln -sf "$INSTALL_DIR/manager.sh" "/usr/local/bin/p0wtemplate"
 ln -sf "$INSTALL_DIR/manager.sh" "/usr/local/bin/3x-ui-theme" # Keep old alias just in case
 
 # Clean up
@@ -72,6 +72,6 @@ if [ "$USE_LOCAL" = false ]; then
 fi
 
 echo "Installation complete!"
-echo "Starting NeoTemplate Manager..."
+echo "Starting p0wTemplate Manager..."
 echo "----------------------------------------"
-neotemplate < /dev/tty
+p0wtemplate < /dev/tty

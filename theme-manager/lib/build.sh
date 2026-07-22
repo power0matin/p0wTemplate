@@ -5,7 +5,7 @@ build_package() {
     local source_dir="$1"
     
     if [[ -z "$source_dir" || ! -d "$source_dir" ]]; then
-        log_error "Usage: neotemplate build <path-to-theme-directory>"
+        log_error "Usage: p0wtemplate build <path-to-theme-directory>"
         return 1
     fi
     
@@ -31,7 +31,7 @@ build_package() {
     log_info "Package identified: $package_id v$package_version"
     
     # 2. Staging Environment
-    local staging_base="/tmp/neotemplate_build"
+    local staging_base="/tmp/p0wtemplate_build"
     local staging_dir="$staging_base/$package_id"
     
     log_info "Staging files..."

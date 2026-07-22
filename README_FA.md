@@ -47,14 +47,14 @@ bash <(curl -Ls https://raw.githubusercontent.com/power0matin/p0wTemplate/main/t
 پس از نصب، این دستور را اجرا کنید:
 
 ```bash
-neotemplate
+p0wtemplate
 ```
 
 منوی مدیریت قالب‌ها باز می‌شود که می‌توانید قالب‌ها را مرور، نصب و به‌روزرسانی کنید.
 
 ### اعمال قالب
 
-۱. یک قالب را از طریق Theme Manager (`neotemplate`) نصب کنید
+۱. یک قالب را از طریق Theme Manager (`p0wtemplate`) نصب کنید
 ۲. مسیری که نمایش داده می‌شود را کپی کنید (مثلاً: `/etc/3x-ui/sub_templates/hyper-sentry/`)
 ۳. در پنل 3x-ui خود به این مسیر بروید: **تنظیمات پنل → اشتراک → پروفایل → مسیر قالب اشتراک**
 ۴. مسیر را جایگذاری کرده و ذخیره کنید

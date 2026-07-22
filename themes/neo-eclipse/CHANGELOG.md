@@ -1,10 +1,10 @@
 # Changelog
 
-All notable changes to the NeoTemplate SDK will be documented in this file.
+All notable changes to the p0wTemplate SDK will be documented in this file.
 
 ## [1.0.0] - 2026-06-26
 ### Added
-- Initial release of the NeoTemplate SDK.
+- Initial release of the p0wTemplate SDK.
 - Core folder structure established.
 - `manifest.json` schema defined.
 - Base `index.html` and `sub.html` templates created.

@@ -1,9 +1,9 @@
 # Theme Starter (SDK)
 
-This is the core SDK and master blueprint for building any NeoTemplate for 3x-ui.
+This is the core SDK and master blueprint for building any p0wTemplate for 3x-ui.
 
 ## Features
-- Natively implements the standard NeoTemplate architectural rules.
+- Natively implements the standard p0wTemplate architectural rules.
 - Includes the `fix_preview2.js` parser for testing Go templates locally.
 - Pre-configured `app.js` with progress bars, days math, and theme switching.
 - Standardized Quick Actions Pill and QR Modals.

@@ -1,9 +1,9 @@
-# NeoTemplate Development Rules
+# p0wTemplate Development Rules
 
 ## Repository Philosophy
 - The repository must remain clean, lightweight, and production-ready.
 - NEVER commit development artifacts, temporary files, internal documentation, docs/, drafts/, planning/, architecture notes, AI conversations, design documents, prototypes, experimental code, tests, local cache, generated zip files, IDE settings, or OS files.
-- ONLY commit NeoTemplate source code, official themes, registry, installer, manager, lib, README, LICENSE, and CHANGELOG.
+- ONLY commit p0wTemplate source code, official themes, registry, installer, manager, lib, README, LICENSE, and CHANGELOG.
 
 ## Theme Development Standard
 - Every theme must strictly follow the official package architecture. NO custom folder structures.
@@ -14,8 +14,8 @@
   - `assets/css/`, `assets/js/`, `assets/fonts/`, `assets/images/`
   - `preview.png`
   - `README.md`
-- Themes must include a valid `manifest.json`, pass the NeoTemplate Validator, support official 3x-ui variables, use relative paths, and avoid external dependencies whenever possible.
-- NEVER invent new directory layouts or unsupported manifest fields. NeoTemplate defines the standard.
+- Themes must include a valid `manifest.json`, pass the p0wTemplate Validator, support official 3x-ui variables, use relative paths, and avoid external dependencies whenever possible.
+- NEVER invent new directory layouts or unsupported manifest fields. p0wTemplate defines the standard.
 
 ## Preview Engine & Production Packaging Rules
 - **Development Only**: The Preview Engine (`preview/` directory, `mock-data.json`, etc.) is strictly for local development and must NEVER be included in the production release.
@@ -23,12 +23,12 @@
 - **Source of Truth**: The Preview Engine must not modify production files. The output in Preview Mode should simulate 3x-ui closely while remaining totally isolated from production architecture.
 
 ## Core Principles
-- **Simplicity First**: NeoTemplate is designed to remain small, predictable, and maintainable. Do not introduce complexity unless it solves a real problem. Prefer simple architecture over clever architecture.
+- **Simplicity First**: p0wTemplate is designed to remain small, predictable, and maintainable. Do not introduce complexity unless it solves a real problem. Prefer simple architecture over clever architecture.
 - **Single Responsibility**: Every module must have exactly one single responsibility.
 - **Official Workflow**: The foundation of the ecosystem is strictly: Source → Preview → Validate → Build → Package → Release → Install. This workflow must remain consistent across all future versions.
 
 ## Development Roadmap & Theme Strategy
-- **Phase 1**: NeoTemplate SDK. The official reference implementation and absolute source of truth.
+- **Phase 1**: p0wTemplate SDK. The official reference implementation and absolute source of truth.
 - **Phase 2**: Neo Default Theme. The official reference implementation for developers (clean, modern, lightweight).
 - **Phase 3**: Official Theme Collection. (Neo Glass, Apple, Minimal, Dashboard, etc.)
 
@@ -46,7 +46,7 @@
 - Themes must pass Validator, support Preview Engine, build, package, and install without manual modifications.
 - Reusable components should remain inside the SDK whenever possible.
 
-## NeoTemplate UI Design Principles
+## p0wTemplate UI Design Principles
 - **Information Priority**: Priority 1 (Most Important) must always be visible without scrolling: Subscription Display Name, Current Status, Remaining Traffic, Total Traffic, Remaining Time, Traffic Progress, Configuration List.
 - **Display Name Priority**: Always prioritize the user's visible identity in the header (Display Name > Remark > Email > Username > Sub Name). Never prioritize Subscription ID.
 - **Progressive Disclosure**: Use expandable sections (accordions) for Priority 3 technical info (Sub ID, Raw timestamps, internal identifiers).

@@ -47,14 +47,14 @@ bash <(curl -Ls https://raw.githubusercontent.com/power0matin/p0wTemplate/main/t
 After installation, run:
 
 ```bash
-neotemplate
+p0wtemplate
 ```
 
 This opens the Theme Manager menu where you can browse, install, and update themes.
 
 ### Apply a Theme
 
-1. Install a theme via the Theme Manager (`neotemplate`)
+1. Install a theme via the Theme Manager (`p0wtemplate`)
 2. Copy the path it provides (e.g., `/etc/3x-ui/sub_templates/hyper-sentry/`)
 3. In your 3x-ui panel, go to: **Panel Settings → Subscription → Profile → Sub Theme Directory**
 4. Paste the path and save

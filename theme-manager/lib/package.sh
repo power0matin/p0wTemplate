@@ -102,7 +102,7 @@ remove_package() {
     # When removing, we might want to specify which package to remove if there are multiple.
     local package_id="$2"
     if [[ -z "$package_id" ]]; then
-        log_error "Usage: neotemplate remove <package_id>"
+        log_error "Usage: p0wtemplate remove <package_id>"
         return 1
     fi
     local theme_install_dir="$install_dir/$package_id"

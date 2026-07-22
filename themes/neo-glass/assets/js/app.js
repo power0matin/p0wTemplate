@@ -315,7 +315,7 @@ document.addEventListener('click', function(e) {
         "Expiration Date": "تاریخ انقضا",
         "Configurations": "کانفیگ‌ها",
         "Your Configurations": "کانفیگ‌های شما",
-        "Powered by NeoTemplate": "قدرت گرفته از NeoTemplate",
+        "Powered by p0wTemplate": "قدرت گرفته از p0wTemplate",
         "Quick Actions": "عملیات سریع",
         "Copy Subscription Link": "کپی لینک سابسکریپشن",
         "Copy Subscription": "کپی لینک سابسکریپشن",

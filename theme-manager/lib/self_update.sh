@@ -3,7 +3,7 @@
 self_update() {
     local config_file="$1"
     
-    log_info "Checking for NeoTemplate manager updates..."
+    log_info "Checking for p0wTemplate manager updates..."
     
     local registry_file=$(fetch_registry "$config_file")
     if [[ -z "$registry_file" || ! -f "$registry_file" ]]; then
