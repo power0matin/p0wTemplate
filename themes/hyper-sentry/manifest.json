@@ -4,16 +4,16 @@
   "name": "HyperSentry",
   "version": "1.2.0",
   "author": "power0matin",
-  "description": "Signature-tier deep-navy security theme with faceted shield motifs, glowing sentry accents, and premium glassmorphism — built exclusively for the p0wTemplate collection.",
+  "description": "Signature deep-navy subscription theme with clear account status, focused usage information, bilingual EN/FA support, and premium glassmorphism.",
   "features": [
-    "Faceted Shield Glassmorphism",
-    "Animated Sentry Pulse & Scan Line",
-    "Animated Background Glow",
-    "Smooth Hover Glow Transitions",
-    "Device Theme Preference Detection",
-    "Security-Branded Status Language",
+    "Clear Subscription Status",
+    "Focused Usage Overview",
+    "Subscription State Awareness",
     "Bilingual EN/FA (RTL) Support",
-    "Modern iOS/VisionOS-inspired Aesthetics"
+    "Device Theme Preference Detection",
+    "Quick Subscription Actions",
+    "QR Code Config Access",
+    "Premium Deep-Navy Glassmorphism"
   ],
   "previewImage": "preview.png",
   "compatibleVersions": [
