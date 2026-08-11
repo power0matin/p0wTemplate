@@ -34,7 +34,7 @@ for (const [token, value] of [
 
 check(digest(index) === digest(sub), 'index.html and sub.html must be identical');
 check(digest(index) === digest(expected), 'production HTML must be rebuilt from template.html and source assets');
-check(parsedManifest.version === '1.3.2', 'manifest version must be 1.3.2');
+check(parsedManifest.version === '1.3.4', 'manifest version must be 1.3.4');
 check(index.includes('<style id="hyper-sentry-styles">'), 'production CSS must be inlined');
 check(index.includes('<script id="hyper-sentry-vendor">'), 'vendor loader must be inlined');
 check(index.includes('<script id="hyper-sentry-i18n">'), 'i18n catalog must be inlined');
@@ -47,9 +47,23 @@ check(!app.includes('TreeWalker'), 'legacy DOM text translation must not return'
 check(index.includes('role="progressbar"'), 'progressbar semantics are required');
 check(index.includes('aria-labelledby="qr-title"'), 'QR dialog must have an accessible name');
 check(!css.includes('prefers-reduced-motion'), 'reduced-motion override must remain absent');
-check(css.includes('@keyframes hs-rise-in') && css.includes('@keyframes hs-dialog-in'), 'lightweight UI animations are required');
+check(css.includes('@keyframes hs-rise-in') && css.includes('@keyframes hs-dialog-in'), 'UI entrance animations are required');
+check(css.includes('@keyframes hs-ambient-orbit-a') && css.includes('@keyframes hs-ambient-orbit-b') && css.includes('@keyframes hs-grid-drift') && css.includes('@keyframes hs-scan-sweep'), 'layered animated background is required');
+check(css.includes('@keyframes hs-logo-float') && css.includes('@keyframes hs-value-shimmer') && css.includes('@keyframes hs-progress-flow'), 'richer component motion is required');
 check(!template.includes('qr-close-bottom'), 'QR dialog must keep only the top close control');
 check(i18n.includes('HYPER_SENTRY_I18N'), 'translation catalog is missing');
+
+check(template.includes('data-online="{{ .isOnline }}"') && template.includes('data-last-online="{{ .lastOnline }}"'), '3x-ui live connection fields must be embedded in the template');
+check(template.includes('id="service-title"') && template.includes('id="connection-status"'), 'human service and connection status UI are required');
+check(template.includes('id="smart-alert"'), 'smart low-data/expiry alert is required');
+check(template.includes('class="support-card glass-pane"'), 'customer-care support panel is required');
+check(template.includes('config-skeleton') && css.includes('hs-skeleton-shimmer'), 'skeleton loading UI is required');
+check(app.includes("format', 'info'") && app.includes('LIVE_REFRESH_INTERVAL_MS') && app.includes('refreshLiveInfo'), 'live refresh via ?format=info is required');
+check(app.includes("document.visibilityState === 'visible'"), 'live polling must pause while the tab is hidden');
+check(template.includes('id="qr-canvas-shell"') && template.includes('id="qr-brand-logo"'), 'premium QR shell and brand mark are required');
+check(app.includes("level: 'H'") && app.includes('padding: 24') && app.includes('size: 512'), 'QR output must use high error correction, padding and high-resolution rendering');
+check(!template.includes('qr-close-bottom'), 'QR dialog must keep only one close control');
+
 check(!index.includes('âœ•') && !index.includes('âˆž'), 'broken UTF-8 artifacts detected');
 
 if (failures.length) {

@@ -48,7 +48,9 @@
          data-down="{{ .downloadByte }}"
          data-total="{{ .totalByte }}"
          data-expire="{{ .expire }}"
-         data-enabled="{{ .enabled }}"></div>
+         data-enabled="{{ .enabled }}"
+         data-online="{{ .isOnline }}"
+         data-last-online="{{ .lastOnline }}"></div>
 
     <div id="raw-links-container" hidden>
         {{ range .links }}
@@ -84,18 +86,37 @@
                 <p id="account-heading" class="eyebrow" data-i18n="account">Account</p>
                 <p id="display-name" class="account-name">{{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}</p>
             </div>
+            <div id="connection-status" class="connection-status is-skeleton" role="status" aria-live="polite">
+                <span class="connection-dot" aria-hidden="true"></span>
+                <span class="connection-copy">
+                    <strong id="connection-title" data-i18n="checkingConnection">Checking connection</strong>
+                    <span id="connection-detail" data-i18n="pleaseWait">Please wait</span>
+                </span>
+            </div>
         </section>
 
-        <section class="hero-card glass-pane facet-corner" aria-labelledby="remaining-heading">
+        <section class="hero-card glass-pane facet-corner" aria-labelledby="remaining-heading" aria-busy="true">
+            <div class="service-summary">
+                <div class="service-copy">
+                    <p class="eyebrow" data-i18n="serviceStatus">Service Status</p>
+                    <strong id="service-title" class="service-title is-skeleton" data-i18n="checkingService">Checking your service</strong>
+                    <span id="service-subtitle" class="service-subtitle is-skeleton" data-i18n="pleaseWait">Please wait</span>
+                </div>
+                <div id="live-refresh-status" class="live-refresh-status" title="Live updates">
+                    <span class="live-refresh-dot" aria-hidden="true"></span>
+                    <span id="live-refresh-text" data-i18n="liveUpdatesOn">Live updates on</span>
+                </div>
+            </div>
+
             <div class="hero-header">
                 <div>
                     <p class="eyebrow" id="remaining-heading" data-i18n="remainingData">Remaining Data</p>
                     <div class="hero-value-row">
-                        <span id="hero-rem-val" class="hero-value">-</span>
+                        <span id="hero-rem-val" class="hero-value is-skeleton">-</span>
                         <span id="hero-rem-unit" class="hero-unit"></span>
                     </div>
                 </div>
-                <span id="status-badge" class="status-badge status-active" data-i18n="active" role="status" aria-live="polite">Active</span>
+                <span id="status-badge" class="status-badge status-inactive is-skeleton" data-i18n="loading" role="status" aria-live="polite">Loading</span>
             </div>
 
             <div class="progress-block">
@@ -106,9 +127,19 @@
 
             <div class="hero-time-card">
                 <span class="hero-stat-label" data-i18n="daysRemaining">Days Remaining</span>
-                <strong class="hero-stat-value" id="days-left">-</strong>
+                <strong class="hero-stat-value is-skeleton" id="days-left">-</strong>
             </div>
         </section>
+
+        <aside id="smart-alert" class="smart-alert glass-pane" role="status" aria-live="polite" hidden>
+            <div class="smart-alert-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+            </div>
+            <div class="smart-alert-copy">
+                <strong id="smart-alert-title"></strong>
+                <span id="smart-alert-message"></span>
+            </div>
+        </aside>
 
         <section class="quick-access glass-pane" aria-labelledby="quick-access-heading">
             <div class="section-heading-row">
@@ -139,12 +170,12 @@
                 <svg class="details-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </summary>
             <div class="details-content">
-                <div class="detail-row"><span data-i18n="status">Status</span><strong id="detail-status">-</strong></div>
-                <div class="detail-row"><span data-i18n="usedData">Used Data</span><strong id="detail-used">-</strong></div>
-                <div class="detail-row"><span data-i18n="totalData">Total Data</span><strong id="detail-total">-</strong></div>
-                <div class="detail-row"><span data-i18n="uploaded">Uploaded</span><strong id="detail-upload">-</strong></div>
-                <div class="detail-row"><span data-i18n="downloaded">Downloaded</span><strong id="detail-download">-</strong></div>
-                <div class="detail-row"><span data-i18n="expires">Expires</span><strong id="detail-expiry">-</strong></div>
+                <div class="detail-row"><span data-i18n="status">Status</span><strong id="detail-status" class="is-skeleton">-</strong></div>
+                <div class="detail-row"><span data-i18n="usedData">Used Data</span><strong id="detail-used" class="is-skeleton">-</strong></div>
+                <div class="detail-row"><span data-i18n="totalData">Total Data</span><strong id="detail-total" class="is-skeleton">-</strong></div>
+                <div class="detail-row"><span data-i18n="uploaded">Uploaded</span><strong id="detail-upload" class="is-skeleton">-</strong></div>
+                <div class="detail-row"><span data-i18n="downloaded">Downloaded</span><strong id="detail-download" class="is-skeleton">-</strong></div>
+                <div class="detail-row"><span data-i18n="expires">Expires</span><strong id="detail-expiry" class="is-skeleton">-</strong></div>
             </div>
         </details>
 
@@ -154,29 +185,59 @@
                     <p class="eyebrow" data-i18n="connection">Connection</p>
                     <h2 id="configs-heading" data-i18n="configs">Configs</h2>
                 </div>
-                <span id="config-count" class="count-badge" aria-live="polite">0</span>
+                <span id="config-count" class="count-badge is-skeleton" aria-live="polite">0</span>
             </div>
-            <div id="configs-container" class="configs-list"></div>
+            <div id="configs-container" class="configs-list">
+                <div class="config-skeleton glass-pane" aria-hidden="true"><span></span><span></span></div>
+                <div class="config-skeleton glass-pane" aria-hidden="true"><span></span><span></span></div>
+            </div>
         </section>
+
+        {{ if .subSupportUrl }}
+        <section class="support-card glass-pane" aria-labelledby="support-heading">
+            <div class="support-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 2Z"/><path d="M20 13v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 2Z"/><path d="M17 19c0 1.1-.9 2-2 2h-2"/></svg>
+            </div>
+            <div class="support-copy">
+                <p class="eyebrow" data-i18n="support">Support</p>
+                <h2 id="support-heading" data-i18n="needHelp">Need help?</h2>
+                <p data-i18n="supportCareMessage">If something does not look right, support is here to help.</p>
+            </div>
+            <a class="support-button" href="{{ .subSupportUrl }}" target="_blank" rel="noopener noreferrer">
+                <span data-i18n="contactSupport">Contact Support</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+        </section>
+        {{ end }}
 
         <footer class="footer">
             <a href="https://github.com/power0matin/p0wTemplate" target="_blank" rel="noopener noreferrer">HyperSentry · p0wTemplate</a>
         </footer>
     </main>
 
-    <dialog id="qr-dialog" class="qr-dialog" aria-labelledby="qr-title" aria-describedby="qr-meta" aria-modal="true">
+    <dialog id="qr-dialog" class="qr-dialog" aria-labelledby="qr-title" aria-describedby="qr-help" aria-modal="true">
         <div class="qr-dialog-card glass-pane">
+            <button id="qr-close" class="icon-action compact-action qr-close" type="button" data-i18n-aria-label="close">×</button>
             <div class="qr-dialog-header">
-                <div>
-                    <p class="eyebrow" data-i18n="qrCode">QR Code</p>
-                    <h2 id="qr-title">Config</h2>
-                    <p id="qr-meta" class="qr-meta">VPN</p>
-                </div>
-                <button id="qr-close" class="icon-action compact-action" type="button" data-i18n-aria-label="close">×</button>
+                <img id="qr-brand-logo" class="qr-brand-logo" alt="" width="46" height="46" hidden>
+                <p class="eyebrow" data-i18n="secureQr">Secure QR</p>
+                <h2 id="qr-title">Config</h2>
+                <span id="qr-meta" class="qr-protocol-pill">VPN</span>
             </div>
-            <div class="qr-canvas-wrap"><canvas id="qr-canvas" aria-hidden="true"></canvas></div>
+            <div id="qr-canvas-shell" class="qr-canvas-shell is-loading">
+                <div class="qr-corner qr-corner-tl" aria-hidden="true"></div>
+                <div class="qr-corner qr-corner-tr" aria-hidden="true"></div>
+                <div class="qr-corner qr-corner-bl" aria-hidden="true"></div>
+                <div class="qr-corner qr-corner-br" aria-hidden="true"></div>
+                <div class="qr-canvas-wrap"><canvas id="qr-canvas" aria-hidden="true"></canvas></div>
+                <span class="qr-loading-label" data-i18n="preparingQr">Preparing QR…</span>
+            </div>
+            <p id="qr-help" class="qr-help" data-i18n="scanQrHelp">Scan this code with your VPN app to add the configuration.</p>
             <div class="qr-dialog-actions">
-                <button id="qr-copy" class="action-button action-primary" type="button" data-i18n="copyConfig">Copy config</button>
+                <button id="qr-copy" class="action-button action-primary qr-copy-button" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span data-i18n="copyConfig" data-button-label>Copy config</span>
+                </button>
             </div>
         </div>
     </dialog>

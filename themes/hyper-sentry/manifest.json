@@ -2,9 +2,9 @@
   "id": "hyper-sentry",
   "type": "theme",
   "name": "HyperSentry",
-  "version": "1.3.2",
+  "version": "1.3.4",
   "author": "power0matin",
-  "description": "Signature deep-navy subscription theme with clearer light mode, centered QR UX, lightweight motion, state-aware usage, and self-contained 3x-ui rendering.",
+  "description": "Signature deep-navy subscription experience with human service status, connection history, smart limit alerts, live refresh, skeleton loading, premium QR UX, and self-contained 3x-ui rendering.",
   "features": [
     "Self-Contained 3x-ui Compatible Production Bundle",
     "Clear State-Aware Subscription Status",
@@ -13,9 +13,17 @@
     "Accessible Keyboard and Dialog Interactions",
     "Responsive Protocol-Aware Config Cards",
     "Lazy QR Loading with Integrity-Checked Fallbacks",
-    "Lightweight UI Motion and Animated Feedback",
     "Light/Dark Theme Preference Detection",
-    "Premium Deep-Navy Glassmorphism"
+    "Layered Animated Ambient Background",
+    "Richer Lightweight UI Motion and Animated Feedback",
+    "Premium Deep-Navy Glassmorphism",
+    "Human Service Health Messaging",
+    "Live Connection and Last-Seen Status",
+    "Smart Low-Data and Expiry Alerts",
+    "Automatic Live Refresh via 3x-ui Info Endpoint",
+    "Skeleton Loading for First Paint",
+    "Customer-Care Support Panel",
+    "Premium High-Reliability QR Experience"
   ],
   "compatibleVersions": [
     ">=1.0.0"

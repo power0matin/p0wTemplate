@@ -7,6 +7,13 @@ const I18N = typeof globalThis !== 'undefined' && globalThis.HYPER_SENTRY_I18N
 const hasDocument = typeof document !== 'undefined';
 let currentLang = hasDocument && document.documentElement.lang === 'fa' ? 'fa' : 'en';
 let cachedRawData = null;
+let liveRefreshTimer = null;
+let liveRefreshInFlight = false;
+let lastLiveRefreshAt = 0;
+let liveRefreshFailures = 0;
+let liveRefreshState = 'idle';
+const LIVE_REFRESH_INTERVAL_MS = 30000;
+const LIVE_REFRESH_TIMEOUT_MS = 6000;
 
 function t(key) {
     return I18N[currentLang][key] || I18N.en[key] || key;
@@ -49,6 +56,7 @@ function setLanguage(lang, persist = true) {
     applyTranslations();
     renderOverview();
     renderConfigs();
+    updateLiveRefreshStatus(liveRefreshState);
 }
 
 function initLanguage() {
@@ -96,7 +104,9 @@ function readRawData() {
         downloadBytes: toSafeInt(raw?.dataset.down),
         totalBytes: toSafeInt(raw?.dataset.total),
         expireSeconds: toSafeInt(raw?.dataset.expire),
-        enabled: parseBool(raw?.dataset.enabled)
+        enabled: parseBool(raw?.dataset.enabled),
+        isOnline: parseBool(raw?.dataset.online),
+        lastOnlineMs: toSafeInt(raw?.dataset.lastOnline)
     };
     cachedRawData.usedBytes = cachedRawData.uploadBytes + cachedRawData.downloadBytes;
     return cachedRawData;
@@ -151,6 +161,196 @@ function getStateClass(state) {
     }[state] || 'status-inactive';
 }
 
+function formatTemplate(key, values = {}) {
+    return Object.entries(values).reduce(
+        (text, [name, value]) => text.replaceAll(`{${name}}`, String(value)),
+        t(key)
+    );
+}
+
+function getServiceMessage(state, data) {
+    if (state === 'active') {
+        return { titleKey: 'serviceActive', subtitleKey: data.isOnline ? 'serviceConnected' : 'serviceReady' };
+    }
+    if (state === 'unlimited') {
+        return { titleKey: 'serviceActive', subtitleKey: data.isOnline ? 'serviceConnected' : 'serviceUnlimitedReady' };
+    }
+    if (state === 'expired') return { titleKey: 'serviceExpired', subtitleKey: 'serviceExpiredHelp' };
+    if (state === 'outOfData') return { titleKey: 'serviceOutOfData', subtitleKey: 'serviceOutOfDataHelp' };
+    return { titleKey: 'serviceInactive', subtitleKey: 'serviceInactiveHelp' };
+}
+
+function formatLastOnline(lastOnlineMs, nowMs = Date.now()) {
+    if (!lastOnlineMs) return t('noRecentConnection');
+    const elapsed = Math.max(0, nowMs - lastOnlineMs);
+    if (elapsed < 60000) return t('justNow');
+    const rtf = new Intl.RelativeTimeFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US', { numeric: 'auto' });
+    if (elapsed < 3600000) return rtf.format(-Math.max(1, Math.round(elapsed / 60000)), 'minute');
+    if (elapsed < 86400000) return rtf.format(-Math.max(1, Math.round(elapsed / 3600000)), 'hour');
+    if (elapsed < 7 * 86400000) return rtf.format(-Math.max(1, Math.round(elapsed / 86400000)), 'day');
+    return new Intl.DateTimeFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US', {
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    }).format(new Date(lastOnlineMs));
+}
+
+function getSmartAlert(data, state, nowMs = Date.now()) {
+    if (!['active', 'unlimited'].includes(state)) return null;
+    const remaining = data.totalBytes > 0 ? Math.max(0, data.totalBytes - data.usedBytes) : null;
+    const remainingRatio = data.totalBytes > 0 ? remaining / data.totalBytes : null;
+    const days = getDaysRemaining(data.expireSeconds, nowMs);
+    const lowData = remainingRatio !== null && remaining > 0 && remainingRatio <= 0.15;
+    const lowDays = data.expireSeconds > 0 && data.expireSeconds * 1000 > nowMs && days !== null && days <= 3;
+    if (!lowData && !lowDays) return null;
+    const critical = (remainingRatio !== null && remainingRatio <= 0.05) || (lowDays && days <= 1);
+    return { lowData, lowDays, remaining, days, severity: critical ? 'critical' : 'warning' };
+}
+
+function renderServiceMessage(state, data) {
+    const copy = getServiceMessage(state, data);
+    const title = document.getElementById('service-title');
+    const subtitle = document.getElementById('service-subtitle');
+    if (title) {
+        title.dataset.i18n = copy.titleKey;
+        title.textContent = t(copy.titleKey);
+    }
+    if (subtitle) {
+        subtitle.dataset.i18n = copy.subtitleKey;
+        subtitle.textContent = t(copy.subtitleKey);
+    }
+}
+
+function renderConnectionStatus(data) {
+    const wrapper = document.getElementById('connection-status');
+    const title = document.getElementById('connection-title');
+    const detail = document.getElementById('connection-detail');
+    if (!wrapper || !title || !detail) return;
+    wrapper.classList.toggle('is-online', Boolean(data.isOnline));
+    wrapper.classList.toggle('has-history', !data.isOnline && Boolean(data.lastOnlineMs));
+    if (data.isOnline) {
+        title.textContent = t('onlineNow');
+        detail.textContent = t('liveConnectionDetected');
+    } else if (data.lastOnlineMs) {
+        title.textContent = t('lastConnection');
+        detail.textContent = formatLastOnline(data.lastOnlineMs);
+    } else {
+        title.textContent = t('readyToConnect');
+        detail.textContent = t('noRecentConnection');
+    }
+}
+
+function renderSmartAlert(data, state) {
+    const alert = document.getElementById('smart-alert');
+    if (!alert) return;
+    const info = getSmartAlert(data, state);
+    if (!info) {
+        alert.hidden = true;
+        alert.classList.remove('is-warning', 'is-critical');
+        return;
+    }
+    const title = document.getElementById('smart-alert-title');
+    const message = document.getElementById('smart-alert-message');
+    const remainingText = info.remaining === null ? '' : formatBytes(info.remaining).text;
+    const daysText = info.days === null ? '' : new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US').format(info.days);
+    let titleKey = 'smartAlertDataTitle';
+    let messageText = formatTemplate('dataRemainingMessage', { data: remainingText });
+    if (info.lowData && info.lowDays) {
+        titleKey = 'smartAlertBothTitle';
+        messageText = formatTemplate('bothRemainingMessage', { data: remainingText, days: daysText });
+    } else if (info.lowDays) {
+        titleKey = 'smartAlertExpiryTitle';
+        messageText = formatTemplate('daysRemainingMessage', { days: daysText });
+    }
+    title.textContent = t(titleKey);
+    message.textContent = messageText;
+    alert.classList.toggle('is-warning', info.severity === 'warning');
+    alert.classList.toggle('is-critical', info.severity === 'critical');
+    alert.hidden = false;
+}
+
+function finishInitialLoading() {
+    document.querySelectorAll('.is-skeleton').forEach((element) => element.classList.remove('is-skeleton'));
+    document.querySelector('.hero-card')?.setAttribute('aria-busy', 'false');
+    document.body.classList.add('is-ready');
+}
+
+function updateLiveRefreshStatus(status) {
+    liveRefreshState = status;
+    const wrapper = document.getElementById('live-refresh-status');
+    const label = document.getElementById('live-refresh-text');
+    if (!wrapper || !label) return;
+    wrapper.classList.toggle('is-refreshing', status === 'refreshing');
+    wrapper.classList.toggle('is-error', status === 'error');
+    label.textContent = t(status === 'error' ? 'liveUpdateUnavailable' : status === 'success' ? 'updatedJustNow' : 'liveUpdatesOn');
+}
+
+function buildLiveInfoUrl(locationLike = window.location) {
+    const url = new URL(locationLike.href);
+    url.searchParams.set('format', 'info');
+    url.searchParams.delete('html');
+    url.searchParams.delete('view');
+    return url.toString();
+}
+
+function applyLivePayload(payload) {
+    if (!payload || typeof payload !== 'object') return false;
+    cachedRawData = {
+        uploadBytes: toSafeInt(payload.uploadByte),
+        downloadBytes: toSafeInt(payload.downloadByte),
+        totalBytes: toSafeInt(payload.totalByte),
+        expireSeconds: toSafeInt(payload.expire),
+        enabled: Boolean(payload.enabled),
+        isOnline: Boolean(payload.isOnline),
+        lastOnlineMs: toSafeInt(payload.lastOnline)
+    };
+    cachedRawData.usedBytes = cachedRawData.uploadBytes + cachedRawData.downloadBytes;
+    return true;
+}
+
+async function refreshLiveInfo() {
+    if (liveRefreshInFlight || !hasDocument) return false;
+    liveRefreshInFlight = true;
+    updateLiveRefreshStatus('refreshing');
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timeout = controller ? window.setTimeout(() => controller.abort(), LIVE_REFRESH_TIMEOUT_MS) : null;
+    try {
+        const response = await fetch(buildLiveInfoUrl(), {
+            method: 'GET',
+            cache: 'no-store',
+            credentials: 'same-origin',
+            headers: { Accept: 'application/json' },
+            signal: controller?.signal
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload = await response.json();
+        if (!applyLivePayload(payload)) throw new Error('Invalid live payload');
+        lastLiveRefreshAt = Date.now();
+        liveRefreshFailures = 0;
+        renderOverview();
+        updateLiveRefreshStatus('success');
+        return true;
+    } catch (_) {
+        liveRefreshFailures += 1;
+        updateLiveRefreshStatus(liveRefreshFailures >= 2 ? 'error' : 'idle');
+        return false;
+    } finally {
+        if (timeout) window.clearTimeout(timeout);
+        liveRefreshInFlight = false;
+    }
+}
+
+function initLiveRefresh() {
+    if (!hasDocument || typeof fetch !== 'function') return;
+    if (liveRefreshTimer) window.clearInterval(liveRefreshTimer);
+    liveRefreshTimer = window.setInterval(() => {
+        if (document.visibilityState === 'visible') refreshLiveInfo();
+    }, LIVE_REFRESH_INTERVAL_MS);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && Date.now() - lastLiveRefreshAt > LIVE_REFRESH_INTERVAL_MS) {
+            refreshLiveInfo();
+        }
+    });
+}
+
 function renderOverview() {
     const data = readRawData();
     const state = deriveSubscriptionState(data);
@@ -181,6 +381,10 @@ function renderOverview() {
     document.getElementById('detail-download').textContent = formatBytes(data.downloadBytes).text;
     document.getElementById('detail-expiry').textContent = formatExpiry(data.expireSeconds);
 
+    renderServiceMessage(state, data);
+    renderConnectionStatus(data);
+    renderSmartAlert(data, state);
+
     const progress = document.getElementById('progress-bar');
     progress.className = 'progress-fill';
     const progressTrack = progress.parentElement;
@@ -191,6 +395,7 @@ function renderOverview() {
         progress.style.inlineSize = '0%';
         progressTrack?.removeAttribute('aria-valuenow');
         progressTrack?.setAttribute('aria-valuetext', t('unlimited'));
+        finishInitialLoading();
         return;
     }
 
@@ -200,6 +405,7 @@ function renderOverview() {
     progressTrack?.setAttribute('aria-valuetext', `${Math.round(percent)}%`);
     if (percent >= 90) progress.classList.add('is-danger');
     else if (percent >= 75) progress.classList.add('is-warning');
+    finishInitialLoading();
 }
 
 function initAvatar() {
@@ -272,6 +478,7 @@ function renderConfigs() {
     const countBadge = document.getElementById('config-count');
     const formattedCount = new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US').format(links.length);
     countBadge.textContent = formattedCount;
+    countBadge.classList.remove('is-skeleton');
     countBadge.setAttribute('aria-label', `${t('configsCount')}: ${formattedCount}`);
     container.replaceChildren();
 
@@ -288,6 +495,7 @@ function renderConfigs() {
         const { name, protocol, protocolLabel, protocolBadge } = getConfigMeta(link, index);
         const card = document.createElement('article');
         card.className = 'config-card glass-pane';
+        card.style.setProperty('--config-delay', `${Math.min(index, 8) * 45}ms`);
 
         const identity = document.createElement('div');
         identity.className = 'config-identity';
@@ -337,10 +545,11 @@ function showTemporaryButtonState(button, label, restoreLabel, duration = 1300) 
     if (!button) return;
     const existing = buttonResetTimers.get(button);
     if (existing) window.clearTimeout(existing);
-    button.textContent = label;
+    const labelTarget = button.querySelector('[data-button-label], [data-i18n]') || button;
+    labelTarget.textContent = label;
     button.classList.add('is-success');
     const timer = window.setTimeout(() => {
-        button.textContent = restoreLabel;
+        labelTarget.textContent = restoreLabel;
         button.classList.remove('is-success');
         buttonResetTimers.delete(button);
     }, duration);
@@ -411,29 +620,55 @@ function showToast(message) {
 
 let activeQrLink = '';
 let qrReturnFocus = null;
+let qrRequestId = 0;
 async function showQr(link, name) {
     const dialog = document.getElementById('qr-dialog');
     const canvas = document.getElementById('qr-canvas');
-    if (!dialog || !canvas) return;
+    const shell = document.getElementById('qr-canvas-shell');
+    if (!dialog || !canvas || !shell) return;
+
+    const requestId = ++qrRequestId;
+    activeQrLink = link;
+    qrReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const { protocolLabel } = getConfigMeta(link, 0);
+    document.getElementById('qr-title').textContent = name;
+    document.getElementById('qr-meta').textContent = protocolLabel;
+    const qrBrand = document.getElementById('qr-brand-logo');
+    const brand = document.querySelector('.brand-logo');
+    if (qrBrand && brand?.src) {
+        qrBrand.src = brand.src;
+        qrBrand.hidden = false;
+    }
+    shell.classList.add('is-loading');
+    canvas.removeAttribute('data-qr-rendered');
+    const context = canvas.getContext?.('2d');
+    if (context) context.clearRect(0, 0, canvas.width || 1, canvas.height || 1);
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+
     let QrConstructor = globalThis.QRious;
     if (!QrConstructor) {
         try {
             QrConstructor = await globalThis.HyperSentryVendors?.loadQrLibrary();
         } catch (_) {
+            shell.classList.remove('is-loading');
             showToast(t('qrUnavailable'));
+            closeQr();
             return;
         }
     }
 
-    activeQrLink = link;
-    qrReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const { protocolLabel } = getConfigMeta(link, 0);
-    document.getElementById('qr-title').textContent = name;
-    const meta = document.getElementById('qr-meta');
-    if (meta) meta.textContent = protocolLabel;
-    new QrConstructor({ element: canvas, value: link, size: 220, background: '#ffffff', foreground: '#06111d' });
-    if (typeof dialog.showModal === 'function') dialog.showModal();
-    else dialog.setAttribute('open', '');
+    if (requestId !== qrRequestId || (!dialog.open && !dialog.hasAttribute('open'))) return;
+    new QrConstructor({
+        element: canvas,
+        value: link,
+        size: 512,
+        padding: 24,
+        level: 'H',
+        background: '#ffffff',
+        foreground: '#06111d'
+    });
+    shell.classList.remove('is-loading');
     window.requestAnimationFrame(() => document.getElementById('qr-copy')?.focus());
 }
 
@@ -442,6 +677,7 @@ function closeQr() {
     if (!dialog) return;
     if (typeof dialog.close === 'function' && dialog.open) dialog.close();
     else dialog.removeAttribute('open');
+    qrRequestId += 1;
     activeQrLink = '';
     const returnTarget = qrReturnFocus;
     qrReturnFocus = null;
@@ -477,9 +713,10 @@ if (hasDocument) {
         initAvatar();
         initActions();
         initLanguage();
+        initLiveRefresh();
     });
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { I18N, deriveSubscriptionState, getDaysRemaining };
+    module.exports = { I18N, deriveSubscriptionState, getDaysRemaining, getSmartAlert, getServiceMessage, applyLivePayload, buildLiveInfoUrl };
 }

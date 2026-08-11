@@ -24,7 +24,7 @@ const replacements = new Map([
 let output = template;
 for (const [token, value] of replacements) {
     if (!output.includes(token)) throw new Error(`Missing build token: ${token}`);
-    output = output.replace(token, value);
+    output = output.replaceAll(token, value);
 }
 
 const unresolved = output.match(/@@HYPER_SENTRY_[A-Z0-9_]+@@/g);
