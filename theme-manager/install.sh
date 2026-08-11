@@ -1,77 +1,96 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# Installation script for 3x-ui Theme Manager
+INSTALL_DIR="${P0W_INSTALL_DIR:-/opt/3x-ui-theme-manager}"
+CONFIG_DIR="${P0W_CONFIG_DIR:-/etc/3x-ui-theme-manager}"
+BIN_DIR="${P0W_BIN_DIR:-/usr/local/bin}"
+DEFAULT_CONFIG="$CONFIG_DIR/config.json"
 
-echo "Installing 3x-ui Theme Manager..."
+echo "Installing p0wTemplate Theme Manager..."
 
-INSTALL_DIR="/opt/3x-ui-theme-manager"
-CONFIG_DIR="/etc/3x-ui-theme-manager"
-REPO_URL="https://github.com/power0matin/p0wTemplate.git"
-
-# Check root privileges
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root to install globally." 
-   exit 1
+    echo "This installer must be run as root."
+    exit 1
 fi
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+install_dependencies() {
+    local missing=()
+    for cmd in curl tar unzip zip jq sha256sum; do
+        command -v "$cmd" >/dev/null 2>&1 || missing+=("$cmd")
+    done
+    [[ ${#missing[@]} -eq 0 ]] && return 0
 
-# Check if we are running from a local clone (either root or theme-manager directory)
-if [[ -f "$SCRIPT_DIR/manager.sh" && -d "$SCRIPT_DIR/config" ]]; then
-    USE_LOCAL=true
-    LOCAL_SRC_DIR="$SCRIPT_DIR"
-elif [[ -f "$SCRIPT_DIR/theme-manager/manager.sh" && -d "$SCRIPT_DIR/theme-manager/config" ]]; then
-    USE_LOCAL=true
-    LOCAL_SRC_DIR="$SCRIPT_DIR/theme-manager"
-else
-    USE_LOCAL=false
-fi
-
-if [ "$USE_LOCAL" = true ]; then
-    echo "Using local repository files from $LOCAL_SRC_DIR..."
-else
-    # Install dependencies if missing
-    if ! command -v curl &> /dev/null || ! command -v tar &> /dev/null; then
-        echo "Installing dependencies (curl, tar)..."
-        apt-get update && apt-get install -y curl tar
+    echo "Installing required dependencies..."
+    if command -v apt-get >/dev/null 2>&1; then
+        apt-get update -y
+        apt-get install -y curl tar unzip zip jq coreutils ca-certificates
+    elif command -v dnf >/dev/null 2>&1; then
+        dnf install -y curl tar unzip zip jq coreutils ca-certificates
+    elif command -v yum >/dev/null 2>&1; then
+        yum install -y curl tar unzip zip jq coreutils ca-certificates
+    else
+        echo "Could not install dependencies automatically. Missing: ${missing[*]}"
+        exit 1
     fi
+}
 
-    # Download repository archive to a temporary directory
+install_dependencies
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+USE_LOCAL=false
+if [[ -f "$SCRIPT_DIR/manager.sh" && -d "$SCRIPT_DIR/config" ]]; then
+    USE_LOCAL=true; LOCAL_SRC_DIR="$SCRIPT_DIR"
+elif [[ -f "$SCRIPT_DIR/theme-manager/manager.sh" && -d "$SCRIPT_DIR/theme-manager/config" ]]; then
+    USE_LOCAL=true; LOCAL_SRC_DIR="$SCRIPT_DIR/theme-manager"
+fi
+
+TMP_DIR=''
+if [[ "$USE_LOCAL" == false ]]; then
     TMP_DIR=$(mktemp -d)
-    echo "Downloading p0wTemplate repository..."
-    curl -sL "https://github.com/power0matin/p0wTemplate/archive/refs/heads/main.tar.gz" | tar xz -C "$TMP_DIR" --strip-components=1
+    trap 'rm -rf "${TMP_DIR:-}"' EXIT
+    echo "Downloading p0wTemplate..."
+    curl --fail --silent --show-error --location --retry 3 \
+        "https://github.com/power0matin/p0wTemplate/archive/refs/heads/main.tar.gz" \
+        | tar xz -C "$TMP_DIR" --strip-components=1
+    LOCAL_SRC_DIR="$TMP_DIR/theme-manager"
 fi
 
-# Create directories
-mkdir -p "$INSTALL_DIR"
+for file in manager.sh install.sh lib/utils.sh lib/ui.sh lib/package.sh lib/update.sh lib/self_update.sh config/config.json; do
+    [[ -f "$LOCAL_SRC_DIR/$file" ]] || { echo "Installer source is incomplete: $file"; exit 1; }
+done
+
 mkdir -p "$CONFIG_DIR"
+CANDIDATE="${INSTALL_DIR}.new.$$"
+rm -rf "$CANDIDATE"
+cp -a "$LOCAL_SRC_DIR" "$CANDIDATE"
+chmod +x "$CANDIDATE/manager.sh" "$CANDIDATE/install.sh" "$CANDIDATE/lib/"*.sh
 
-# Copy theme-manager files
-echo "Copying files to $INSTALL_DIR..."
-if [ "$USE_LOCAL" = true ]; then
-    cp -r "$LOCAL_SRC_DIR/"* "$INSTALL_DIR/"
-else
-    cp -r "$TMP_DIR/theme-manager/"* "$INSTALL_DIR/"
+while IFS= read -r file; do
+    bash -n "$file"
+done < <(find "$CANDIDATE" -type f -name '*.sh' -print)
+
+PREVIOUS="${INSTALL_DIR}.previous"
+rm -rf "$PREVIOUS"
+[[ -d "$INSTALL_DIR" ]] && mv "$INSTALL_DIR" "$PREVIOUS"
+if ! mv "$CANDIDATE" "$INSTALL_DIR"; then
+    [[ -d "$PREVIOUS" ]] && mv "$PREVIOUS" "$INSTALL_DIR"
+    echo "Installation failed; previous manager restored."
+    exit 1
 fi
 
-# Setup default configuration (Force update for now)
-cp "$INSTALL_DIR/config/config.json" "$CONFIG_DIR/config.json"
-
-# Make scripts executable
-chmod +x "$INSTALL_DIR/manager.sh"
-chmod +x "$INSTALL_DIR/install.sh"
-chmod +x "$INSTALL_DIR/lib/"*.sh
-
-# Create symlink for easy access
-ln -sf "$INSTALL_DIR/manager.sh" "/usr/local/bin/p0wtemplate"
-ln -sf "$INSTALL_DIR/manager.sh" "/usr/local/bin/3x-ui-theme" # Keep old alias just in case
-
-# Clean up
-if [ "$USE_LOCAL" = false ]; then
-    rm -rf "$TMP_DIR"
+# Preserve an existing user config. Only seed defaults on first install.
+if [[ ! -f "$DEFAULT_CONFIG" ]]; then
+    cp "$INSTALL_DIR/config/config.json" "$DEFAULT_CONFIG"
+    chmod 600 "$DEFAULT_CONFIG"
 fi
 
-echo "Installation complete!"
-echo "Starting p0wTemplate Manager..."
-echo "----------------------------------------"
-p0wtemplate < /dev/tty
+mkdir -p "$BIN_DIR"
+ln -sfn "$INSTALL_DIR/manager.sh" "$BIN_DIR/p0wtemplate"
+ln -sfn "$INSTALL_DIR/manager.sh" "$BIN_DIR/3x-ui-theme"
+
+echo "Installation complete."
+echo "Configuration: $DEFAULT_CONFIG"
+
+if [[ -t 0 && -t 1 ]]; then
+    exec "$BIN_DIR/p0wtemplate" < /dev/tty
+fi

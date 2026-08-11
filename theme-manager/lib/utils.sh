@@ -1,98 +1,66 @@
 #!/usr/bin/env bash
 
-# ─── Color Definitions ───────────────────────────────────────────────────────
+# Shared logging and utility helpers. UI colors are redefined by ui.sh with
+# terminal capability detection; these defaults keep direct library use safe.
 RED='\033[38;5;203m'
 GREEN='\033[38;5;114m'
 YELLOW='\033[38;5;221m'
-BLUE='\033[38;5;69m'
-CYAN='\033[38;5;87m'
+BLUE='\033[38;5;75m'
+CYAN='\033[38;5;81m'
 WHITE='\033[38;5;255m'
-LIGHT_GRAY='\033[38;5;249m'
+LIGHT_GRAY='\033[38;5;245m'
 DIM='\033[2m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-# ─── Logging Functions ───────────────────────────────────────────────────────
-
-log_info() {
-    printf "  ${GREEN}OK${RESET}  %s\n" "$1"
-}
-
-log_warn() {
-    printf "  ${YELLOW}!${RESET}   %s\n" "$1"
-}
-
-log_error() {
-    printf "  ${RED}ERR${RESET} %s\n" "$1"
-}
-
-# ─── Dependency Check ────────────────────────────────────────────────────────
+log_info()  { printf '  %b✓%b  %s\n' "$GREEN" "$RESET" "$1"; }
+log_warn()  { printf '  %b!%b  %s\n' "$YELLOW" "$RESET" "$1"; }
+log_error() { printf '  %b×%b  %s\n' "$RED" "$RESET" "$1" >&2; }
 
 check_dependencies() {
-    local deps=("curl" "unzip" "jq" "sha256sum")
-    local missing=()
-
+    local deps=(curl tar unzip zip jq sha256sum)
+    local missing=() dep
     for dep in "${deps[@]}"; do
-        if ! command -v "$dep" >/dev/null 2>&1; then
-            missing+=("$dep")
-        fi
+        command -v "$dep" >/dev/null 2>&1 || missing+=("$dep")
     done
-
     if [[ ${#missing[@]} -gt 0 ]]; then
-        echo ""
-        printf "  ${RED}ERR${RESET} ${WHITE}Missing dependencies:${RESET}\n"
-        for dep in "${missing[@]}"; do
-            printf "        ${DIM}* %s${RESET}\n" "$dep"
-        done
-        echo ""
-        printf "  ${DIM}Install them with:${RESET}\n"
-        printf "  ${CYAN}apt-get install -y %s${RESET}\n" "${missing[*]}"
-        echo ""
+        log_error "Missing dependencies: ${missing[*]}"
+        printf '  Install them, or rerun the official installer as root.\n'
         exit 1
     fi
 }
-
-# ─── Config Reader ───────────────────────────────────────────────────────────
 
 get_config_val() {
-    local key="$1"
-    local config_file="$2"
-
-    if [[ ! -f "$config_file" ]]; then
-        log_error "Config file not found: $config_file"
-        exit 1
-    fi
-
-    jq -r ".$key" "$config_file"
+    local key="$1" config_file="$2"
+    [[ -f "$config_file" ]] || { log_error "Config file not found: $config_file"; return 1; }
+    jq -r --arg key "$key" '.[$key]' "$config_file"
 }
 
-# ─── Help Command ────────────────────────────────────────────────────────────
-
 show_help() {
-    echo ""
-    printf "  ${CYAN}${BOLD}p0wTemplate${RESET} ${DIM}Theme Manager${RESET}\n"
-    echo ""
-    printf "  ${WHITE}USAGE${RESET}\n"
-    printf "    ${GREEN}p0wtemplate${RESET}                    Launch interactive menu\n"
-    printf "    ${GREEN}p0wtemplate${RESET} ${YELLOW}<command>${RESET}       Run a command directly\n"
-    echo ""
-    printf "  ${WHITE}COMMANDS${RESET}\n"
-    printf "    ${GREEN}browse${RESET}   ${DIM}|${RESET} ${LIGHT_GRAY}search <query>   ${RESET}  Browse available themes\n"
-    printf "    ${GREEN}install${RESET}  ${DIM}|${RESET} ${LIGHT_GRAY}<id>[@version]   ${RESET}  Install a theme\n"
-    printf "    ${GREEN}remove${RESET}   ${DIM}|${RESET} ${LIGHT_GRAY}<id>             ${RESET}  Remove installed theme\n"
-    printf "    ${GREEN}list${RESET}     ${DIM}|${RESET} ${LIGHT_GRAY}ls               ${RESET}  List installed themes\n"
-    printf "    ${GREEN}upgrade${RESET}  ${DIM}|${RESET} ${LIGHT_GRAY}update           ${RESET}  Update all themes\n"
-    printf "    ${GREEN}build${RESET}    ${DIM}|${RESET} ${LIGHT_GRAY}<path>           ${RESET}  Build theme package\n"
-    printf "    ${GREEN}version${RESET}  ${DIM}|${RESET} ${LIGHT_GRAY}-v, --version    ${RESET}  Show version\n"
-    printf "    ${GREEN}help${RESET}     ${DIM}|${RESET} ${LIGHT_GRAY}-h, --help       ${RESET}  Show this help\n"
-    echo ""
-    printf "  ${WHITE}EXAMPLES${RESET}\n"
-    printf "    ${DIM}p0wtemplate install neo-default@latest${RESET}\n"
-    printf "    ${DIM}p0wtemplate browse glass${RESET}\n"
-    printf "    ${DIM}p0wtemplate build ./themes/my-theme${RESET}\n"
-    echo ""
-    printf "  ${WHITE}INFO${RESET}\n"
-    printf "    ${DIM}Docs:${RESET}  https://github.com/power0matin/p0wTemplate\n"
-    printf "    ${DIM}Issues:${RESET} https://github.com/power0matin/p0wTemplate/issues\n"
-    echo ""
+    cat <<'HELP'
+
+  p0wTemplate Theme Manager
+
+  USAGE
+    p0wtemplate                         Launch interactive menu
+    p0wtemplate <command> [arguments]   Run a command directly
+
+  THEMES
+    search <query>                      Search available themes
+    install <id>[@version]              Install or replace a theme
+    update | upgrade                    Update installed themes in place
+    list | ls                           List installed themes
+    remove <id>                         Remove an installed theme
+
+  MANAGER
+    self-update                         Update Theme Manager in place
+    version                             Show installed manager version
+
+  DEVELOPMENT
+    build <path>                        Validate and build a theme package
+
+  OTHER
+    help                                Show this help
+
+HELP
 }

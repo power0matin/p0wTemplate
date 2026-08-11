@@ -4,18 +4,18 @@
   "name": "HyperSentry",
   "version": "1.3.0",
   "author": "power0matin",
-  "description": "Signature deep-navy subscription theme with clear account status, focused usage information, bilingual EN/FA support, and premium glassmorphism.",
+  "description": "Signature deep-navy subscription theme with clear state-aware usage, accessible EN/FA UX, resilient QR access, and performance-tuned glassmorphism.",
   "features": [
-    "Clear Subscription Status",
-    "Focused Usage Overview",
-    "Subscription State Awareness",
-    "Bilingual EN/FA (RTL) Support",
-    "Device Theme Preference Detection",
-    "Quick Subscription Actions",
-    "QR Code Config Access",
+    "Clear State-Aware Subscription Status",
+    "Focused Remaining Data and Time Overview",
+    "Bilingual EN/FA with Native RTL Support",
+    "Accessible Keyboard and Dialog Interactions",
+    "Responsive Protocol-Aware Config Cards",
+    "Lazy QR Loading with Integrity-Checked Fallbacks",
+    "Reduced-Motion and Low-Power Optimizations",
+    "Light/Dark Theme Preference Detection",
     "Premium Deep-Navy Glassmorphism"
   ],
-  "previewImage": "preview.png",
   "compatibleVersions": [
     ">=1.0.0"
   ]

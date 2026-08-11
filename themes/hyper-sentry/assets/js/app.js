@@ -1,79 +1,8 @@
 'use strict';
 
-const I18N = Object.freeze({
-    en: Object.freeze({
-        account: 'Account',
-        remainingData: 'Remaining Data',
-        active: 'Active',
-        inactive: 'Inactive',
-        expired: 'Expired',
-        outOfData: 'Out of Data',
-        unlimited: 'Unlimited',
-        usedData: 'Used Data',
-        daysRemaining: 'Days Remaining',
-        subscription: 'Subscription',
-        quickAccess: 'Quick Access',
-        copySubscriptionLink: 'Copy Subscription Link',
-        addToV2ray: 'Add to V2RayNG / v2rayN',
-        addToShadowrocket: 'Add to Shadowrocket / iOS',
-        subscriptionDetails: 'Subscription Details',
-        status: 'Status',
-        totalData: 'Total Data',
-        uploaded: 'Uploaded',
-        downloaded: 'Downloaded',
-        expires: 'Expires',
-        connection: 'Connection',
-        configs: 'Configs',
-        qrCode: 'QR Code',
-        close: 'Close',
-        support: 'Support',
-        noConfigs: 'No configs found',
-        copy: 'Copy',
-        copied: 'Copied',
-        configCopied: 'Config copied',
-        linkCopied: 'Link copied',
-        neverExpires: 'Never expires',
-        config: 'Config',
-        toggleTheme: 'Toggle theme',
-        switchLanguage: 'Switch language'
-    }),
-    fa: Object.freeze({
-        account: 'حساب کاربری',
-        remainingData: 'حجم باقی‌مانده',
-        active: 'فعال',
-        inactive: 'غیرفعال',
-        expired: 'منقضی',
-        outOfData: 'حجم تمام شده',
-        unlimited: 'نامحدود',
-        usedData: 'حجم مصرف‌شده',
-        daysRemaining: 'روز باقی‌مانده',
-        subscription: 'اشتراک',
-        quickAccess: 'دسترسی سریع',
-        copySubscriptionLink: 'کپی لینک اشتراک',
-        addToV2ray: 'افزودن به V2RayNG / v2rayN',
-        addToShadowrocket: 'افزودن به Shadowrocket / iOS',
-        subscriptionDetails: 'جزئیات اشتراک',
-        status: 'وضعیت',
-        totalData: 'حجم کل',
-        uploaded: 'آپلود',
-        downloaded: 'دانلود',
-        expires: 'انقضا',
-        connection: 'اتصال',
-        configs: 'کانفیگ‌ها',
-        qrCode: 'کد QR',
-        close: 'بستن',
-        support: 'پشتیبانی',
-        noConfigs: 'کانفیگی موجود نیست',
-        copy: 'کپی',
-        copied: 'کپی شد',
-        configCopied: 'کانفیگ کپی شد',
-        linkCopied: 'لینک کپی شد',
-        neverExpires: 'بدون تاریخ انقضا',
-        config: 'کانفیگ',
-        toggleTheme: 'تغییر حالت نمایش',
-        switchLanguage: 'تغییر زبان'
-    })
-});
+const I18N = typeof globalThis !== 'undefined' && globalThis.HYPER_SENTRY_I18N
+    ? globalThis.HYPER_SENTRY_I18N
+    : (typeof require === 'function' ? require('./i18n.js') : { en: {}, fa: {} });
 
 const hasDocument = typeof document !== 'undefined';
 let currentLang = hasDocument && document.documentElement.lang === 'fa' ? 'fa' : 'en';
@@ -260,11 +189,15 @@ function renderOverview() {
     if (unlimitedData) {
         progressTrack?.classList.add('is-unlimited');
         progress.style.inlineSize = '0%';
+        progressTrack?.removeAttribute('aria-valuenow');
+        progressTrack?.setAttribute('aria-valuetext', t('unlimited'));
         return;
     }
 
     const percent = Math.min(100, data.totalBytes > 0 ? (data.usedBytes / data.totalBytes) * 100 : 0);
     progress.style.inlineSize = `${percent}%`;
+    progressTrack?.setAttribute('aria-valuenow', String(Math.round(percent)));
+    progressTrack?.setAttribute('aria-valuetext', `${Math.round(percent)}%`);
     if (percent >= 90) progress.classList.add('is-danger');
     else if (percent >= 75) progress.classList.add('is-warning');
 }
@@ -281,6 +214,25 @@ function getRawLinks() {
         .filter(Boolean);
 }
 
+const PROTOCOL_META = Object.freeze({
+    vless: { label: 'VLESS', badge: 'VL' },
+    vmess: { label: 'VMess', badge: 'VM' },
+    trojan: { label: 'Trojan', badge: 'TR' },
+    ss: { label: 'Shadowsocks', badge: 'SS' },
+    shadowsocks: { label: 'Shadowsocks', badge: 'SS' },
+    hysteria2: { label: 'Hysteria2', badge: 'H2' },
+    hy2: { label: 'Hysteria2', badge: 'H2' },
+    tuic: { label: 'TUIC', badge: 'TU' },
+    wireguard: { label: 'WireGuard', badge: 'WG' },
+    socks: { label: 'SOCKS', badge: 'SO' },
+    http: { label: 'HTTP', badge: 'HT' },
+    https: { label: 'HTTPS', badge: 'HS' }
+});
+
+function normalizeProtocol(protocol) {
+    return String(protocol || 'vpn').toLowerCase().replace(/[^a-z0-9-]/g, '') || 'vpn';
+}
+
 function getConfigMeta(link, index) {
     let name = `${t('config')} ${index + 1}`;
     let protocol = 'vpn';
@@ -292,14 +244,35 @@ function getConfigMeta(link, index) {
         const protocolIndex = link.indexOf('://');
         if (protocolIndex > 0) protocol = link.slice(0, protocolIndex).toLowerCase();
     } catch (_) {}
-    return { name, protocol };
+
+    const normalized = normalizeProtocol(protocol);
+    const meta = PROTOCOL_META[normalized] || {
+        label: normalized.toUpperCase(),
+        badge: normalized.slice(0, 2).toUpperCase()
+    };
+    return { name, protocol: normalized, protocolLabel: meta.label, protocolBadge: meta.badge };
+}
+
+function createConfigButton({ action, label, className, link, name }) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = className;
+    button.dataset.configAction = action;
+    button.dataset.link = link;
+    button.dataset.name = name;
+    button.textContent = label;
+    button.setAttribute('aria-label', `${label}: ${name}`);
+    return button;
 }
 
 function renderConfigs() {
     const container = document.getElementById('configs-container');
     if (!container) return;
     const links = getRawLinks();
-    document.getElementById('config-count').textContent = new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US').format(links.length);
+    const countBadge = document.getElementById('config-count');
+    const formattedCount = new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US').format(links.length);
+    countBadge.textContent = formattedCount;
+    countBadge.setAttribute('aria-label', `${t('configsCount')}: ${formattedCount}`);
     container.replaceChildren();
 
     if (!links.length) {
@@ -310,45 +283,91 @@ function renderConfigs() {
         return;
     }
 
+    const fragment = document.createDocumentFragment();
     links.forEach((link, index) => {
-        const { name, protocol } = getConfigMeta(link, index);
+        const { name, protocol, protocolLabel, protocolBadge } = getConfigMeta(link, index);
         const card = document.createElement('article');
         card.className = 'config-card glass-pane';
 
         const identity = document.createElement('div');
         identity.className = 'config-identity';
-        const protocolBadge = document.createElement('span');
-        protocolBadge.className = 'protocol-badge';
-        protocolBadge.textContent = protocol.slice(0, 5);
+
+        const badge = document.createElement('span');
+        badge.className = `protocol-badge protocol-${protocol}`;
+        badge.textContent = protocolBadge;
+        badge.title = protocolLabel;
+        badge.setAttribute('aria-label', `${t('protocol')}: ${protocolLabel}`);
+
         const copy = document.createElement('div');
         copy.className = 'config-copy';
         const title = document.createElement('h3');
         title.textContent = name;
+        title.title = name;
         const protocolText = document.createElement('p');
-        protocolText.textContent = protocol;
+        protocolText.textContent = protocolLabel;
         copy.append(title, protocolText);
-        identity.append(protocolBadge, copy);
+        identity.append(badge, copy);
 
         const actions = document.createElement('div');
         actions.className = 'config-actions';
-        const copyButton = document.createElement('button');
-        copyButton.type = 'button';
-        copyButton.className = 'mini-button';
-        copyButton.textContent = t('copy');
-        copyButton.addEventListener('click', () => copyToClipboard(link, t('configCopied')));
-        const qrButton = document.createElement('button');
-        qrButton.type = 'button';
-        qrButton.className = 'mini-button mini-button-accent';
-        qrButton.textContent = 'QR';
-        qrButton.addEventListener('click', () => showQr(link, name));
+        const copyButton = createConfigButton({
+            action: 'copy',
+            label: t('copy'),
+            className: 'mini-button config-copy-button',
+            link,
+            name
+        });
+        const qrButton = createConfigButton({
+            action: 'qr',
+            label: 'QR',
+            className: 'mini-button mini-button-accent config-qr-button',
+            link,
+            name
+        });
+        qrButton.setAttribute('aria-label', `${t('showQr')}: ${name}`);
         actions.append(copyButton, qrButton);
         card.append(identity, actions);
-        container.append(card);
+        fragment.append(card);
+    });
+    container.append(fragment);
+}
+
+const buttonResetTimers = new WeakMap();
+function showTemporaryButtonState(button, label, restoreLabel, duration = 1300) {
+    if (!button) return;
+    const existing = buttonResetTimers.get(button);
+    if (existing) window.clearTimeout(existing);
+    button.textContent = label;
+    button.classList.add('is-success');
+    const timer = window.setTimeout(() => {
+        button.textContent = restoreLabel;
+        button.classList.remove('is-success');
+        buttonResetTimers.delete(button);
+    }, duration);
+    buttonResetTimers.set(button, timer);
+}
+
+function initConfigActions() {
+    const container = document.getElementById('configs-container');
+    if (!container || container.dataset.actionsReady === 'true') return;
+    container.dataset.actionsReady = 'true';
+    container.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-config-action]');
+        if (!button || !container.contains(button)) return;
+        const action = button.dataset.configAction;
+        const link = button.dataset.link || '';
+        const name = button.dataset.name || t('config');
+        if (action === 'copy') {
+            const success = await copyToClipboard(link, t('configCopied'));
+            if (success) showTemporaryButtonState(button, t('copied'), t('copy'));
+        } else if (action === 'qr') {
+            showQr(link, name);
+        }
     });
 }
 
 async function copyToClipboard(text, message) {
-    if (!text) return;
+    if (!text) return false;
     try {
         if (navigator.clipboard?.writeText) {
             await navigator.clipboard.writeText(text);
@@ -356,9 +375,15 @@ async function copyToClipboard(text, message) {
             fallbackCopy(text);
         }
         showToast(message || t('copied'));
+        return true;
     } catch (_) {
-        fallbackCopy(text);
-        showToast(message || t('copied'));
+        try {
+            fallbackCopy(text);
+            showToast(message || t('copied'));
+            return true;
+        } catch (_) {
+            return false;
+        }
     }
 }
 
@@ -384,30 +409,67 @@ function showToast(message) {
     toastTimer = window.setTimeout(() => { toast.hidden = true; }, 1900);
 }
 
-function showQr(link, name) {
+let activeQrLink = '';
+let qrReturnFocus = null;
+async function showQr(link, name) {
     const dialog = document.getElementById('qr-dialog');
     const canvas = document.getElementById('qr-canvas');
-    if (!dialog || !canvas || typeof QRious === 'undefined') return;
+    if (!dialog || !canvas) return;
+    let QrConstructor = globalThis.QRious;
+    if (!QrConstructor) {
+        try {
+            QrConstructor = await globalThis.HyperSentryVendors?.loadQrLibrary();
+        } catch (_) {
+            showToast(t('qrUnavailable'));
+            return;
+        }
+    }
+
+    activeQrLink = link;
+    qrReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const { protocolLabel } = getConfigMeta(link, 0);
     document.getElementById('qr-title').textContent = name;
-    new QRious({ element: canvas, value: link, size: 220, background: '#ffffff', foreground: '#06111d' });
+    const meta = document.getElementById('qr-meta');
+    if (meta) meta.textContent = protocolLabel;
+    new QrConstructor({ element: canvas, value: link, size: 220, background: '#ffffff', foreground: '#06111d' });
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
+    window.requestAnimationFrame(() => document.getElementById('qr-copy')?.focus());
 }
 
 function closeQr() {
     const dialog = document.getElementById('qr-dialog');
     if (!dialog) return;
-    if (typeof dialog.close === 'function') dialog.close();
+    if (typeof dialog.close === 'function' && dialog.open) dialog.close();
     else dialog.removeAttribute('open');
+    activeQrLink = '';
+    const returnTarget = qrReturnFocus;
+    qrReturnFocus = null;
+    if (returnTarget?.isConnected) window.requestAnimationFrame(() => returnTarget.focus());
 }
 
 function initActions() {
     const copySubscription = document.getElementById('copy-subscription');
-    copySubscription?.addEventListener('click', () => {
-        copyToClipboard(copySubscription.dataset.subUrl, t('linkCopied'));
+    copySubscription?.addEventListener('click', async () => {
+        const success = await copyToClipboard(copySubscription.dataset.subUrl, t('linkCopied'));
+        if (success) showTemporaryButtonState(copySubscription, t('copied'), t('copySubscriptionLink'));
+    });
+
+    document.getElementById('qr-copy')?.addEventListener('click', async (event) => {
+        const success = await copyToClipboard(activeQrLink, t('configCopied'));
+        if (success) showTemporaryButtonState(event.currentTarget, t('copied'), t('copyConfig'));
     });
     document.getElementById('qr-close')?.addEventListener('click', closeQr);
     document.getElementById('qr-close-bottom')?.addEventListener('click', closeQr);
+    const qrDialog = document.getElementById('qr-dialog');
+    qrDialog?.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeQr();
+    });
+    qrDialog?.addEventListener('click', (event) => {
+        if (event.target === qrDialog) closeQr();
+    });
+    initConfigActions();
 }
 
 if (hasDocument) {

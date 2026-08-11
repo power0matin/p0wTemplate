@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Vazirmatn';
-    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2') format('woff2');
+    src: local('Vazirmatn'), url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2') format('woff2');
     font-style: normal;
     font-weight: 400;
     font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
     font-family: 'Vazirmatn';
-    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Medium.woff2') format('woff2');
+    src: local('Vazirmatn Medium'), local('Vazirmatn'), url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Medium.woff2') format('woff2');
     font-style: normal;
     font-weight: 500;
     font-display: swap;
@@ -16,7 +16,7 @@
 
 @font-face {
     font-family: 'Vazirmatn';
-    src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Bold.woff2') format('woff2');
+    src: local('Vazirmatn Bold'), local('Vazirmatn'), url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Bold.woff2') format('woff2');
     font-style: normal;
     font-weight: 700;
     font-display: swap;
@@ -894,5 +894,116 @@ summary:focus-visible {
 
     .mini-button {
         flex: 1 1 0;
+    }
+}
+
+/* Stage 6 — Config cards 2.0 */
+.protocol-vless { background: linear-gradient(145deg, rgba(94, 224, 255, 0.22), rgba(63, 124, 173, 0.32)); }
+.protocol-vmess { background: linear-gradient(145deg, rgba(111, 179, 224, 0.22), rgba(72, 99, 155, 0.32)); }
+.protocol-trojan { background: linear-gradient(145deg, rgba(255, 181, 71, 0.16), rgba(63, 124, 173, 0.28)); }
+.protocol-ss,
+.protocol-shadowsocks { background: linear-gradient(145deg, rgba(47, 225, 168, 0.16), rgba(63, 124, 173, 0.28)); }
+.protocol-hysteria2,
+.protocol-hy2,
+.protocol-tuic { background: linear-gradient(145deg, rgba(168, 139, 250, 0.18), rgba(63, 124, 173, 0.28)); }
+
+.mini-button {
+    transition: transform var(--duration-fast) var(--ease-out), background var(--duration-fast) ease,
+        border-color var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.mini-button:hover { background: rgba(94, 224, 255, 0.08); }
+.mini-button:active { transform: scale(0.96); }
+.mini-button.is-success,
+.action-button.is-success {
+    border-color: rgba(47, 225, 168, 0.42);
+    background: rgba(47, 225, 168, 0.13);
+    color: var(--success);
+}
+
+.qr-meta {
+    margin: 5px 0 0;
+    color: var(--text-faint);
+    font-family: var(--font-latin);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.qr-dialog-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+@media (max-width: 380px) {
+    .qr-dialog-actions { grid-template-columns: 1fr; }
+}
+
+/* Stage 7 — Accessibility */
+.skip-link {
+    position: fixed;
+    inset-block-start: 10px;
+    inset-inline-start: 10px;
+    z-index: 2000;
+    padding: 9px 13px;
+    border-radius: 10px;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    border: 1px solid var(--sentry-cyan);
+    text-decoration: none;
+    transform: translateY(-160%);
+    transition: transform var(--duration-fast) ease;
+}
+
+.skip-link:focus { transform: translateY(0); }
+
+.progress-track:focus-visible {
+    outline: 2px solid var(--sentry-cyan);
+    outline-offset: 3px;
+}
+
+/* Stage 8 — Performance and motion preferences */
+.config-card,
+.empty-state {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 68px;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass-pane {
+        background: var(--glass-3);
+    }
+
+    .qr-dialog::backdrop {
+        background: rgba(2, 7, 13, 0.88);
+    }
+}
+
+@media (max-width: 520px), (pointer: coarse) {
+    .glass-pane {
+        backdrop-filter: blur(15px) saturate(135%);
+        -webkit-backdrop-filter: blur(15px) saturate(135%);
+    }
+
+    .brand-shield,
+    .hero-value {
+        filter: none;
+    }
+
+    .qr-dialog::backdrop {
+        backdrop-filter: blur(4px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
