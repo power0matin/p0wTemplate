@@ -34,7 +34,7 @@ for (const [token, value] of [
 
 check(digest(index) === digest(sub), 'index.html and sub.html must be identical');
 check(digest(index) === digest(expected), 'production HTML must be rebuilt from template.html and source assets');
-check(parsedManifest.version === '1.3.1', 'manifest version must be 1.3.1');
+check(parsedManifest.version === '1.3.2', 'manifest version must be 1.3.2');
 check(index.includes('<style id="hyper-sentry-styles">'), 'production CSS must be inlined');
 check(index.includes('<script id="hyper-sentry-vendor">'), 'vendor loader must be inlined');
 check(index.includes('<script id="hyper-sentry-i18n">'), 'i18n catalog must be inlined');
@@ -46,7 +46,9 @@ check(index.includes('data:image/webp;base64,'), 'official HyperSentry logo must
 check(!app.includes('TreeWalker'), 'legacy DOM text translation must not return');
 check(index.includes('role="progressbar"'), 'progressbar semantics are required');
 check(index.includes('aria-labelledby="qr-title"'), 'QR dialog must have an accessible name');
-check(css.includes('@media (prefers-reduced-motion: reduce)'), 'reduced-motion support is required');
+check(!css.includes('prefers-reduced-motion'), 'reduced-motion override must remain absent');
+check(css.includes('@keyframes hs-rise-in') && css.includes('@keyframes hs-dialog-in'), 'lightweight UI animations are required');
+check(!template.includes('qr-close-bottom'), 'QR dialog must keep only the top close control');
 check(i18n.includes('HYPER_SENTRY_I18N'), 'translation catalog is missing');
 check(!index.includes('âœ•') && !index.includes('âˆž'), 'broken UTF-8 artifacts detected');
 

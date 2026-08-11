@@ -460,7 +460,6 @@ function initActions() {
         if (success) showTemporaryButtonState(event.currentTarget, t('copied'), t('copyConfig'));
     });
     document.getElementById('qr-close')?.addEventListener('click', closeQr);
-    document.getElementById('qr-close-bottom')?.addEventListener('click', closeQr);
     const qrDialog = document.getElementById('qr-dialog');
     qrDialog?.addEventListener('cancel', (event) => {
         event.preventDefault();

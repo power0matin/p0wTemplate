@@ -64,21 +64,28 @@
 }
 
 :root.theme-light {
-    --bg-deep: #e8f0f7;
-    --bg-mid: #dbe8f3;
+    --bg-deep: #dfeaf3;
+    --bg-mid: #d2e1ed;
     --bg-elevated: #ffffff;
-    --page-bg: #edf4f9;
-    --text-main: #0b1a29;
-    --text-muted: rgba(11, 26, 41, 0.65);
-    --text-faint: rgba(11, 26, 41, 0.48);
-    --glass-1: rgba(255, 255, 255, 0.5);
-    --glass-2: rgba(255, 255, 255, 0.7);
-    --glass-3: rgba(255, 255, 255, 0.9);
-    --glass-border: rgba(63, 124, 173, 0.2);
-    --glass-border-strong: rgba(63, 124, 173, 0.32);
-    --shadow-sm: 0 4px 16px rgba(36, 65, 89, 0.08);
-    --shadow-md: 0 14px 42px rgba(36, 65, 89, 0.13);
-    --shadow-glow: 0 0 24px rgba(63, 124, 173, 0.08);
+    --page-bg: #e8f1f7;
+    --text-main: #091b2a;
+    --text-muted: rgba(9, 27, 42, 0.72);
+    --text-faint: rgba(9, 27, 42, 0.56);
+    --glass-1: rgba(255, 255, 255, 0.68);
+    --glass-2: rgba(255, 255, 255, 0.82);
+    --glass-3: rgba(255, 255, 255, 0.94);
+    --glass-border: rgba(43, 111, 158, 0.28);
+    --glass-border-strong: rgba(35, 111, 166, 0.46);
+    --sentry-blue: #2f6f9c;
+    --sentry-blue-light: #4c9dcb;
+    --sentry-cyan: #168eb8;
+    --success: #0b8d68;
+    --warning: #ad6a07;
+    --danger: #d43f55;
+    --inactive: #647789;
+    --shadow-sm: 0 5px 18px rgba(31, 71, 102, 0.11);
+    --shadow-md: 0 16px 44px rgba(31, 71, 102, 0.16);
+    --shadow-glow: 0 0 24px rgba(47, 111, 156, 0.11);
 }
 
 * {
@@ -153,9 +160,9 @@ summary:focus-visible {
 
 .theme-light .ambient-bg {
     background:
-        radial-gradient(circle at 16% 8%, rgba(111, 179, 224, 0.28), transparent 38%),
-        radial-gradient(circle at 86% 20%, rgba(94, 224, 255, 0.18), transparent 42%),
-        linear-gradient(180deg, #f1f7fb, #dce9f3);
+        radial-gradient(circle at 16% 8%, rgba(63, 124, 173, 0.27), transparent 38%),
+        radial-gradient(circle at 86% 20%, rgba(22, 142, 184, 0.17), transparent 42%),
+        linear-gradient(180deg, #eef5fa, #dbe8f2);
 }
 
 .facet-grid {
@@ -171,7 +178,7 @@ summary:focus-visible {
 }
 
 .theme-light .facet-grid {
-    opacity: 0.14;
+    opacity: 0.2;
 }
 
 .scan-line {
@@ -807,17 +814,31 @@ summary:focus-visible {
 }
 
 .qr-dialog-header {
+    position: relative;
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
+    justify-content: center;
+    min-block-size: 46px;
+    text-align: center;
+}
+
+.qr-dialog-header > div {
+    inline-size: 100%;
+    padding-inline: 46px;
+}
+
+.qr-dialog-header #qr-close {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
 }
 
 .qr-dialog-header h2 {
-    max-inline-size: 260px;
+    max-inline-size: 100%;
     margin: 4px 0 0;
     overflow-wrap: anywhere;
     font-size: 0.95rem;
+    text-align: center;
 }
 
 .qr-canvas-wrap {
@@ -937,16 +958,13 @@ summary:focus-visible {
     font-family: var(--font-latin);
     font-size: 0.72rem;
     font-weight: 700;
+    text-align: center;
 }
 
 .qr-dialog-actions {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 8px;
-}
-
-@media (max-width: 380px) {
-    .qr-dialog-actions { grid-template-columns: 1fr; }
 }
 
 /* Stage 7 — Accessibility */
@@ -1005,17 +1023,106 @@ summary:focus-visible {
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
 
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
+/* v1.3.2 — Light-mode clarity */
+.theme-light .glass-pane {
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.theme-light .action-primary {
+    border-color: rgba(22, 142, 184, 0.38);
+    background: linear-gradient(120deg, rgba(47, 111, 156, 0.24), rgba(22, 142, 184, 0.13));
+}
+
+.theme-light .app-badge,
+.theme-light .count-badge {
+    background: rgba(22, 142, 184, 0.1);
+    border-color: rgba(22, 142, 184, 0.24);
+}
+
+.theme-light .protocol-badge {
+    background: linear-gradient(145deg, rgba(47, 111, 156, 0.18), rgba(22, 142, 184, 0.11));
+    border-color: rgba(22, 142, 184, 0.28);
+}
+
+.theme-light .mini-button {
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.theme-light .hero-time-card {
+    background: rgba(47, 111, 156, 0.065);
+    border-color: rgba(47, 111, 156, 0.14);
+}
+
+.theme-light .progress-track {
+    background: rgba(47, 111, 156, 0.11);
+    border-color: rgba(47, 111, 156, 0.12);
+}
+
+/* v1.3.2 — Lightweight motion */
+@keyframes hs-rise-in {
+    from { opacity: 0; transform: translateY(9px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hs-dialog-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes hs-ambient-breathe {
+    from { transform: scale(1.01); opacity: 0.94; }
+    to { transform: scale(1.035); opacity: 1; }
+}
+
+@keyframes hs-scan-glow {
+    0%, 100% { opacity: 0.18; }
+    50% { opacity: 0.4; }
+}
+
+@keyframes hs-status-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.76; }
+    50% { transform: scale(1.28); opacity: 1; }
+}
+
+.ambient-bg {
+    animation: hs-ambient-breathe 12s ease-in-out infinite alternate;
+    transform-origin: center;
+    will-change: transform, opacity;
+}
+
+.scan-line {
+    animation: hs-scan-glow 5.5s ease-in-out infinite;
+}
+
+.status-badge::before {
+    animation: hs-status-pulse 2.6s ease-in-out infinite;
+}
+
+.topbar,
+.account-card,
+.hero-card,
+.quick-access,
+.details-card,
+.configs-section,
+.footer {
+    animation: hs-rise-in 440ms var(--ease-out) both;
+}
+
+.account-card { animation-delay: 45ms; }
+.hero-card { animation-delay: 90ms; }
+.quick-access { animation-delay: 135ms; }
+.details-card { animation-delay: 180ms; }
+.configs-section { animation-delay: 225ms; }
+.footer { animation-delay: 270ms; }
+
+.config-card,
+.empty-state {
+    animation: hs-rise-in 300ms var(--ease-out) both;
+}
+
+.qr-dialog[open] .qr-dialog-card {
+    animation: hs-dialog-in 220ms var(--ease-out) both;
 }
 
 @media (max-width: 460px) {
@@ -1664,7 +1771,6 @@ function initActions() {
         if (success) showTemporaryButtonState(event.currentTarget, t('copied'), t('copyConfig'));
     });
     document.getElementById('qr-close')?.addEventListener('click', closeQr);
-    document.getElementById('qr-close-bottom')?.addEventListener('click', closeQr);
     const qrDialog = document.getElementById('qr-dialog');
     qrDialog?.addEventListener('cancel', (event) => {
         event.preventDefault();
@@ -1832,7 +1938,6 @@ if (typeof module !== 'undefined' && module.exports) {
             <div class="qr-canvas-wrap"><canvas id="qr-canvas" aria-hidden="true"></canvas></div>
             <div class="qr-dialog-actions">
                 <button id="qr-copy" class="action-button action-primary" type="button" data-i18n="copyConfig">Copy config</button>
-                <button id="qr-close-bottom" class="action-button" type="button" data-i18n="close">Close</button>
             </div>
         </div>
     </dialog>
