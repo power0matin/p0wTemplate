@@ -23,10 +23,13 @@ const css = await readFile(resolve(root, 'assets/css/main.css'), 'utf8');
 const manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8'));
 
 check(index === sub, 'index.html and sub.html are synchronized');
-check(manifest.version === '1.3.0', 'manifest release version is 1.3.0');
-check(index.indexOf('assets/js/vendor-loader.js') < index.indexOf('assets/js/i18n.js') && index.indexOf('assets/js/i18n.js') < index.indexOf('assets/js/app.js'), 'local scripts load in deterministic order');
+check(manifest.version === '1.3.1', 'manifest release version is 1.3.1');
+check(index.indexOf('id="hyper-sentry-vendor"') < index.indexOf('id="hyper-sentry-i18n"') && index.indexOf('id="hyper-sentry-i18n"') < index.indexOf('id="hyper-sentry-app"'), 'inline scripts load in deterministic order');
+check(index.includes('<style id="hyper-sentry-styles">'), 'production CSS is inlined for 3x-ui compatibility');
+check(!/\b(?:src|href)=["']assets\//.test(index), 'production HTML has no relative theme asset references');
+check(index.includes('data:image/webp;base64,'), 'official HyperSentry logo is embedded in production HTML');
 check(!index.includes('fonts.googleapis.com'), 'Google Fonts is not a critical-path dependency');
-check(!index.includes('cdnjs.cloudflare.com/ajax/libs/qrious'), 'QR library is not eagerly loaded from a CDN');
+check(!/<script[^>]+src=[\"'][^\"']*qrious/i.test(index), 'QR library is not eagerly loaded from a CDN');
 check(css.includes('@media (prefers-reduced-motion: reduce)'), 'reduced-motion styles are present');
 check(css.includes('@supports not ((backdrop-filter: blur(1px))'), 'glass fallback is present');
 check(index.includes('role="progressbar"') && index.includes('aria-labelledby="qr-title"'), 'core accessibility semantics are present');
@@ -57,7 +60,7 @@ for (const [expected, data] of states) {
 check(app.getDaysRemaining(0, now) === null, 'no-expiry plans return unlimited remaining days');
 check(app.getDaysRemaining(Math.floor((now - 60000) / 1000), now) === 0, 'expired plans clamp remaining days to zero');
 
-for (const file of ['assets/js/vendor-loader.js', 'assets/js/i18n.js', 'assets/js/app.js', 'scripts/sync-sub.mjs', 'scripts/validate.mjs']) {
+for (const file of ['assets/js/vendor-loader.js', 'assets/js/i18n.js', 'assets/js/app.js', 'scripts/build-inline.mjs', 'scripts/sync-sub.mjs', 'scripts/validate.mjs']) {
     const syntax = spawnSync(process.execPath, ['--check', resolve(root, file)], { encoding: 'utf8' });
     check(syntax.status === 0, `${file} passes Node syntax validation`);
 }

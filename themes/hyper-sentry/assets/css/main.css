@@ -211,12 +211,14 @@ summary:focus-visible {
     text-decoration: none;
 }
 
-.brand-shield {
-    inline-size: 30px;
-    block-size: 30px;
-    flex: 0 0 auto;
-    color: var(--sentry-cyan);
-    filter: drop-shadow(0 0 9px rgba(94, 224, 255, 0.38));
+.brand-logo {
+    inline-size: 44px;
+    block-size: 44px;
+    flex: 0 0 44px;
+    display: block;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 8px 22px rgba(2, 8, 16, 0.24), 0 0 0 1px rgba(94, 224, 255, 0.10);
 }
 
 .brand-name {
@@ -1005,5 +1007,14 @@ summary:focus-visible {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+
+@media (max-width: 460px) {
+    .brand-logo {
+        inline-size: 40px;
+        block-size: 40px;
+        flex-basis: 40px;
+        border-radius: 11px;
     }
 }

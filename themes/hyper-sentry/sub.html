@@ -5,7 +5,1029 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark light">
     <title>HyperSentry - Subscription</title>
-    <link rel="stylesheet" href="assets/css/main.css">
+    <style id="hyper-sentry-styles">
+@font-face {
+    font-family: 'Vazirmatn';
+    src: local('Vazirmatn'), url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Vazirmatn';
+    src: local('Vazirmatn Medium'), local('Vazirmatn'), url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Medium.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Vazirmatn';
+    src: local('Vazirmatn Bold'), local('Vazirmatn'), url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Bold.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+:root {
+    --bg-deep: #060d16;
+    --bg-mid: #0c1a2a;
+    --bg-elevated: #12263c;
+    --page-bg: #060d16;
+    --text-main: #eef5fb;
+    --text-muted: rgba(214, 229, 242, 0.68);
+    --text-faint: rgba(214, 229, 242, 0.48);
+    --glass-1: rgba(20, 36, 54, 0.42);
+    --glass-2: rgba(20, 36, 54, 0.62);
+    --glass-3: rgba(20, 36, 54, 0.82);
+    --glass-border: rgba(132, 178, 219, 0.18);
+    --glass-border-strong: rgba(132, 178, 219, 0.3);
+    --sentry-blue: #3f7cad;
+    --sentry-blue-light: #78c4ef;
+    --sentry-cyan: #5ee0ff;
+    --success: #2fe1a8;
+    --warning: #ffb547;
+    --danger: #ff6476;
+    --inactive: #9fb0bf;
+    --radius-xl: 28px;
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+    --radius-pill: 999px;
+    --shadow-sm: 0 4px 16px rgba(2, 8, 16, 0.18);
+    --shadow-md: 0 14px 42px rgba(2, 8, 16, 0.3);
+    --shadow-glow: 0 0 28px rgba(94, 224, 255, 0.13);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --font-latin: 'Manrope', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-fa: 'Vazirmatn', Tahoma, system-ui, sans-serif;
+}
+
+:root.theme-light {
+    --bg-deep: #e8f0f7;
+    --bg-mid: #dbe8f3;
+    --bg-elevated: #ffffff;
+    --page-bg: #edf4f9;
+    --text-main: #0b1a29;
+    --text-muted: rgba(11, 26, 41, 0.65);
+    --text-faint: rgba(11, 26, 41, 0.48);
+    --glass-1: rgba(255, 255, 255, 0.5);
+    --glass-2: rgba(255, 255, 255, 0.7);
+    --glass-3: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(63, 124, 173, 0.2);
+    --glass-border-strong: rgba(63, 124, 173, 0.32);
+    --shadow-sm: 0 4px 16px rgba(36, 65, 89, 0.08);
+    --shadow-md: 0 14px 42px rgba(36, 65, 89, 0.13);
+    --shadow-glow: 0 0 24px rgba(63, 124, 173, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    background: var(--page-bg);
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--text-main);
+    font-family: var(--font-latin);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+}
+
+[dir='rtl'] body,
+[dir='rtl'] button,
+[dir='rtl'] input,
+[dir='rtl'] textarea,
+[dir='rtl'] select {
+    font-family: var(--font-fa);
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    font: inherit;
+}
+
+button,
+a,
+summary {
+    outline: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+    outline: 2px solid var(--sentry-cyan);
+    outline-offset: 3px;
+}
+
+.ambient-bg,
+.facet-grid,
+.scan-line {
+    position: fixed;
+    pointer-events: none;
+}
+
+.ambient-bg {
+    inset: 0;
+    z-index: -3;
+    background:
+        radial-gradient(circle at 16% 8%, rgba(111, 179, 224, 0.22), transparent 38%),
+        radial-gradient(circle at 86% 20%, rgba(94, 224, 255, 0.12), transparent 42%),
+        radial-gradient(circle at 50% 100%, rgba(63, 124, 173, 0.2), transparent 52%),
+        linear-gradient(180deg, var(--bg-deep), var(--bg-mid));
+}
+
+.theme-light .ambient-bg {
+    background:
+        radial-gradient(circle at 16% 8%, rgba(111, 179, 224, 0.28), transparent 38%),
+        radial-gradient(circle at 86% 20%, rgba(94, 224, 255, 0.18), transparent 42%),
+        linear-gradient(180deg, #f1f7fb, #dce9f3);
+}
+
+.facet-grid {
+    inset: 0;
+    z-index: -2;
+    opacity: 0.28;
+    background-image:
+        linear-gradient(135deg, rgba(111, 179, 224, 0.08) 1px, transparent 1px),
+        linear-gradient(45deg, rgba(94, 224, 255, 0.05) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 72%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 72%);
+}
+
+.theme-light .facet-grid {
+    opacity: 0.14;
+}
+
+.scan-line {
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 20;
+    block-size: 1px;
+    background: linear-gradient(90deg, transparent, var(--sentry-cyan), transparent);
+    opacity: 0.32;
+    box-shadow: 0 0 18px rgba(94, 224, 255, 0.35);
+}
+
+.container {
+    inline-size: min(100%, 660px);
+    margin-inline: auto;
+    padding: 24px 20px 48px;
+}
+
+.glass-pane {
+    background: var(--glass-2);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-block-size: 58px;
+    padding: 10px 12px 10px 16px;
+    border-radius: var(--radius-pill);
+    position: relative;
+    z-index: 2;
+}
+
+.brand {
+    min-inline-size: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.brand-logo {
+    inline-size: 44px;
+    block-size: 44px;
+    flex: 0 0 44px;
+    display: block;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 8px 22px rgba(2, 8, 16, 0.24), 0 0 0 1px rgba(94, 224, 255, 0.10);
+}
+
+.brand-name {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 800;
+    font-size: 0.96rem;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex: 0 0 auto;
+}
+
+.icon-action {
+    min-block-size: 38px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-1);
+    color: var(--text-main);
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding-inline: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 700;
+    transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.icon-action:hover {
+    border-color: var(--glass-border-strong);
+    background: var(--glass-2);
+}
+
+.icon-action:active {
+    transform: scale(0.96);
+}
+
+.icon-action svg {
+    inline-size: 16px;
+    block-size: 16px;
+}
+
+.compact-action {
+    inline-size: 38px;
+    padding-inline: 0;
+}
+
+.theme-icon {
+    display: none;
+}
+
+.theme-dark .theme-icon-sun,
+.theme-light .theme-icon-moon {
+    display: block;
+}
+
+.account-card {
+    margin-block-start: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 18px;
+    border-radius: var(--radius-lg);
+}
+
+.account-avatar {
+    inline-size: 46px;
+    block-size: 46px;
+    flex: 0 0 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    color: #041520;
+    background: linear-gradient(145deg, var(--sentry-cyan), var(--sentry-blue));
+    box-shadow: 0 8px 22px rgba(63, 124, 173, 0.3), 0 0 0 3px rgba(94, 224, 255, 0.08);
+    font-weight: 800;
+}
+
+.account-copy {
+    min-inline-size: 0;
+}
+
+.eyebrow {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-transform: uppercase;
+}
+
+[dir='rtl'] .eyebrow {
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.account-name {
+    margin: 3px 0 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.hero-card {
+    margin-block-start: 12px;
+    padding: 22px;
+    border-radius: var(--radius-xl);
+    position: relative;
+    overflow: hidden;
+}
+
+.facet-corner::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    inline-size: 68px;
+    block-size: 68px;
+    background: linear-gradient(135deg, transparent 52%, rgba(94, 224, 255, 0.08) 52%);
+    pointer-events: none;
+}
+
+.hero-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.hero-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    margin-block-start: 8px;
+}
+
+.hero-value {
+    font-size: clamp(2.5rem, 9vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--sentry-cyan), var(--sentry-blue-light));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 12px rgba(94, 224, 255, 0.23));
+}
+
+[dir='rtl'] .hero-value {
+    letter-spacing: 0;
+}
+
+.hero-unit {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.status-badge {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-block-size: 30px;
+    padding-inline: 11px;
+    border-radius: var(--radius-pill);
+    font-size: 0.72rem;
+    font-weight: 800;
+    border: 1px solid currentColor;
+    background: rgba(47, 225, 168, 0.09);
+}
+
+.status-badge::before {
+    content: '';
+    inline-size: 6px;
+    block-size: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 7px currentColor;
+}
+
+.status-active,
+.status-unlimited {
+    color: var(--success);
+}
+
+.status-inactive {
+    color: var(--inactive);
+    background: rgba(159, 176, 191, 0.08);
+}
+
+.status-expired,
+.status-out-of-data {
+    color: var(--danger);
+    background: rgba(255, 100, 118, 0.08);
+}
+
+.progress-block {
+    margin-block-start: 22px;
+}
+
+.progress-track {
+    inline-size: 100%;
+    block-size: 8px;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.theme-light .progress-track {
+    background: rgba(11, 26, 41, 0.08);
+    border-color: rgba(11, 26, 41, 0.04);
+}
+
+.progress-fill {
+    inline-size: 0;
+    block-size: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--sentry-blue), var(--sentry-cyan));
+    box-shadow: 0 0 14px rgba(94, 224, 255, 0.5);
+    transition: inline-size 650ms var(--ease-out), background 180ms ease;
+}
+
+.progress-fill.is-warning {
+    background: linear-gradient(90deg, #c7832f, var(--warning));
+}
+
+.progress-fill.is-danger {
+    background: linear-gradient(90deg, #c94b5a, var(--danger));
+}
+
+.progress-track.is-unlimited {
+    background: repeating-linear-gradient(115deg, rgba(63, 124, 173, 0.18) 0 10px, rgba(94, 224, 255, 0.12) 10px 20px);
+    border-color: rgba(94, 224, 255, 0.12);
+}
+
+.hero-time-card {
+    margin-block-start: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 13px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.theme-light .hero-time-card {
+    background: rgba(63, 124, 173, 0.045);
+    border-color: rgba(63, 124, 173, 0.08);
+}
+
+.hero-card[data-state='expired'],
+.hero-card[data-state='outOfData'] {
+    border-color: rgba(255, 100, 118, 0.2);
+}
+
+.hero-card[data-state='inactive'] {
+    border-color: rgba(159, 176, 191, 0.16);
+}
+
+.hero-stat-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+}
+
+.hero-stat-value {
+    display: block;
+    margin-block-start: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1rem;
+}
+
+.quick-access,
+.details-card {
+    margin-block-start: 12px;
+    border-radius: var(--radius-lg);
+}
+
+.quick-access {
+    padding: 18px;
+}
+
+.section-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.section-heading-row h2 {
+    margin: 3px 0 0;
+    font-size: 1rem;
+    line-height: 1.35;
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin-block-start: 14px;
+}
+
+.action-button {
+    min-block-size: 46px;
+    inline-size: 100%;
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    background: var(--glass-1);
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px 13px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.action-button:hover {
+    border-color: var(--glass-border-strong);
+    background: var(--glass-2);
+}
+
+.action-button:active {
+    transform: scale(0.985);
+}
+
+.action-button svg {
+    inline-size: 18px;
+    block-size: 18px;
+    flex: 0 0 auto;
+}
+
+.action-primary {
+    border-color: rgba(94, 224, 255, 0.3);
+    background: linear-gradient(120deg, rgba(63, 124, 173, 0.36), rgba(94, 224, 255, 0.18));
+}
+
+.app-badge {
+    inline-size: 24px;
+    block-size: 24px;
+    flex: 0 0 24px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: rgba(94, 224, 255, 0.12);
+    color: var(--sentry-cyan);
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.details-card {
+    overflow: clip;
+}
+
+.details-card summary {
+    min-block-size: 52px;
+    padding: 14px 17px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.86rem;
+    font-weight: 750;
+}
+
+.details-card summary::-webkit-details-marker {
+    display: none;
+}
+
+.details-chevron {
+    inline-size: 18px;
+    block-size: 18px;
+    color: var(--text-muted);
+    transition: transform 180ms ease;
+}
+
+.details-card[open] .details-chevron {
+    transform: rotate(180deg);
+}
+
+.details-content {
+    padding: 0 17px 15px;
+}
+
+.detail-row {
+    min-block-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-block-start: 1px solid rgba(132, 178, 219, 0.1);
+    font-size: 0.79rem;
+}
+
+.detail-row span {
+    color: var(--text-muted);
+}
+
+.detail-row strong {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+    text-align: end;
+}
+
+.configs-section {
+    margin-block-start: 24px;
+}
+
+.configs-heading-row {
+    padding-inline: 4px;
+    margin-block-end: 11px;
+}
+
+.count-badge {
+    min-inline-size: 30px;
+    block-size: 30px;
+    padding-inline: 8px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-pill);
+    background: rgba(94, 224, 255, 0.1);
+    border: 1px solid rgba(94, 224, 255, 0.18);
+    color: var(--sentry-cyan);
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.configs-list {
+    display: grid;
+    gap: 9px;
+}
+
+.config-card {
+    min-inline-size: 0;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.config-identity {
+    min-inline-size: 0;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex: 1 1 auto;
+}
+
+.protocol-badge {
+    inline-size: 42px;
+    block-size: 42px;
+    flex: 0 0 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(63, 124, 173, 0.46), rgba(94, 224, 255, 0.16));
+    border: 1px solid rgba(94, 224, 255, 0.2);
+    color: var(--sentry-cyan);
+    font-family: var(--font-latin);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.config-copy {
+    min-inline-size: 0;
+}
+
+.config-copy h3,
+.config-copy p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.config-copy h3 {
+    margin: 0;
+    font-size: 0.83rem;
+    font-weight: 700;
+}
+
+.config-copy p {
+    margin: 2px 0 0;
+    color: var(--text-faint);
+    font-family: var(--font-latin);
+    font-size: 0.68rem;
+}
+
+.config-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+}
+
+.mini-button {
+    min-block-size: 34px;
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--text-main);
+    padding-inline: 10px;
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 750;
+}
+
+.mini-button-accent {
+    border-color: rgba(94, 224, 255, 0.24);
+    color: var(--sentry-cyan);
+}
+
+.empty-state {
+    padding: 24px 16px;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 0.82rem;
+}
+
+.footer {
+    margin-block-start: 28px;
+    text-align: center;
+}
+
+.footer a {
+    color: var(--text-faint);
+    text-decoration: none;
+    font-family: var(--font-latin);
+    font-size: 0.68rem;
+}
+
+.qr-dialog {
+    inline-size: min(calc(100% - 32px), 390px);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-xl);
+    background: transparent;
+    color: var(--text-main);
+}
+
+.qr-dialog::backdrop {
+    background: rgba(2, 7, 13, 0.7);
+    backdrop-filter: blur(8px);
+}
+
+.qr-dialog-card {
+    padding: 18px;
+    border-radius: var(--radius-xl);
+    background: var(--glass-3);
+}
+
+.qr-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.qr-dialog-header h2 {
+    max-inline-size: 260px;
+    margin: 4px 0 0;
+    overflow-wrap: anywhere;
+    font-size: 0.95rem;
+}
+
+.qr-canvas-wrap {
+    inline-size: fit-content;
+    margin: 18px auto;
+    padding: 12px;
+    border-radius: 18px;
+    background: #fff;
+    line-height: 0;
+}
+
+.toast {
+    position: fixed;
+    inset-block-start: 18px;
+    inset-inline-start: 50%;
+    z-index: 1000;
+    transform: translateX(-50%);
+    max-inline-size: min(calc(100% - 32px), 420px);
+    padding: 10px 16px;
+    border-radius: var(--radius-pill);
+    color: var(--text-main);
+    font-size: 0.78rem;
+    font-weight: 750;
+    text-align: center;
+}
+
+[dir='rtl'] .toast {
+    transform: translateX(50%);
+}
+
+[hidden] {
+    display: none !important;
+}
+
+@media (min-width: 560px) {
+    .action-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .action-primary {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 520px) {
+    .container {
+        padding: 16px 12px 36px;
+    }
+
+    .topbar {
+        gap: 8px;
+        padding-inline: 11px 8px;
+    }
+
+    .support-action span {
+        display: none;
+    }
+
+    .support-action {
+        inline-size: 38px;
+        padding-inline: 0;
+    }
+
+    .hero-card {
+        padding: 19px 17px;
+    }
+
+    .hero-header {
+        gap: 10px;
+    }
+
+    .quick-access {
+        padding: 16px;
+    }
+
+    .config-card {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .config-actions {
+        inline-size: 100%;
+    }
+
+    .mini-button {
+        flex: 1 1 0;
+    }
+}
+
+/* Stage 6 — Config cards 2.0 */
+.protocol-vless { background: linear-gradient(145deg, rgba(94, 224, 255, 0.22), rgba(63, 124, 173, 0.32)); }
+.protocol-vmess { background: linear-gradient(145deg, rgba(111, 179, 224, 0.22), rgba(72, 99, 155, 0.32)); }
+.protocol-trojan { background: linear-gradient(145deg, rgba(255, 181, 71, 0.16), rgba(63, 124, 173, 0.28)); }
+.protocol-ss,
+.protocol-shadowsocks { background: linear-gradient(145deg, rgba(47, 225, 168, 0.16), rgba(63, 124, 173, 0.28)); }
+.protocol-hysteria2,
+.protocol-hy2,
+.protocol-tuic { background: linear-gradient(145deg, rgba(168, 139, 250, 0.18), rgba(63, 124, 173, 0.28)); }
+
+.mini-button {
+    transition: transform var(--duration-fast) var(--ease-out), background var(--duration-fast) ease,
+        border-color var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.mini-button:hover { background: rgba(94, 224, 255, 0.08); }
+.mini-button:active { transform: scale(0.96); }
+.mini-button.is-success,
+.action-button.is-success {
+    border-color: rgba(47, 225, 168, 0.42);
+    background: rgba(47, 225, 168, 0.13);
+    color: var(--success);
+}
+
+.qr-meta {
+    margin: 5px 0 0;
+    color: var(--text-faint);
+    font-family: var(--font-latin);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.qr-dialog-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+@media (max-width: 380px) {
+    .qr-dialog-actions { grid-template-columns: 1fr; }
+}
+
+/* Stage 7 — Accessibility */
+.skip-link {
+    position: fixed;
+    inset-block-start: 10px;
+    inset-inline-start: 10px;
+    z-index: 2000;
+    padding: 9px 13px;
+    border-radius: 10px;
+    background: var(--bg-deep);
+    color: var(--text-main);
+    border: 1px solid var(--sentry-cyan);
+    text-decoration: none;
+    transform: translateY(-160%);
+    transition: transform var(--duration-fast) ease;
+}
+
+.skip-link:focus { transform: translateY(0); }
+
+.progress-track:focus-visible {
+    outline: 2px solid var(--sentry-cyan);
+    outline-offset: 3px;
+}
+
+/* Stage 8 — Performance and motion preferences */
+.config-card,
+.empty-state {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 68px;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass-pane {
+        background: var(--glass-3);
+    }
+
+    .qr-dialog::backdrop {
+        background: rgba(2, 7, 13, 0.88);
+    }
+}
+
+@media (max-width: 520px), (pointer: coarse) {
+    .glass-pane {
+        backdrop-filter: blur(15px) saturate(135%);
+        -webkit-backdrop-filter: blur(15px) saturate(135%);
+    }
+
+    .brand-shield,
+    .hero-value {
+        filter: none;
+    }
+
+    .qr-dialog::backdrop {
+        backdrop-filter: blur(4px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@media (max-width: 460px) {
+    .brand-logo {
+        inline-size: 40px;
+        block-size: 40px;
+        flex-basis: 40px;
+        border-radius: 11px;
+    }
+}
+
+    </style>
     <script>
         (function () {
             try {
@@ -24,9 +1046,650 @@
             } catch (_) {}
         })();
     </script>
-    <script src="assets/js/vendor-loader.js" defer></script>
-    <script src="assets/js/i18n.js" defer></script>
-    <script src="assets/js/app.js" defer></script>
+    <script id="hyper-sentry-vendor">
+'use strict';
+
+(function initHyperSentryVendors(global) {
+    const QRIousIntegrity = 'sha512-pUhApVQtLbnpLtJn6DuzDD5o2xtmLJnJ7oBoMsBnzOkVkpqofGLGPaBJ6ayD2zQe3lCgCibhJBi4cj5wAxwVKA==';
+    const sources = Object.freeze([
+        'https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js'
+    ]);
+
+    let qrPromise = null;
+
+    function loadScript(url) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = true;
+            script.crossOrigin = 'anonymous';
+            script.referrerPolicy = 'no-referrer';
+            script.integrity = QRIousIntegrity;
+            script.addEventListener('load', () => resolve(global.QRious), { once: true });
+            script.addEventListener('error', () => {
+                script.remove();
+                reject(new Error(`Failed to load ${url}`));
+            }, { once: true });
+            document.head.append(script);
+        });
+    }
+
+    async function loadQrLibrary() {
+        if (global.QRious) return global.QRious;
+        if (qrPromise) return qrPromise;
+
+        qrPromise = (async () => {
+            let lastError = null;
+            for (const source of sources) {
+                try {
+                    const library = await loadScript(source);
+                    if (library) return library;
+                } catch (error) {
+                    lastError = error;
+                }
+            }
+            qrPromise = null;
+            throw lastError || new Error('QR library could not be loaded');
+        })();
+
+        return qrPromise;
+    }
+
+    global.HyperSentryVendors = Object.freeze({ loadQrLibrary });
+})(globalThis);
+
+    </script>
+    <script id="hyper-sentry-i18n">
+'use strict';
+
+const HYPER_SENTRY_I18N = Object.freeze({
+    en: Object.freeze({
+        account: 'Account',
+        remainingData: 'Remaining Data',
+        active: 'Active',
+        inactive: 'Inactive',
+        expired: 'Expired',
+        outOfData: 'Out of Data',
+        unlimited: 'Unlimited',
+        usedData: 'Used Data',
+        daysRemaining: 'Days Remaining',
+        subscription: 'Subscription',
+        quickAccess: 'Quick Access',
+        copySubscriptionLink: 'Copy Subscription Link',
+        addToV2ray: 'Add to V2RayNG / v2rayN',
+        addToShadowrocket: 'Add to Shadowrocket / iOS',
+        subscriptionDetails: 'Subscription Details',
+        status: 'Status',
+        totalData: 'Total Data',
+        uploaded: 'Uploaded',
+        downloaded: 'Downloaded',
+        expires: 'Expires',
+        connection: 'Connection',
+        configs: 'Configs',
+        qrCode: 'QR Code',
+        close: 'Close',
+        support: 'Support',
+        noConfigs: 'No configs found',
+        copy: 'Copy',
+        copied: 'Copied',
+        configCopied: 'Config copied',
+        linkCopied: 'Link copied',
+        neverExpires: 'Never expires',
+        config: 'Config',
+        toggleTheme: 'Toggle theme',
+        switchLanguage: 'Switch language',
+        copyConfig: 'Copy config',
+        showQr: 'Show QR code',
+        qrUnavailable: 'QR code is unavailable',
+        protocol: 'Protocol',
+        dataUsage: 'Data usage',
+        configsCount: 'Configuration count',
+        skipToContent: 'Skip to content'
+    }),
+    fa: Object.freeze({
+        account: 'حساب کاربری',
+        remainingData: 'حجم باقی‌مانده',
+        active: 'فعال',
+        inactive: 'غیرفعال',
+        expired: 'منقضی',
+        outOfData: 'حجم تمام شده',
+        unlimited: 'نامحدود',
+        usedData: 'حجم مصرف‌شده',
+        daysRemaining: 'روز باقی‌مانده',
+        subscription: 'اشتراک',
+        quickAccess: 'دسترسی سریع',
+        copySubscriptionLink: 'کپی لینک اشتراک',
+        addToV2ray: 'افزودن به V2RayNG / v2rayN',
+        addToShadowrocket: 'افزودن به Shadowrocket / iOS',
+        subscriptionDetails: 'جزئیات اشتراک',
+        status: 'وضعیت',
+        totalData: 'حجم کل',
+        uploaded: 'آپلود',
+        downloaded: 'دانلود',
+        expires: 'انقضا',
+        connection: 'اتصال',
+        configs: 'کانفیگ‌ها',
+        qrCode: 'کد QR',
+        close: 'بستن',
+        support: 'پشتیبانی',
+        noConfigs: 'کانفیگی موجود نیست',
+        copy: 'کپی',
+        copied: 'کپی شد',
+        configCopied: 'کانفیگ کپی شد',
+        linkCopied: 'لینک کپی شد',
+        neverExpires: 'بدون تاریخ انقضا',
+        config: 'کانفیگ',
+        toggleTheme: 'تغییر حالت نمایش',
+        switchLanguage: 'تغییر زبان',
+        copyConfig: 'کپی کانفیگ',
+        showQr: 'نمایش کد QR',
+        qrUnavailable: 'نمایش کد QR در دسترس نیست',
+        protocol: 'پروتکل',
+        dataUsage: 'میزان مصرف حجم',
+        configsCount: 'تعداد کانفیگ‌ها',
+        skipToContent: 'رفتن به محتوای اصلی'
+    })
+});
+
+if (typeof globalThis !== 'undefined') {
+    globalThis.HYPER_SENTRY_I18N = HYPER_SENTRY_I18N;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = HYPER_SENTRY_I18N;
+}
+
+    </script>
+    <script id="hyper-sentry-app">
+'use strict';
+
+const I18N = typeof globalThis !== 'undefined' && globalThis.HYPER_SENTRY_I18N
+    ? globalThis.HYPER_SENTRY_I18N
+    : (typeof require === 'function' ? require('./i18n.js') : { en: {}, fa: {} });
+
+const hasDocument = typeof document !== 'undefined';
+let currentLang = hasDocument && document.documentElement.lang === 'fa' ? 'fa' : 'en';
+let cachedRawData = null;
+
+function t(key) {
+    return I18N[currentLang][key] || I18N.en[key] || key;
+}
+
+function applyTranslations(root = document) {
+    root.querySelectorAll('[data-i18n]').forEach((element) => {
+        const key = element.dataset.i18n;
+        if (I18N[currentLang][key]) {
+            element.textContent = I18N[currentLang][key];
+        }
+    });
+
+    root.querySelectorAll('[data-i18n-aria-label]').forEach((element) => {
+        const key = element.dataset.i18nAriaLabel;
+        if (I18N[currentLang][key]) {
+            element.setAttribute('aria-label', I18N[currentLang][key]);
+        }
+    });
+
+    const langToggle = document.getElementById('lang-toggle');
+    if (langToggle) {
+        langToggle.textContent = currentLang === 'fa' ? 'EN' : 'FA';
+        langToggle.setAttribute('aria-label', t('switchLanguage'));
+    }
+
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.setAttribute('aria-label', t('toggleTheme'));
+    }
+}
+
+function setLanguage(lang, persist = true) {
+    currentLang = lang === 'fa' ? 'fa' : 'en';
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+    if (persist) {
+        localStorage.setItem('p0wtemplate-lang', currentLang);
+    }
+    applyTranslations();
+    renderOverview();
+    renderConfigs();
+}
+
+function initLanguage() {
+    const saved = localStorage.getItem('p0wtemplate-lang') || localStorage.getItem('neo-lang') || currentLang;
+    setLanguage(saved, true);
+
+    document.getElementById('lang-toggle')?.addEventListener('click', () => {
+        setLanguage(currentLang === 'fa' ? 'en' : 'fa');
+    });
+}
+
+function setTheme(theme, persist = true) {
+    const next = theme === 'theme-light' ? 'theme-light' : 'theme-dark';
+    document.documentElement.classList.remove('theme-light', 'theme-dark');
+    document.documentElement.classList.add(next);
+    if (persist) {
+        localStorage.setItem('hyper-sentry-theme', next);
+    }
+}
+
+function initTheme() {
+    const saved = localStorage.getItem('hyper-sentry-theme');
+    const fallback = window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'theme-light' : 'theme-dark';
+    setTheme(saved || fallback, Boolean(saved));
+
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        setTheme(document.documentElement.classList.contains('theme-light') ? 'theme-dark' : 'theme-light');
+    });
+}
+
+function parseBool(value) {
+    return /^(true|1|yes|on)$/i.test(String(value || '').trim());
+}
+
+function toSafeInt(value) {
+    const parsed = Number.parseInt(value || '0', 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
+function readRawData() {
+    if (cachedRawData) return cachedRawData;
+    const raw = document.getElementById('raw-data');
+    cachedRawData = {
+        uploadBytes: toSafeInt(raw?.dataset.up),
+        downloadBytes: toSafeInt(raw?.dataset.down),
+        totalBytes: toSafeInt(raw?.dataset.total),
+        expireSeconds: toSafeInt(raw?.dataset.expire),
+        enabled: parseBool(raw?.dataset.enabled)
+    };
+    cachedRawData.usedBytes = cachedRawData.uploadBytes + cachedRawData.downloadBytes;
+    return cachedRawData;
+}
+
+function formatBytes(bytes) {
+    const safeBytes = Math.max(0, Number(bytes) || 0);
+    if (safeBytes === 0) return { value: '0', unit: 'B', text: '0 B' };
+    const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    const index = Math.min(Math.floor(Math.log(safeBytes) / Math.log(1024)), units.length - 1);
+    const value = safeBytes / Math.pow(1024, index);
+    const formatted = new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US', {
+        maximumFractionDigits: value >= 100 ? 0 : value >= 10 ? 1 : 2
+    }).format(value);
+    return { value: formatted, unit: units[index], text: `${formatted} ${units[index]}` };
+}
+
+function getDaysRemaining(expireSeconds, nowMs = Date.now()) {
+    if (!expireSeconds) return null;
+    return Math.max(0, Math.ceil((expireSeconds * 1000 - nowMs) / 86400000));
+}
+
+function formatExpiry(expireSeconds) {
+    if (!expireSeconds) return t('neverExpires');
+    return new Intl.DateTimeFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    }).format(new Date(expireSeconds * 1000));
+}
+
+function deriveSubscriptionState({ enabled, totalBytes, usedBytes, expireSeconds }, nowMs = Date.now()) {
+    const expired = expireSeconds > 0 && expireSeconds * 1000 <= nowMs;
+    const quotaExhausted = totalBytes > 0 && usedBytes >= totalBytes;
+
+    // Show the most useful reason first. 3x-ui may disable a client after
+    // expiration/quota exhaustion, so those explicit conditions take priority.
+    if (expired) return 'expired';
+    if (quotaExhausted) return 'outOfData';
+    if (!enabled) return 'inactive';
+    if (totalBytes === 0) return 'unlimited';
+    return 'active';
+}
+
+function getStateClass(state) {
+    return {
+        active: 'status-active',
+        unlimited: 'status-unlimited',
+        inactive: 'status-inactive',
+        expired: 'status-expired',
+        outOfData: 'status-out-of-data'
+    }[state] || 'status-inactive';
+}
+
+function renderOverview() {
+    const data = readRawData();
+    const state = deriveSubscriptionState(data);
+    const unlimitedData = data.totalBytes === 0;
+    const remaining = unlimitedData ? null : Math.max(0, data.totalBytes - data.usedBytes);
+    const remainingFormatted = remaining === null ? null : formatBytes(remaining);
+    const usedFormatted = formatBytes(data.usedBytes);
+    const days = getDaysRemaining(data.expireSeconds);
+
+    document.getElementById('hero-rem-val').textContent = remainingFormatted ? remainingFormatted.value : '∞';
+    document.getElementById('hero-rem-unit').textContent = remainingFormatted ? remainingFormatted.unit : '';
+    document.getElementById('detail-used').textContent = usedFormatted.text;
+    document.getElementById('days-left').textContent = days === null
+        ? '∞'
+        : new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US').format(days);
+
+    const hero = document.querySelector('.hero-card');
+    if (hero) hero.dataset.state = state;
+
+    const badge = document.getElementById('status-badge');
+    badge.dataset.i18n = state;
+    badge.textContent = t(state);
+    badge.className = `status-badge ${getStateClass(state)}`;
+    document.getElementById('detail-status').textContent = t(state);
+
+    document.getElementById('detail-total').textContent = unlimitedData ? t('unlimited') : formatBytes(data.totalBytes).text;
+    document.getElementById('detail-upload').textContent = formatBytes(data.uploadBytes).text;
+    document.getElementById('detail-download').textContent = formatBytes(data.downloadBytes).text;
+    document.getElementById('detail-expiry').textContent = formatExpiry(data.expireSeconds);
+
+    const progress = document.getElementById('progress-bar');
+    progress.className = 'progress-fill';
+    const progressTrack = progress.parentElement;
+    progressTrack?.classList.remove('is-unlimited');
+
+    if (unlimitedData) {
+        progressTrack?.classList.add('is-unlimited');
+        progress.style.inlineSize = '0%';
+        progressTrack?.removeAttribute('aria-valuenow');
+        progressTrack?.setAttribute('aria-valuetext', t('unlimited'));
+        return;
+    }
+
+    const percent = Math.min(100, data.totalBytes > 0 ? (data.usedBytes / data.totalBytes) * 100 : 0);
+    progress.style.inlineSize = `${percent}%`;
+    progressTrack?.setAttribute('aria-valuenow', String(Math.round(percent)));
+    progressTrack?.setAttribute('aria-valuetext', `${Math.round(percent)}%`);
+    if (percent >= 90) progress.classList.add('is-danger');
+    else if (percent >= 75) progress.classList.add('is-warning');
+}
+
+function initAvatar() {
+    const name = document.getElementById('display-name')?.textContent.trim() || '';
+    const avatar = document.getElementById('user-avatar');
+    if (avatar && name) avatar.textContent = name.charAt(0).toUpperCase();
+}
+
+function getRawLinks() {
+    return Array.from(document.querySelectorAll('#raw-links-container .raw-link'))
+        .map((node) => node.textContent.trim())
+        .filter(Boolean);
+}
+
+const PROTOCOL_META = Object.freeze({
+    vless: { label: 'VLESS', badge: 'VL' },
+    vmess: { label: 'VMess', badge: 'VM' },
+    trojan: { label: 'Trojan', badge: 'TR' },
+    ss: { label: 'Shadowsocks', badge: 'SS' },
+    shadowsocks: { label: 'Shadowsocks', badge: 'SS' },
+    hysteria2: { label: 'Hysteria2', badge: 'H2' },
+    hy2: { label: 'Hysteria2', badge: 'H2' },
+    tuic: { label: 'TUIC', badge: 'TU' },
+    wireguard: { label: 'WireGuard', badge: 'WG' },
+    socks: { label: 'SOCKS', badge: 'SO' },
+    http: { label: 'HTTP', badge: 'HT' },
+    https: { label: 'HTTPS', badge: 'HS' }
+});
+
+function normalizeProtocol(protocol) {
+    return String(protocol || 'vpn').toLowerCase().replace(/[^a-z0-9-]/g, '') || 'vpn';
+}
+
+function getConfigMeta(link, index) {
+    let name = `${t('config')} ${index + 1}`;
+    let protocol = 'vpn';
+    try {
+        const hashIndex = link.indexOf('#');
+        if (hashIndex >= 0 && hashIndex < link.length - 1) {
+            name = decodeURIComponent(link.slice(hashIndex + 1));
+        }
+        const protocolIndex = link.indexOf('://');
+        if (protocolIndex > 0) protocol = link.slice(0, protocolIndex).toLowerCase();
+    } catch (_) {}
+
+    const normalized = normalizeProtocol(protocol);
+    const meta = PROTOCOL_META[normalized] || {
+        label: normalized.toUpperCase(),
+        badge: normalized.slice(0, 2).toUpperCase()
+    };
+    return { name, protocol: normalized, protocolLabel: meta.label, protocolBadge: meta.badge };
+}
+
+function createConfigButton({ action, label, className, link, name }) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = className;
+    button.dataset.configAction = action;
+    button.dataset.link = link;
+    button.dataset.name = name;
+    button.textContent = label;
+    button.setAttribute('aria-label', `${label}: ${name}`);
+    return button;
+}
+
+function renderConfigs() {
+    const container = document.getElementById('configs-container');
+    if (!container) return;
+    const links = getRawLinks();
+    const countBadge = document.getElementById('config-count');
+    const formattedCount = new Intl.NumberFormat(currentLang === 'fa' ? 'fa-IR' : 'en-US').format(links.length);
+    countBadge.textContent = formattedCount;
+    countBadge.setAttribute('aria-label', `${t('configsCount')}: ${formattedCount}`);
+    container.replaceChildren();
+
+    if (!links.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state glass-pane';
+        empty.textContent = t('noConfigs');
+        container.append(empty);
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    links.forEach((link, index) => {
+        const { name, protocol, protocolLabel, protocolBadge } = getConfigMeta(link, index);
+        const card = document.createElement('article');
+        card.className = 'config-card glass-pane';
+
+        const identity = document.createElement('div');
+        identity.className = 'config-identity';
+
+        const badge = document.createElement('span');
+        badge.className = `protocol-badge protocol-${protocol}`;
+        badge.textContent = protocolBadge;
+        badge.title = protocolLabel;
+        badge.setAttribute('aria-label', `${t('protocol')}: ${protocolLabel}`);
+
+        const copy = document.createElement('div');
+        copy.className = 'config-copy';
+        const title = document.createElement('h3');
+        title.textContent = name;
+        title.title = name;
+        const protocolText = document.createElement('p');
+        protocolText.textContent = protocolLabel;
+        copy.append(title, protocolText);
+        identity.append(badge, copy);
+
+        const actions = document.createElement('div');
+        actions.className = 'config-actions';
+        const copyButton = createConfigButton({
+            action: 'copy',
+            label: t('copy'),
+            className: 'mini-button config-copy-button',
+            link,
+            name
+        });
+        const qrButton = createConfigButton({
+            action: 'qr',
+            label: 'QR',
+            className: 'mini-button mini-button-accent config-qr-button',
+            link,
+            name
+        });
+        qrButton.setAttribute('aria-label', `${t('showQr')}: ${name}`);
+        actions.append(copyButton, qrButton);
+        card.append(identity, actions);
+        fragment.append(card);
+    });
+    container.append(fragment);
+}
+
+const buttonResetTimers = new WeakMap();
+function showTemporaryButtonState(button, label, restoreLabel, duration = 1300) {
+    if (!button) return;
+    const existing = buttonResetTimers.get(button);
+    if (existing) window.clearTimeout(existing);
+    button.textContent = label;
+    button.classList.add('is-success');
+    const timer = window.setTimeout(() => {
+        button.textContent = restoreLabel;
+        button.classList.remove('is-success');
+        buttonResetTimers.delete(button);
+    }, duration);
+    buttonResetTimers.set(button, timer);
+}
+
+function initConfigActions() {
+    const container = document.getElementById('configs-container');
+    if (!container || container.dataset.actionsReady === 'true') return;
+    container.dataset.actionsReady = 'true';
+    container.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-config-action]');
+        if (!button || !container.contains(button)) return;
+        const action = button.dataset.configAction;
+        const link = button.dataset.link || '';
+        const name = button.dataset.name || t('config');
+        if (action === 'copy') {
+            const success = await copyToClipboard(link, t('configCopied'));
+            if (success) showTemporaryButtonState(button, t('copied'), t('copy'));
+        } else if (action === 'qr') {
+            showQr(link, name);
+        }
+    });
+}
+
+async function copyToClipboard(text, message) {
+    if (!text) return false;
+    try {
+        if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text);
+        } else {
+            fallbackCopy(text);
+        }
+        showToast(message || t('copied'));
+        return true;
+    } catch (_) {
+        try {
+            fallbackCopy(text);
+            showToast(message || t('copied'));
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+}
+
+function fallbackCopy(text) {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.readOnly = true;
+    area.style.position = 'fixed';
+    area.style.insetInlineStart = '-9999px';
+    document.body.append(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+}
+
+let toastTimer = null;
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = message;
+    toast.hidden = false;
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => { toast.hidden = true; }, 1900);
+}
+
+let activeQrLink = '';
+let qrReturnFocus = null;
+async function showQr(link, name) {
+    const dialog = document.getElementById('qr-dialog');
+    const canvas = document.getElementById('qr-canvas');
+    if (!dialog || !canvas) return;
+    let QrConstructor = globalThis.QRious;
+    if (!QrConstructor) {
+        try {
+            QrConstructor = await globalThis.HyperSentryVendors?.loadQrLibrary();
+        } catch (_) {
+            showToast(t('qrUnavailable'));
+            return;
+        }
+    }
+
+    activeQrLink = link;
+    qrReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const { protocolLabel } = getConfigMeta(link, 0);
+    document.getElementById('qr-title').textContent = name;
+    const meta = document.getElementById('qr-meta');
+    if (meta) meta.textContent = protocolLabel;
+    new QrConstructor({ element: canvas, value: link, size: 220, background: '#ffffff', foreground: '#06111d' });
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+    window.requestAnimationFrame(() => document.getElementById('qr-copy')?.focus());
+}
+
+function closeQr() {
+    const dialog = document.getElementById('qr-dialog');
+    if (!dialog) return;
+    if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+    else dialog.removeAttribute('open');
+    activeQrLink = '';
+    const returnTarget = qrReturnFocus;
+    qrReturnFocus = null;
+    if (returnTarget?.isConnected) window.requestAnimationFrame(() => returnTarget.focus());
+}
+
+function initActions() {
+    const copySubscription = document.getElementById('copy-subscription');
+    copySubscription?.addEventListener('click', async () => {
+        const success = await copyToClipboard(copySubscription.dataset.subUrl, t('linkCopied'));
+        if (success) showTemporaryButtonState(copySubscription, t('copied'), t('copySubscriptionLink'));
+    });
+
+    document.getElementById('qr-copy')?.addEventListener('click', async (event) => {
+        const success = await copyToClipboard(activeQrLink, t('configCopied'));
+        if (success) showTemporaryButtonState(event.currentTarget, t('copied'), t('copyConfig'));
+    });
+    document.getElementById('qr-close')?.addEventListener('click', closeQr);
+    document.getElementById('qr-close-bottom')?.addEventListener('click', closeQr);
+    const qrDialog = document.getElementById('qr-dialog');
+    qrDialog?.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeQr();
+    });
+    qrDialog?.addEventListener('click', (event) => {
+        if (event.target === qrDialog) closeQr();
+    });
+    initConfigActions();
+}
+
+if (hasDocument) {
+    document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        initAvatar();
+        initActions();
+        initLanguage();
+    });
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { I18N, deriveSubscriptionState, getDaysRemaining };
+}
+
+    </script>
 </head>
 <body>
     <a class="skip-link" href="#main-content" data-i18n="skipToContent">Skip to content</a>
@@ -51,17 +1714,7 @@
     <main id="main-content" class="container" tabindex="-1">
         <header class="topbar glass-pane">
             <a class="brand" href="https://github.com/power0matin/p0wTemplate" target="_blank" rel="noopener noreferrer" aria-label="HyperSentry · p0wTemplate">
-                <svg class="brand-shield" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M12 2 4 5v6c0 5.2 3.4 9.8 8 11 4.6-1.2 8-5.8 8-11V5l-8-3Z" fill="url(#shieldGrad)" stroke="currentColor" stroke-width=".75"/>
-                    <rect x="9.3" y="11" width="5.4" height="4.2" rx="1" fill="#041520"/>
-                    <path d="M10.3 11V9.6a1.7 1.7 0 0 1 3.4 0V11" stroke="#041520" stroke-width="1.1" stroke-linecap="round"/>
-                    <defs>
-                        <linearGradient id="shieldGrad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
-                            <stop offset="0" stop-color="#6fb3e0"/>
-                            <stop offset="1" stop-color="#16273a"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
+                <img class="brand-logo" src="data:image/webp;base64,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" alt="" width="44" height="44" decoding="async">
                 <span class="brand-name">{{ if .subTitle }}{{ .subTitle }}{{ else }}HyperSentry{{ end }}</span>
             </a>
 

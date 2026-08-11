@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="theme-dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>HyperSentry - Subscription</title>
+    <style id="hyper-sentry-styles">
+@@HYPER_SENTRY_CSS@@
+    </style>
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('hyper-sentry-theme');
+                if (!theme) {
+                    theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+                        ? 'theme-light'
+                        : 'theme-dark';
+                }
+                document.documentElement.className = theme;
+
+                var lang = localStorage.getItem('p0wtemplate-lang') || localStorage.getItem('neo-lang') || 'en';
+                lang = lang === 'fa' ? 'fa' : 'en';
+                document.documentElement.lang = lang;
+                document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+            } catch (_) {}
+        })();
+    </script>
+    <script id="hyper-sentry-vendor">
+@@HYPER_SENTRY_VENDOR_JS@@
+    </script>
+    <script id="hyper-sentry-i18n">
+@@HYPER_SENTRY_I18N_JS@@
+    </script>
+    <script id="hyper-sentry-app">
+@@HYPER_SENTRY_APP_JS@@
+    </script>
+</head>
+<body>
+    <a class="skip-link" href="#main-content" data-i18n="skipToContent">Skip to content</a>
+    <div class="ambient-bg" aria-hidden="true"></div>
+    <div class="facet-grid" aria-hidden="true"></div>
+    <div class="scan-line" aria-hidden="true"></div>
+
+    <div id="raw-data"
+         hidden
+         data-up="{{ .uploadByte }}"
+         data-down="{{ .downloadByte }}"
+         data-total="{{ .totalByte }}"
+         data-expire="{{ .expire }}"
+         data-enabled="{{ .enabled }}"></div>
+
+    <div id="raw-links-container" hidden>
+        {{ range .links }}
+        <div class="raw-link">{{ . }}</div>
+        {{ end }}
+    </div>
+
+    <main id="main-content" class="container" tabindex="-1">
+        <header class="topbar glass-pane">
+            <a class="brand" href="https://github.com/power0matin/p0wTemplate" target="_blank" rel="noopener noreferrer" aria-label="HyperSentry · p0wTemplate">
+                <img class="brand-logo" src="@@HYPER_SENTRY_LOGO_DATA@@" alt="" width="44" height="44" decoding="async">
+                <span class="brand-name">{{ if .subTitle }}{{ .subTitle }}{{ else }}HyperSentry{{ end }}</span>
+            </a>
+
+            <div class="topbar-actions">
+                {{ if .subSupportUrl }}
+                <a class="icon-action support-action" href="{{ .subSupportUrl }}" target="_blank" rel="noopener noreferrer" data-i18n-aria-label="support">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg>
+                    <span data-i18n="support">Support</span>
+                </a>
+                {{ end }}
+                <button id="lang-toggle" class="icon-action compact-action" type="button" aria-label="Switch language">FA</button>
+                <button id="theme-toggle" class="icon-action compact-action" type="button" aria-label="Toggle theme">
+                    <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+                    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <section class="account-card glass-pane" aria-labelledby="account-heading">
+            <div class="account-avatar" id="user-avatar" aria-hidden="true">N</div>
+            <div class="account-copy">
+                <p id="account-heading" class="eyebrow" data-i18n="account">Account</p>
+                <p id="display-name" class="account-name">{{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e }}{{ end }}{{ end }}</p>
+            </div>
+        </section>
+
+        <section class="hero-card glass-pane facet-corner" aria-labelledby="remaining-heading">
+            <div class="hero-header">
+                <div>
+                    <p class="eyebrow" id="remaining-heading" data-i18n="remainingData">Remaining Data</p>
+                    <div class="hero-value-row">
+                        <span id="hero-rem-val" class="hero-value">-</span>
+                        <span id="hero-rem-unit" class="hero-unit"></span>
+                    </div>
+                </div>
+                <span id="status-badge" class="status-badge status-active" data-i18n="active" role="status" aria-live="polite">Active</span>
+            </div>
+
+            <div class="progress-block">
+                <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-i18n-aria-label="dataUsage">
+                    <div class="progress-fill" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <div class="hero-time-card">
+                <span class="hero-stat-label" data-i18n="daysRemaining">Days Remaining</span>
+                <strong class="hero-stat-value" id="days-left">-</strong>
+            </div>
+        </section>
+
+        <section class="quick-access glass-pane" aria-labelledby="quick-access-heading">
+            <div class="section-heading-row">
+                <div>
+                    <p class="eyebrow" data-i18n="subscription">Subscription</p>
+                    <h2 id="quick-access-heading" data-i18n="quickAccess">Quick Access</h2>
+                </div>
+            </div>
+            <div class="action-grid">
+                <button id="copy-subscription" class="action-button action-primary" type="button" data-sub-url="{{ .subUrl }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span data-i18n="copySubscriptionLink">Copy Subscription Link</span>
+                </button>
+                <a class="action-button" href="v2rayng://install-sub?url={{ .subUrl | urlquery }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e | urlquery }}{{ end }}{{ end }}">
+                    <span class="app-badge">V</span>
+                    <span data-i18n="addToV2ray">Add to V2RayNG / v2rayN</span>
+                </a>
+                <a class="action-button" href="v2ray://install-sub?url={{ .subUrl | urlquery }}&name={{ range $i, $e := .emails }}{{ if eq $i 0 }}{{ $e | urlquery }}{{ end }}{{ end }}">
+                    <span class="app-badge">S</span>
+                    <span data-i18n="addToShadowrocket">Add to Shadowrocket / iOS</span>
+                </a>
+            </div>
+        </section>
+
+        <details class="details-card glass-pane" id="subscription-details">
+            <summary>
+                <span data-i18n="subscriptionDetails">Subscription Details</span>
+                <svg class="details-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="details-content">
+                <div class="detail-row"><span data-i18n="status">Status</span><strong id="detail-status">-</strong></div>
+                <div class="detail-row"><span data-i18n="usedData">Used Data</span><strong id="detail-used">-</strong></div>
+                <div class="detail-row"><span data-i18n="totalData">Total Data</span><strong id="detail-total">-</strong></div>
+                <div class="detail-row"><span data-i18n="uploaded">Uploaded</span><strong id="detail-upload">-</strong></div>
+                <div class="detail-row"><span data-i18n="downloaded">Downloaded</span><strong id="detail-download">-</strong></div>
+                <div class="detail-row"><span data-i18n="expires">Expires</span><strong id="detail-expiry">-</strong></div>
+            </div>
+        </details>
+
+        <section class="configs-section" aria-labelledby="configs-heading">
+            <div class="section-heading-row configs-heading-row">
+                <div>
+                    <p class="eyebrow" data-i18n="connection">Connection</p>
+                    <h2 id="configs-heading" data-i18n="configs">Configs</h2>
+                </div>
+                <span id="config-count" class="count-badge" aria-live="polite">0</span>
+            </div>
+            <div id="configs-container" class="configs-list"></div>
+        </section>
+
+        <footer class="footer">
+            <a href="https://github.com/power0matin/p0wTemplate" target="_blank" rel="noopener noreferrer">HyperSentry · p0wTemplate</a>
+        </footer>
+    </main>
+
+    <dialog id="qr-dialog" class="qr-dialog" aria-labelledby="qr-title" aria-describedby="qr-meta" aria-modal="true">
+        <div class="qr-dialog-card glass-pane">
+            <div class="qr-dialog-header">
+                <div>
+                    <p class="eyebrow" data-i18n="qrCode">QR Code</p>
+                    <h2 id="qr-title">Config</h2>
+                    <p id="qr-meta" class="qr-meta">VPN</p>
+                </div>
+                <button id="qr-close" class="icon-action compact-action" type="button" data-i18n-aria-label="close">×</button>
+            </div>
+            <div class="qr-canvas-wrap"><canvas id="qr-canvas" aria-hidden="true"></canvas></div>
+            <div class="qr-dialog-actions">
+                <button id="qr-copy" class="action-button action-primary" type="button" data-i18n="copyConfig">Copy config</button>
+                <button id="qr-close-bottom" class="action-button" type="button" data-i18n="close">Close</button>
+            </div>
+        </div>
+    </dialog>
+
+    <div id="toast" class="toast glass-pane" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
