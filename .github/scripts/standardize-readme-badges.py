@@ -8,7 +8,10 @@ is_private = os.environ.get("REPO_PRIVATE", "false").lower() == "true"
 preferred = [Path("README.md"), Path("Readme.md"), Path("readme.md")]
 readme = next((p for p in preferred if p.exists()), None)
 if readme is None:
-    candidates = sorted(p for p in Path(".").iterdir() if p.is_file() and p.name.lower().startswith("readme"))
+    candidates = sorted(
+        p for p in Path(".").iterdir()
+        if p.is_file() and p.name.lower().startswith("readme")
+    )
     readme = candidates[0] if candidates else Path("README.md")
 
 text = readme.read_text(encoding="utf-8") if readme.exists() else f"# {repo}\n"
@@ -33,16 +36,31 @@ else:
 lines.extend(["</p>", "<!-- repo-badges:end -->"])
 block = "\n".join(lines)
 
-marker = re.compile(r"<!-- repo-badges:start -->.*?<!-- repo-badges:end -->", re.S)
-if marker.search(text):
-    text = marker.sub(block, text, count=1)
-else:
-    text = re.sub(r"^.*komarev\.com/ghpvc/.*\n?", "", text, flags=re.M)
-    html_h1 = re.search(r"</h1>\s*", text, flags=re.I)
-    md_h1 = re.search(r"^#\s+.+$", text, flags=re.M)
-    pos = html_h1.end() if html_h1 else (md_h1.end() if md_h1 else 0)
-    prefix = text[:pos].rstrip()
-    suffix = text[pos:].lstrip("\n")
-    text = f"{prefix}\n\n{block}\n\n{suffix}" if prefix else f"{block}\n\n{suffix}"
+# Always remove a previous standardized block before positioning it again.
+# This repairs older runs that may have inserted the block next to an <h1>
+# appearing later inside a fenced code example.
+text = re.sub(
+    r"\n?<!-- repo-badges:start -->.*?<!-- repo-badges:end -->\n?",
+    "\n",
+    text,
+    count=1,
+    flags=re.S,
+)
+
+# Remove obsolete view counters so the README has a single source of truth.
+text = re.sub(r"^.*komarev\.com/ghpvc/.*\n?", "", text, flags=re.M)
+text = re.sub(r"^.*badges\.strrl\.dev/visits/.*\n?", "", text, flags=re.M)
+
+# Find the actual top-level title. If Markdown and HTML h1 headings both
+# exist, pick whichever appears first in the document instead of blindly
+# preferring any later HTML h1 (which may be inside a code sample).
+html_h1 = re.search(r"<h1\b[^>]*>.*?</h1>\s*", text, flags=re.I | re.S)
+md_h1 = re.search(r"^#\s+.+$", text, flags=re.M)
+headings = [m for m in (html_h1, md_h1) if m]
+pos = min(headings, key=lambda m: m.start()).end() if headings else 0
+
+prefix = text[:pos].rstrip()
+suffix = text[pos:].lstrip("\n")
+text = f"{prefix}\n\n{block}\n\n{suffix}" if prefix else f"{block}\n\n{suffix}"
 
 readme.write_text(text.rstrip() + "\n", encoding="utf-8")
