@@ -8,6 +8,8 @@ const hasDocument = typeof document !== 'undefined';
 let currentLang = hasDocument && document.documentElement.lang === 'fa' ? 'fa' : 'en';
 let cachedRawData = null;
 let liveRefreshTimer = null;
+let liveRefreshController = null;
+let liveRefreshVisibilityHandler = null;
 let liveRefreshInFlight = false;
 let lastLiveRefreshAt = 0;
 let liveRefreshFailures = 0;
@@ -311,6 +313,7 @@ async function refreshLiveInfo() {
     liveRefreshInFlight = true;
     updateLiveRefreshStatus('refreshing');
     const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    liveRefreshController = controller;
     const timeout = controller ? window.setTimeout(() => controller.abort(), LIVE_REFRESH_TIMEOUT_MS) : null;
     try {
         const response = await fetch(buildLiveInfoUrl(), {
@@ -334,21 +337,38 @@ async function refreshLiveInfo() {
         return false;
     } finally {
         if (timeout) window.clearTimeout(timeout);
+        if (liveRefreshController === controller) liveRefreshController = null;
         liveRefreshInFlight = false;
+    }
+}
+
+function stopLiveRefresh() {
+    if (liveRefreshTimer) {
+        window.clearInterval(liveRefreshTimer);
+        liveRefreshTimer = null;
+    }
+    if (liveRefreshVisibilityHandler) {
+        document.removeEventListener('visibilitychange', liveRefreshVisibilityHandler);
+        liveRefreshVisibilityHandler = null;
+    }
+    if (liveRefreshController) {
+        liveRefreshController.abort();
+        liveRefreshController = null;
     }
 }
 
 function initLiveRefresh() {
     if (!hasDocument || typeof fetch !== 'function') return;
-    if (liveRefreshTimer) window.clearInterval(liveRefreshTimer);
+    stopLiveRefresh();
     liveRefreshTimer = window.setInterval(() => {
         if (document.visibilityState === 'visible') refreshLiveInfo();
     }, LIVE_REFRESH_INTERVAL_MS);
-    document.addEventListener('visibilitychange', () => {
+    liveRefreshVisibilityHandler = () => {
         if (document.visibilityState === 'visible' && Date.now() - lastLiveRefreshAt > LIVE_REFRESH_INTERVAL_MS) {
             refreshLiveInfo();
         }
-    });
+    };
+    document.addEventListener('visibilitychange', liveRefreshVisibilityHandler);
 }
 
 function renderOverview() {
@@ -714,6 +734,10 @@ if (hasDocument) {
         initActions();
         initLanguage();
         initLiveRefresh();
+        window.addEventListener('pagehide', stopLiveRefresh);
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) initLiveRefresh();
+        });
     });
 }
 

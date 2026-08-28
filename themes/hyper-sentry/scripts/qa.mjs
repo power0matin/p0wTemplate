@@ -45,6 +45,7 @@ check(index.includes('class="support-card glass-pane"'), 'customer-care support 
 check(index.includes('config-skeleton') && css.includes('hs-skeleton-shimmer'), 'skeleton loading is present');
 check(appSource.includes("format', 'info'") && appSource.includes('refreshLiveInfo'), 'live refresh uses the 3x-ui info endpoint');
 check(appSource.includes("document.visibilityState === 'visible'"), 'live refresh pauses while the page is hidden');
+check(appSource.includes('stopLiveRefresh') && appSource.includes("removeEventListener('visibilitychange'"), 'live refresh timers and listeners have an explicit cleanup path');
 check(index.includes('id="qr-canvas-shell"') && index.includes('id="qr-brand-logo"'), 'premium QR presentation is present');
 check(appSource.includes("level: 'H'") && appSource.includes('padding: 24') && appSource.includes('size: 512'), 'QR rendering uses high error correction and crisp sizing');
 

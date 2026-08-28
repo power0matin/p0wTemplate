@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr" class="theme-dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="color-scheme" content="dark light">
     <title>HyperSentry - Subscription</title>
     <style id="hyper-sentry-styles">
@@ -59,6 +59,7 @@
     --shadow-md: 0 14px 42px rgba(2, 8, 16, 0.3);
     --shadow-glow: 0 0 28px rgba(94, 224, 255, 0.13);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-fast: 160ms;
     --font-latin: 'Manrope', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-fa: 'Vazirmatn', Tahoma, system-ui, sans-serif;
 }
@@ -100,6 +101,7 @@ html {
 
 body {
     min-height: 100vh;
+    min-height: 100svh;
     margin: 0;
     background: var(--page-bg);
     color: var(--text-main);
@@ -192,9 +194,16 @@ summary:focus-visible {
 }
 
 .container {
+    --container-pad-inline: 20px;
+    --container-pad-top: 24px;
+    --container-pad-bottom: 48px;
     inline-size: min(100%, 660px);
     margin-inline: auto;
-    padding: 24px 20px 48px;
+    padding: var(--container-pad-top) var(--container-pad-inline) var(--container-pad-bottom);
+    padding-block-start: max(var(--container-pad-top), env(safe-area-inset-top, 0px));
+    padding-block-end: max(var(--container-pad-bottom), env(safe-area-inset-bottom, 0px));
+    padding-left: max(var(--container-pad-inline), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--container-pad-inline), env(safe-area-inset-right, 0px));
 }
 
 .glass-pane {
@@ -786,6 +795,9 @@ summary:focus-visible {
 }
 
 .footer a {
+    min-block-size: 44px;
+    display: inline-flex;
+    align-items: center;
     color: var(--text-faint);
     text-decoration: none;
     font-family: var(--font-latin);
@@ -885,7 +897,9 @@ summary:focus-visible {
 
 @media (max-width: 520px) {
     .container {
-        padding: 16px 12px 36px;
+        --container-pad-inline: 12px;
+        --container-pad-top: 16px;
+        --container-pad-bottom: 36px;
     }
 
     .topbar {
@@ -898,7 +912,7 @@ summary:focus-visible {
     }
 
     .support-action {
-        inline-size: 38px;
+        inline-size: 44px;
         padding-inline: 0;
     }
 
@@ -925,6 +939,7 @@ summary:focus-visible {
 
     .mini-button {
         flex: 1 1 0;
+        min-block-size: 44px;
     }
 }
 
@@ -974,6 +989,7 @@ summary:focus-visible {
     inset-inline-start: 10px;
     z-index: 2000;
     padding: 9px 13px;
+    min-block-size: 44px;
     border-radius: 10px;
     background: var(--bg-deep);
     color: var(--text-main);
@@ -1020,6 +1036,24 @@ summary:focus-visible {
 
     .qr-dialog::backdrop {
         backdrop-filter: blur(4px);
+    }
+
+}
+
+@media (max-width: 1024px), (pointer: coarse) {
+    .brand,
+    .icon-action,
+    .support-button {
+        min-block-size: 44px;
+    }
+
+    .compact-action,
+    .support-action {
+        inline-size: 44px;
+    }
+
+    .mini-button {
+        min-block-size: 44px;
     }
 }
 
@@ -1616,7 +1650,7 @@ body {
 }
 
 .support-button {
-    min-block-size: 40px;
+    min-block-size: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1682,6 +1716,10 @@ body {
 /* QR is deliberately clean and high contrast for reliable scanning. */
 .qr-dialog {
     inline-size: min(calc(100% - 28px), 410px);
+    max-block-size: calc(100vh - 24px);
+    max-block-size: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .qr-dialog-card {
@@ -1883,13 +1921,17 @@ body {
 
 @media (max-width: 560px) {
     .account-card {
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        column-gap: 14px;
+        row-gap: 10px;
     }
 
     .connection-status {
+        grid-column: 2;
         inline-size: 100%;
         max-inline-size: none;
-        margin-inline-start: 60px;
+        margin-inline-start: 0;
     }
 
     .service-summary {
@@ -1907,6 +1949,34 @@ body {
     .support-button {
         grid-column: 1 / -1;
         inline-size: 100%;
+    }
+}
+
+@media (max-height: 560px) {
+    .qr-dialog {
+        max-block-size: calc(100vh - 16px);
+        max-block-size: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    }
+
+    .qr-dialog-card {
+        padding-block: 16px;
+    }
+
+    .qr-brand-logo {
+        inline-size: 40px;
+        block-size: 40px;
+    }
+
+    .qr-canvas-shell {
+        margin-block: 12px 9px;
+    }
+
+    #qr-canvas {
+        inline-size: min(42dvh, 64vw, 200px);
+    }
+
+    .qr-help {
+        margin-block-end: 12px;
     }
 }
 
@@ -2199,6 +2269,8 @@ const hasDocument = typeof document !== 'undefined';
 let currentLang = hasDocument && document.documentElement.lang === 'fa' ? 'fa' : 'en';
 let cachedRawData = null;
 let liveRefreshTimer = null;
+let liveRefreshController = null;
+let liveRefreshVisibilityHandler = null;
 let liveRefreshInFlight = false;
 let lastLiveRefreshAt = 0;
 let liveRefreshFailures = 0;
@@ -2502,6 +2574,7 @@ async function refreshLiveInfo() {
     liveRefreshInFlight = true;
     updateLiveRefreshStatus('refreshing');
     const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    liveRefreshController = controller;
     const timeout = controller ? window.setTimeout(() => controller.abort(), LIVE_REFRESH_TIMEOUT_MS) : null;
     try {
         const response = await fetch(buildLiveInfoUrl(), {
@@ -2525,21 +2598,38 @@ async function refreshLiveInfo() {
         return false;
     } finally {
         if (timeout) window.clearTimeout(timeout);
+        if (liveRefreshController === controller) liveRefreshController = null;
         liveRefreshInFlight = false;
+    }
+}
+
+function stopLiveRefresh() {
+    if (liveRefreshTimer) {
+        window.clearInterval(liveRefreshTimer);
+        liveRefreshTimer = null;
+    }
+    if (liveRefreshVisibilityHandler) {
+        document.removeEventListener('visibilitychange', liveRefreshVisibilityHandler);
+        liveRefreshVisibilityHandler = null;
+    }
+    if (liveRefreshController) {
+        liveRefreshController.abort();
+        liveRefreshController = null;
     }
 }
 
 function initLiveRefresh() {
     if (!hasDocument || typeof fetch !== 'function') return;
-    if (liveRefreshTimer) window.clearInterval(liveRefreshTimer);
+    stopLiveRefresh();
     liveRefreshTimer = window.setInterval(() => {
         if (document.visibilityState === 'visible') refreshLiveInfo();
     }, LIVE_REFRESH_INTERVAL_MS);
-    document.addEventListener('visibilitychange', () => {
+    liveRefreshVisibilityHandler = () => {
         if (document.visibilityState === 'visible' && Date.now() - lastLiveRefreshAt > LIVE_REFRESH_INTERVAL_MS) {
             refreshLiveInfo();
         }
-    });
+    };
+    document.addEventListener('visibilitychange', liveRefreshVisibilityHandler);
 }
 
 function renderOverview() {
@@ -2905,6 +2995,10 @@ if (hasDocument) {
         initActions();
         initLanguage();
         initLiveRefresh();
+        window.addEventListener('pagehide', stopLiveRefresh);
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) initLiveRefresh();
+        });
     });
 }
 

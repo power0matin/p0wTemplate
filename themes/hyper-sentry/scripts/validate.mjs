@@ -60,6 +60,7 @@ check(template.includes('class="support-card glass-pane"'), 'customer-care suppo
 check(template.includes('config-skeleton') && css.includes('hs-skeleton-shimmer'), 'skeleton loading UI is required');
 check(app.includes("format', 'info'") && app.includes('LIVE_REFRESH_INTERVAL_MS') && app.includes('refreshLiveInfo'), 'live refresh via ?format=info is required');
 check(app.includes("document.visibilityState === 'visible'"), 'live polling must pause while the tab is hidden');
+check(app.includes('stopLiveRefresh') && app.includes("removeEventListener('visibilitychange'"), 'live refresh timers and listeners must be cleaned up');
 check(template.includes('id="qr-canvas-shell"') && template.includes('id="qr-brand-logo"'), 'premium QR shell and brand mark are required');
 check(app.includes("level: 'H'") && app.includes('padding: 24') && app.includes('size: 512'), 'QR output must use high error correction, padding and high-resolution rendering');
 check(!template.includes('qr-close-bottom'), 'QR dialog must keep only one close control');
