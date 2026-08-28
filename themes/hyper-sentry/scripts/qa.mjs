@@ -23,7 +23,7 @@ const css = await readFile(resolve(root, 'assets/css/main.css'), 'utf8');
 const manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8'));
 
 check(index === sub, 'index.html and sub.html are synchronized');
-check(manifest.version === '1.3.4', 'manifest release version is 1.3.4');
+check(manifest.version === '1.3.5', 'manifest release version is 1.3.5');
 check(index.indexOf('id="hyper-sentry-vendor"') < index.indexOf('id="hyper-sentry-i18n"') && index.indexOf('id="hyper-sentry-i18n"') < index.indexOf('id="hyper-sentry-app"'), 'inline scripts load in deterministic order');
 check(index.includes('<style id="hyper-sentry-styles">'), 'production CSS is inlined for 3x-ui compatibility');
 check(!/\b(?:src|href)=["']assets\//.test(index), 'production HTML has no relative theme asset references');

@@ -2,7 +2,7 @@
   "id": "hyper-sentry",
   "type": "theme",
   "name": "HyperSentry",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "author": "power0matin",
   "description": "Signature deep-navy subscription experience with human service status, connection history, smart limit alerts, live refresh, skeleton loading, premium QR UX, and self-contained 3x-ui rendering.",
   "features": [
