@@ -125,9 +125,10 @@ const runtimeHarness = String.raw`
         Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async () => {} } });
     } catch (_) {}
 
-    document.addEventListener('DOMContentLoaded', () => setTimeout(async () => {
+    const runRuntimeQa = () => setTimeout(async () => {
         const issues = [];
         const assert = (condition, message) => { if (!condition) issues.push(message); };
+        try {
         const now = Date.now();
         const MB = 1024 * 1024;
         const cases = [
@@ -210,7 +211,18 @@ const runtimeHarness = String.raw`
         assert(document.querySelector('[role="progressbar"]') !== null, 'progressbar');
         assert(document.getElementById('toast').getAttribute('aria-live') === 'polite', 'toast-live');
 
-        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        await new Promise((resolve) => {
+            let settled = false;
+            const settle = () => {
+                if (settled) return;
+                settled = true;
+                resolve();
+            };
+            if (typeof requestAnimationFrame === 'function') {
+                requestAnimationFrame(() => requestAnimationFrame(settle));
+            }
+            setTimeout(settle, 100);
+        });
         const viewportWidth = document.documentElement.clientWidth;
         const documentWidth = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
         assert(documentWidth <= viewportWidth + 1, 'horizontal-overflow:' + viewportWidth + ':' + documentWidth);
@@ -222,13 +234,30 @@ const runtimeHarness = String.raw`
             }
         }
 
+        } catch (error) {
+            issues.push('harness-error:' + (error?.stack || error));
+        }
         issues.push(...errors.map((error) => 'runtime-error:' + error));
         const result = document.createElement('div');
         result.id = 'qa-result';
         result.dataset.status = issues.length ? 'fail' : 'pass';
         result.textContent = issues.length ? issues.join('|') : 'PASS';
         document.body.append(result);
-    }, 0));
+    }, 0);
+    let runtimeQaScheduled = false;
+    const scheduleRuntimeQa = () => {
+        if (runtimeQaScheduled) return;
+        runtimeQaScheduled = true;
+        runRuntimeQa();
+    };
+    document.addEventListener('DOMContentLoaded', scheduleRuntimeQa, { once: true });
+    if (document.readyState !== 'loading') {
+        scheduleRuntimeQa();
+    } else {
+        // A dump-dom navigation can race the DOMContentLoaded task. Keep a
+        // bounded fallback so the matrix always emits a useful result.
+        setTimeout(scheduleRuntimeQa, 250);
+    }
 })();
 </script>`;
 
