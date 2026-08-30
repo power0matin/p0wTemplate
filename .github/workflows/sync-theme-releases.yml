@@ -1,0 +1,90 @@
+name: Validate and sync theme releases
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "themes/**"
+      - "theme-manager/**"
+      - "registry.json"
+      - "packages/**"
+      - ".github/workflows/sync-theme-releases.yml"
+
+  push:
+    branches: [main]
+    paths:
+      - "themes/**"
+      - "theme-manager/**"
+      - "registry.json"
+      - "packages/**"
+      - ".github/workflows/sync-theme-releases.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: theme-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install release dependencies
+        run: sudo apt-get update && sudo apt-get install -y jq zip unzip coreutils
+
+      - name: Verify browser QA runtime
+        run: command -v google-chrome || command -v chromium || command -v chromium-browser
+
+      - name: Build release artifacts in CI
+        run: bash theme-manager/scripts/sync-releases.sh --write
+
+      - name: Run comprehensive QA
+        run: bash theme-manager/qa.sh
+
+  sync-main:
+    if: github.event_name != 'pull_request' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install release dependencies
+        run: sudo apt-get update && sudo apt-get install -y jq zip unzip coreutils
+
+      - name: Verify browser QA runtime
+        run: command -v google-chrome || command -v chromium || command -v chromium-browser
+
+      - name: Build and synchronize release artifacts
+        run: bash theme-manager/scripts/sync-releases.sh --write
+
+      - name: Run comprehensive QA
+        run: bash theme-manager/qa.sh
+
+      - name: Commit generated release artifacts
+        shell: bash
+        run: |
+          git add registry.json packages/
+          if git diff --cached --quiet; then
+            echo "Release artifacts are already synchronized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(releases): sync generated theme packages"
+          git push

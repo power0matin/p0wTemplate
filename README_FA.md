@@ -41,7 +41,7 @@
 دستور زیر را در ترمینال سرور خود کپی و اجرا کنید:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/power0matin/p0wTemplate/main/theme-manager/install.sh)
+curl -fsSL https://raw.githubusercontent.com/power0matin/p0wTemplate/main/theme-manager/install.sh | sudo bash
 ```
 
 پس از نصب، این دستور را اجرا کنید:
@@ -51,6 +51,8 @@ p0wtemplate
 ```
 
 منوی مدیریت قالب‌ها باز می‌شود که می‌توانید قالب‌ها را مرور، نصب و به‌روزرسانی کنید.
+
+نصب‌کننده پیش از هر تغییری، بسته‌ی منتشرشده‌ی Theme Manager را با checksum از نوع SHA-256 موجود در `registry.json` اعتبارسنجی می‌کند.
 
 ### اعمال قالب
 
@@ -109,6 +111,24 @@ p0wTemplate/
 ۲. فایل `manifest.json` را با اطلاعات تم خود ویرایش کنید
 ۳. فایل‌های `assets/css/main.css` و `assets/js/app.js` را سفارشی کنید
 ۴. فایل‌های `index.html` و `sub.html` را با طرح خود به‌روز کنید
+
+
+## انتشار خودکار به‌روزرسانی Themeها
+
+محتوای پوشه‌ی `themes/` منبع اصلی توسعه است. نصب نهایی همچنان از ZIPهای immutable استفاده می‌کند تا هر نسخه قابل بازتولید و کنترل با checksum باشد، اما دیگر لازم نیست این فایل‌ها را دستی بسازید.
+
+۱. Theme را تغییر دهید و نسخه‌ی SemVer آن را در `manifest.json` افزایش دهید.
+۲. Changelog همان Theme را به‌روز کنید و تغییر سورس را روی شاخه‌ی `main` پوش کنید.
+۳. Workflow با نام **Sync theme releases** به‌صورت خودکار ZIP قطعی و قابل‌بازتولید می‌سازد، `registry.json` و SHA-256 را همگام می‌کند، QA کامل Manager و Theme را اجرا می‌کند و فایل‌های release را commit می‌کند.
+
+برای کنترل محلی بدون تغییر فایل‌های release:
+
+```bash
+bash theme-manager/scripts/sync-releases.sh --check
+bash theme-manager/qa.sh
+```
+
+برای آماده‌سازی محلی release از `--write` به‌جای `--check` استفاده کنید. انتشار نسخه‌ی جدید Theme Manager نیز به افزایش نسخه در `theme-manager/VERSION` نیاز دارد.
 
 
 ## پشتیبانی

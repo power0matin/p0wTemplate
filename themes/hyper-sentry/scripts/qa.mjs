@@ -1,4 +1,5 @@
 import { readFile, writeFile, rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
@@ -23,7 +24,7 @@ const css = await readFile(resolve(root, 'assets/css/main.css'), 'utf8');
 const manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8'));
 
 check(index === sub, 'index.html and sub.html are synchronized');
-check(manifest.version === '1.3.5', 'manifest release version is 1.3.5');
+check(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(manifest.version), 'manifest release version is valid SemVer');
 check(index.indexOf('id="hyper-sentry-vendor"') < index.indexOf('id="hyper-sentry-i18n"') && index.indexOf('id="hyper-sentry-i18n"') < index.indexOf('id="hyper-sentry-app"'), 'inline scripts load in deterministic order');
 check(index.includes('<style id="hyper-sentry-styles">'), 'production CSS is inlined for 3x-ui compatibility');
 check(!/\b(?:src|href)=["']assets\//.test(index), 'production HTML has no relative theme asset references');
@@ -209,6 +210,18 @@ const runtimeHarness = String.raw`
         assert(document.querySelector('[role="progressbar"]') !== null, 'progressbar');
         assert(document.getElementById('toast').getAttribute('aria-live') === 'polite', 'toast-live');
 
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const viewportWidth = document.documentElement.clientWidth;
+        const documentWidth = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
+        assert(documentWidth <= viewportWidth + 1, 'horizontal-overflow:' + viewportWidth + ':' + documentWidth);
+        for (const selector of ['.container', '.topbar', '.account-card', '.hero-card', '.quick-access', '.details-card', '.configs-section', '.support-card', '.footer']) {
+            for (const element of document.querySelectorAll(selector)) {
+                const rect = element.getBoundingClientRect();
+                if (!rect.width || !rect.height) continue;
+                assert(rect.left >= -1 && rect.right <= viewportWidth + 1, 'viewport-bounds:' + selector + ':' + Math.round(rect.left) + ':' + Math.round(rect.right));
+            }
+        }
+
         issues.push(...errors.map((error) => 'runtime-error:' + error));
         const result = document.createElement('div');
         result.id = 'qa-result';
@@ -226,24 +239,43 @@ await writeFile(fixturePath, fixture);
 if (process.env.P0W_QA_SKIP_BROWSER === '1') {
     console.log('SKIP: browser QA matrix (P0W_QA_SKIP_BROWSER=1)');
 } else {
-    const chromium = process.env.CHROMIUM || '/usr/bin/chromium';
-    const browser = spawnSync(chromium, [
-        '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
-        '--disable-background-networking', '--host-resolver-rules=MAP * 0.0.0.0',
-        '--allow-file-access-from-files', '--virtual-time-budget=3500', '--dump-dom',
-        `file://${fixturePath}`
-    ], { encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024 });
+    const chromiumCandidates = [
+        process.env.CHROMIUM,
+        '/usr/bin/chromium',
+        '/usr/bin/google-chrome',
+        '/usr/bin/google-chrome-stable',
+        '/usr/bin/chromium-browser'
+    ].filter(Boolean);
+    const chromium = chromiumCandidates.find((candidate) => existsSync(candidate));
+    check(Boolean(chromium), 'a Chromium-compatible browser is available');
 
-    const dom = browser.stdout || '';
-    check(browser.status === 0, 'Headless Chromium completed successfully');
-    check(dom.includes('id="qa-result" data-status="pass"'), 'browser QA matrix passed EN/FA × light/dark × 5 states × config cases');
-    if (!dom.includes('id="qa-result"')) {
-        console.error('BROWSER_STDERR', browser.stderr);
-        console.error('DOM_TAIL', dom.slice(-5000));
-    }
-    if (dom.includes('id="qa-result" data-status="fail"')) {
-        const match = dom.match(/<div id="qa-result"[^>]*>(.*?)<\/div>/s);
-        failures.push(`browser runtime: ${match?.[1] || 'unknown failure'}`);
+    const viewports = [
+        [320, 568], [360, 640], [375, 667], [390, 520], [412, 732], [430, 780], [480, 800],
+        [768, 430], [820, 1180], [1024, 768], [1280, 800], [1440, 900], [1920, 1080], [2560, 1440]
+    ];
+    if (chromium) {
+        for (const [width, height] of viewports) {
+            const browser = spawnSync(chromium, [
+                '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
+                '--disable-background-networking', '--host-resolver-rules=MAP * 0.0.0.0',
+                '--allow-file-access-from-files', '--virtual-time-budget=3500', '--dump-dom',
+                `--window-size=${width},${height}`,
+                `file://${fixturePath}`
+            ], { encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024 });
+
+            const dom = browser.stdout || '';
+            const label = `${width}x${height}`;
+            check(browser.status === 0, `Headless Chromium completed at ${label}`);
+            check(dom.includes('id="qa-result" data-status="pass"'), `responsive/runtime matrix passed at ${label}`);
+            if (!dom.includes('id="qa-result"')) {
+                console.error(`BROWSER_STDERR ${label}`, browser.stderr);
+                console.error(`DOM_TAIL ${label}`, dom.slice(-5000));
+            }
+            if (dom.includes('id="qa-result" data-status="fail"')) {
+                const match = dom.match(/<div id="qa-result"[^>]*>(.*?)<\/div>/s);
+                failures.push(`browser runtime ${label}: ${match?.[1] || 'unknown failure'}`);
+            }
+        }
     }
 }
 

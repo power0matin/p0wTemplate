@@ -18,7 +18,7 @@ log_warn()  { printf '  %b!%b  %s\n' "$YELLOW" "$RESET" "$1"; }
 log_error() { printf '  %b×%b  %s\n' "$RED" "$RESET" "$1" >&2; }
 
 check_dependencies() {
-    local deps=(curl tar unzip zip jq sha256sum)
+    local deps=(curl tar unzip zip zipinfo jq sha256sum)
     local missing=() dep
     for dep in "${deps[@]}"; do
         command -v "$dep" >/dev/null 2>&1 || missing+=("$dep")
@@ -33,7 +33,14 @@ check_dependencies() {
 get_config_val() {
     local key="$1" config_file="$2"
     [[ -f "$config_file" ]] || { log_error "Config file not found: $config_file"; return 1; }
-    jq -r --arg key "$key" '.[$key]' "$config_file"
+    jq -er --arg key "$key" '.[$key] | select(. != null and . != "")' "$config_file" 2>/dev/null || {
+        log_error "Config value '$key' is missing or empty in $config_file"
+        return 1
+    }
+}
+
+is_valid_package_id() {
+    [[ "$1" =~ ^[a-z0-9][a-z0-9._-]*$ ]]
 }
 
 show_help() {

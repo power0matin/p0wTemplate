@@ -34,7 +34,7 @@ for (const [token, value] of [
 
 check(digest(index) === digest(sub), 'index.html and sub.html must be identical');
 check(digest(index) === digest(expected), 'production HTML must be rebuilt from template.html and source assets');
-check(parsedManifest.version === '1.3.5', 'manifest version must be 1.3.5');
+check(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(parsedManifest.version), 'manifest version must be valid SemVer');
 check(index.includes('<style id="hyper-sentry-styles">'), 'production CSS must be inlined');
 check(index.includes('<script id="hyper-sentry-vendor">'), 'vendor loader must be inlined');
 check(index.includes('<script id="hyper-sentry-i18n">'), 'i18n catalog must be inlined');
