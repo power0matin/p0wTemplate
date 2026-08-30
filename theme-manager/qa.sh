@@ -16,7 +16,16 @@ source "$SCRIPT_DIR/lib/update.sh"
 source "$SCRIPT_DIR/lib/self_update.sh"
 source "$SCRIPT_DIR/lib/build.sh"
 
-trap 'safe_remove_dir "$QA_ROOT"' EXIT
+cleanup_qa_root() {
+    safe_remove_dir "$QA_ROOT" && return 0
+    if [[ $EUID -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
+        sudo rm -rf -- "$QA_ROOT"
+        return
+    fi
+    return 1
+}
+
+trap cleanup_qa_root EXIT
 export NO_COLOR=1
 
 pass() { printf 'PASS: %s\n' "$1"; }
@@ -110,15 +119,25 @@ bash "$SCRIPT_DIR/scripts/sync-releases.sh" --check >/dev/null
 pass 'theme sources, packages, checksums and registry are synchronized'
 
 installer_root="$QA_ROOT/installer-success"
-P0W_INSTALL_DIR="$installer_root/opt/manager" \
-P0W_CONFIG_DIR="$installer_root/etc/manager" \
-P0W_BIN_DIR="$installer_root/usr/local/bin" \
-    bash "$SCRIPT_DIR/install.sh" </dev/null >/dev/null
+installer_runner=()
+if [[ $EUID -ne 0 ]]; then
+    command -v sudo >/dev/null 2>&1 || fail 'Installer QA requires root or passwordless sudo'
+    installer_runner=(sudo)
+fi
+if ! "${installer_runner[@]}" env \
+    P0W_INSTALL_DIR="$installer_root/opt/manager" \
+    P0W_CONFIG_DIR="$installer_root/etc/manager" \
+    P0W_BIN_DIR="$installer_root/usr/local/bin" \
+    bash "$SCRIPT_DIR/install.sh" </dev/null > "$installer_root.out" 2>&1; then
+    cat "$installer_root.out" >&2
+    fail 'Installer success path failed'
+fi
 [[ -x "$installer_root/opt/manager/manager.sh" ]] || fail 'Installer did not deploy manager.sh'
 [[ -f "$installer_root/etc/manager/config.json" ]] || fail 'Installer did not deploy its configuration'
 [[ "$(readlink "$installer_root/usr/local/bin/p0wtemplate")" == "$installer_root/opt/manager/manager.sh" ]] || fail 'Installer command link is incorrect'
 
 set +e
+"${installer_runner[@]}" env \
 P0W_INSTALL_DIR='/tmp' \
 P0W_CONFIG_DIR="$QA_ROOT/invalid-path/etc/manager" \
 P0W_BIN_DIR="$QA_ROOT/invalid-path/usr/local/bin" \
@@ -131,6 +150,7 @@ rollback_root="$QA_ROOT/installer-rollback"
 mkdir -p "$rollback_root/opt/manager" "$rollback_root/usr/local/bin"
 touch "$rollback_root/opt/manager/original-install" "$rollback_root/usr/local/bin/p0wtemplate"
 set +e
+"${installer_runner[@]}" env \
 P0W_INSTALL_DIR="$rollback_root/opt/manager" \
 P0W_CONFIG_DIR="$rollback_root/etc/manager" \
 P0W_BIN_DIR="$rollback_root/usr/local/bin" \
