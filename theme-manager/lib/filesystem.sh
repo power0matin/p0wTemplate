@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 safe_create_dir() {
-    [[ -d "$1" ]] || mkdir -p "$1"
+    local dir="${1:-}"
+    [[ -n "$dir" ]] || { log_error "Refusing to create an empty path."; return 1; }
+    [[ -d "$dir" ]] || mkdir -p -- "$dir"
 }
 
 safe_copy() {
@@ -9,8 +11,31 @@ safe_copy() {
 }
 
 safe_remove_dir() {
-    local dir="$1"
-    [[ -n "$dir" && "$dir" != '/' && -d "$dir" ]] && rm -rf -- "$dir"
+    local dir="${1:-}" resolved
+    [[ -n "$dir" ]] || { log_error "Refusing to remove an empty path."; return 1; }
+    resolved=$(realpath -m -- "$dir") || return 1
+    [[ "$resolved" != '/' ]] || { log_error "Refusing to remove the filesystem root."; return 1; }
+    [[ -e "$dir" || -L "$dir" ]] || return 0
+    rm -rf -- "$dir"
+}
+
+path_is_direct_child() {
+    local root child root_resolved child_resolved
+    root="${1:-}"; child="${2:-}"
+    [[ -n "$root" && -n "$child" ]] || return 1
+    root_resolved=$(realpath -m -- "$root") || return 1
+    child_resolved=$(realpath -m -- "$child") || return 1
+    [[ "$child_resolved" != "$root_resolved" && "$(dirname -- "$child_resolved")" == "$root_resolved" ]]
+}
+
+ensure_directory_writable() {
+    local path="${1:-}" probe
+    [[ -n "$path" ]] || return 1
+    probe=$(realpath -m -- "$path") || return 1
+    while [[ ! -e "$probe" && "$probe" != '/' ]]; do
+        probe=$(dirname -- "$probe")
+    done
+    [[ -d "$probe" && -w "$probe" && -x "$probe" ]]
 }
 
 extract_zip() {
@@ -25,8 +50,14 @@ backup_theme() {
     local timestamp destination
     timestamp=$(date +%Y%m%d-%H%M%S)
     destination="$backup_root/${version:-unknown}-${timestamp}"
+    local suffix=1
+    while [[ -e "$destination" ]]; do
+        destination="$backup_root/${version:-unknown}-${timestamp}-$suffix"
+        ((suffix+=1))
+    done
     safe_create_dir "$backup_root"
-    safe_copy "$current_dir" "$destination"
+    safe_create_dir "$destination"
+    safe_copy "$current_dir/." "$destination/"
     printf '%s\n' "$destination"
 }
 

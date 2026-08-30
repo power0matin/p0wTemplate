@@ -26,18 +26,27 @@ build_package() {
     safe_remove_dir "$staging_dir/preview"
     safe_remove_dir "$staging_dir/scripts"
     rm -f "$staging_dir/mock-data.json"
-    find "$staging_dir" -type f \( -name '.DS_Store' -o -name 'Thumbs.db' -o -name 'desktop.ini' \) -delete
+    find "$staging_dir" -type f \( -name '.DS_Store' -o -name 'Thumbs.db' -o -name 'desktop.ini' -o -name '*.zip' \) -delete
+    if find "$staging_dir" -type l -print -quit | grep -q .; then
+        log_error "Theme packages may not contain symbolic links."
+        safe_remove_dir "$staging_base"
+        return 1
+    fi
 
     find "$staging_dir" -depth -type d -empty -delete
+    find "$staging_dir" -type f -exec chmod 644 {} +
+    find "$staging_dir" -type d -exec chmod 755 {} +
+    find "$staging_dir" -exec touch -h -t 198001010000.00 {} +
 
     validate_theme_structure "$staging_dir" || { safe_remove_dir "$staging_base"; return 1; }
 
-    dist_dir="$source_dir/../dist"
+    dist_dir="${P0W_DIST_DIR:-$source_dir/../dist}"
+    dist_dir=$(realpath -m -- "$dist_dir")
     mkdir -p "$dist_dir"
     zip_file="$dist_dir/${package_id}-${package_version}.zip"
     rm -f "$zip_file"
 
-    if (cd "$staging_dir" && zip -r -q "$zip_file" .); then
+    if (cd "$staging_dir" && LC_ALL=C find . -type f -print | LC_ALL=C sort | zip -X -q "$zip_file" -@); then
         show_success "Build complete" "$zip_file"
         sha256sum "$zip_file"
     else

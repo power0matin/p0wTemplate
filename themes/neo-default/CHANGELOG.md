@@ -2,6 +2,11 @@
 
 All notable changes to the p0wTemplate SDK will be documented in this file.
 
+## [1.2.0] - 2026-08-29
+### Changed
+- Published the current theme source as a deterministic, checksum-verified package.
+- Synchronized release metadata with the Theme Manager registry.
+
 ## [1.0.0] - 2026-06-26
 ### Added
 - Initial release of the p0wTemplate SDK.

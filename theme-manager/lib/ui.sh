@@ -37,7 +37,7 @@ ui_width() {
     if command -v tput >/dev/null 2>&1 && [[ -t 1 ]]; then
         cols=$(tput cols 2>/dev/null || printf '72')
     fi
-    (( cols < 52 )) && cols=52
+    (( cols < 32 )) && cols=32
     (( cols > 76 )) && cols=76
     printf '%s' "$((cols - 6))"
 }
@@ -71,7 +71,14 @@ box_text() {
 
 box_lr() {
     local left="$1" right="$2" width="${3:-$(ui_width)}"
-    local left_len=${#left} right_len=${#right}
+    local left_len=${#left} right_len=${#right} available max_left max_right
+    available=$((width - 5))
+    if (( left_len + right_len > available )); then
+        max_left=$((available / 2))
+        max_right=$((available - max_left))
+        (( left_len > max_left )) && left="${left:0:$((max_left-3))}..." && left_len=${#left}
+        (( right_len > max_right )) && right="${right:0:$((max_right-3))}..." && right_len=${#right}
+    fi
     local spaces=$((width - left_len - right_len - 4))
     (( spaces < 1 )) && spaces=1
     printf '  %b%s%b  %b%s%b%*s%b%s%b  %b%s%b\n' \
@@ -121,7 +128,7 @@ show_menu() {
 }
 
 show_theme_browser() {
-    local -n ids_ref=$1 names_ref=$2 descs_ref=$3
+    local -n ids_ref=$1 names_ref=$2 descs_ref=$3 versions_ref=$4 statuses_ref=$5
     local count=${#names_ref[@]} width
     width=$(ui_width)
 
@@ -134,7 +141,9 @@ show_theme_browser() {
     for i in "${!names_ref[@]}"; do
         num=$((i+1)); name="${names_ref[$i]}"; desc="${descs_ref[$i]}"
         (( ${#desc} > width - 10 )) && desc="${desc:0:$((width-13))}..."
-        box_text "[$num] $name" "$width" "$WHITE$BOLD"
+        local version_label="v${versions_ref[$i]}" status_label="${statuses_ref[$i]}"
+        [[ -n "$status_label" ]] && status_label=" · $status_label"
+        box_text "[$num] $name  $version_label$status_label" "$width" "$WHITE$BOLD"
         box_text "    $desc" "$width" "$LIGHT_GRAY"
         [[ "$i" -lt $((count-1)) ]] && box_blank "$width"
     done
@@ -197,18 +206,36 @@ show_installed_list_header() {
 }
 
 show_installed_item() {
-    local index="$1" name="$2" id="$3" version="$4"
+    local index="$1" name="$2" id="$3" version="$4" path="${5:-}"
     local width
     width=$(ui_width)
     box_text "[$index] $name  v$version" "$width" "$WHITE$BOLD"
     box_text "    $id" "$width" "$LIGHT_GRAY"
+    [[ -n "$path" ]] && box_text "    $path/" "$width" "$LIGHT_GRAY"
 }
 
 show_installed_list_footer() {
-    local count="$1" action="${2:-select}" width
+    local count="${1:-}" action="${2:-select}" width
     width=$(ui_width)
     box_border "$width" "$BOX_BL" "$BOX_BR"
-    printf '\n  %bSelect 1-%s to %s, or 0 to go back%b\n\n' "$DIM$LIGHT_GRAY" "$count" "$action" "$RESET"
+    [[ -n "$count" ]] && printf '\n  %bSelect 1-%s to %s, or 0 to go back%b\n\n' "$DIM$LIGHT_GRAY" "$count" "$action" "$RESET"
+}
+
+show_theme_details() {
+    local name="$1" id="$2" version="$3" author="$4" path="$5" description="$6" width
+    width=$(ui_width)
+    printf '\n'
+    box_border "$width" "$BOX_TL" "$BOX_TR"
+    box_text 'THEME DETAILS' "$width" "$CYAN$BOLD"
+    box_blank "$width"
+    box_text "$name  v$version" "$width" "$WHITE$BOLD"
+    box_text "ID: $id" "$width" "$LIGHT_GRAY"
+    box_text "Author: $author" "$width" "$LIGHT_GRAY"
+    box_text "Path: $path/" "$width" "$CYAN"
+    box_blank "$width"
+    box_text "$description" "$width" "$LIGHT_GRAY"
+    box_border "$width" "$BOX_BL" "$BOX_BR"
+    printf '\n'
 }
 
 show_empty_state() {
@@ -220,7 +247,7 @@ show_confirm() {
     if [[ "$default" == 'y' ]]; then hint='Y/n'; else hint='y/N'; fi
     printf '  %b?%b  %b%s%b %b[%s]%b ' "$YELLOW" "$RESET" "$WHITE" "$message" "$RESET" "$DIM" "$hint" "$RESET"
     local response
-    read -r response
+    read -r response || return 2
     [[ -z "$response" ]] && response="$default"
     [[ "$response" =~ ^[Yy]$ ]]
 }

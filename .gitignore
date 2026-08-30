@@ -12,6 +12,7 @@ themes/neo-dashboard/
 .vscode/
 *.zip
 !packages/*.zip
+!packages/*.tar.gz
 *.js
 !themes/*/assets/js/*.js
 node_modules/

@@ -50,7 +50,7 @@
 Copy and paste this into your server terminal:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/power0matin/p0wTemplate/main/theme-manager/install.sh)
+curl -fsSL https://raw.githubusercontent.com/power0matin/p0wTemplate/main/theme-manager/install.sh | sudo bash
 ```
 
 After installation, run:
@@ -60,6 +60,8 @@ p0wtemplate
 ```
 
 This opens the Theme Manager menu where you can browse, install, and update themes.
+
+The installer verifies the published Theme Manager archive against the SHA-256 checksum in `registry.json` before changing the installed manager.
 
 ### Apply a Theme
 
@@ -120,6 +122,24 @@ Use the `theme-starter` directory as a starting point:
 4. Update `index.html` and `sub.html` with your layout
 
 See the [custom subscription templates docs](theme-manager/docs/custom-subscription-templates.md) for details.
+
+
+## Publishing Theme Updates
+
+Theme source under `themes/` is the canonical authoring copy. Installations still use immutable ZIP releases so every version can be checksum-verified and reproduced safely, but maintainers no longer need to build those ZIP files manually.
+
+1. Update the theme and bump its SemVer value in `manifest.json`.
+2. Update the theme changelog and push the source change to `main`.
+3. The **Sync theme releases** workflow builds a deterministic ZIP, updates `registry.json` with its SHA-256 checksum, runs the complete manager/theme QA suite, and commits the generated release artifacts.
+
+For a local verification without changing release files:
+
+```bash
+bash theme-manager/scripts/sync-releases.sh --check
+bash theme-manager/qa.sh
+```
+
+Use `--write` instead of `--check` when preparing release artifacts locally. Theme Manager releases use the same workflow and require a version bump in `theme-manager/VERSION`.
 
 
 ## Support
