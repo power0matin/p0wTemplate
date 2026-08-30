@@ -17,11 +17,13 @@ source "$SCRIPT_DIR/lib/self_update.sh"
 source "$SCRIPT_DIR/lib/build.sh"
 
 cleanup_qa_root() {
-    safe_remove_dir "$QA_ROOT" && return 0
-    if [[ $EUID -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
-        sudo rm -rf -- "$QA_ROOT"
-        return
+    if safe_remove_dir "$QA_ROOT"; then
+        return 0
     fi
+    if [[ $EUID -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
+        sudo -n rm -rf -- "$QA_ROOT" && return 0
+    fi
+    printf 'WARN: could not remove QA fixture root: %s\n' "$QA_ROOT" >&2
     return 1
 }
 
@@ -269,7 +271,10 @@ set +e
 P0W_BIN_DIR="$QA_ROOT/self-update-bin" self_update "$QA_ROOT/config.json" '1.3.0' "$QA_ROOT/old-manager" > "$QA_ROOT/self-update-full.out"
 self_update_rc=$?
 set -e
-[[ $self_update_rc -eq 10 ]] || fail 'Self Update did not return its restart status after a successful update'
+if [[ $self_update_rc -ne 10 ]]; then
+    cat "$QA_ROOT/self-update-full.out" >&2 || true
+    fail "Self Update did not return its restart status after a successful update (exit $self_update_rc)"
+fi
 [[ "$(tr -d '[:space:]' < "$QA_ROOT/old-manager/VERSION")" == "$manager_version" ]] || fail 'Self Update did not install the latest manager version'
 [[ "$(readlink "$QA_ROOT/self-update-bin/p0wtemplate")" == "$QA_ROOT/old-manager/manager.sh" ]] || fail 'Self Update did not refresh command links'
 [[ "$(cat "$QA_ROOT/old-manager/.config-path")" == "$QA_ROOT/config.json" ]] || fail 'Self Update did not preserve the custom configuration path'

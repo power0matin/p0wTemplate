@@ -49,7 +49,7 @@ jobs:
         run: bash theme-manager/scripts/sync-releases.sh --check
 
       - name: Run comprehensive QA
-        run: bash theme-manager/qa.sh
+        run: sudo -n bash theme-manager/qa.sh
 
   sync-main:
     if: github.event_name != 'pull_request' && github.actor != 'github-actions[bot]'
@@ -74,7 +74,7 @@ jobs:
         run: bash theme-manager/scripts/sync-releases.sh --write
 
       - name: Run comprehensive QA
-        run: bash theme-manager/qa.sh
+        run: sudo -n bash theme-manager/qa.sh
 
       - name: Commit generated release artifacts
         shell: bash
