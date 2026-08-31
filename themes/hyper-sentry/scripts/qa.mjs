@@ -284,25 +284,45 @@ if (process.env.P0W_QA_SKIP_BROWSER === '1') {
     ];
     if (chromium) {
         for (const [width, height] of viewports) {
-            const browser = spawnSync(chromium, [
-                '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
-                '--disable-background-networking', '--host-resolver-rules=MAP * 0.0.0.0',
-                '--allow-file-access-from-files', '--virtual-time-budget=3500', '--dump-dom',
-                `--window-size=${width},${height}`,
-                `file://${fixturePath}`
-            ], { encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024 });
-
-            const dom = browser.stdout || '';
             const label = `${width}x${height}`;
-            check(browser.status === 0, `Headless Chromium completed at ${label}`);
-            check(dom.includes('id="qa-result" data-status="pass"'), `responsive/runtime matrix passed at ${label}`);
-            if (!dom.includes('id="qa-result"')) {
-                console.error(`BROWSER_STDERR ${label}`, browser.stderr);
+            let browser;
+            let dom = '';
+
+            // Chromium can occasionally return a successful process status with an
+            // empty dump when the first headless renderer is still starting. Retry
+            // those startup-only failures without changing the browser profile or
+            // any production/runtime assertions.
+            for (let attempt = 1; attempt <= 3; attempt += 1) {
+                browser = spawnSync(chromium, [
+                    '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
+                    '--disable-background-networking', '--disable-component-update',
+                    '--no-first-run', '--no-default-browser-check', '--disable-extensions',
+                    '--host-resolver-rules=MAP * 0.0.0.0',
+                    '--allow-file-access-from-files', '--virtual-time-budget=3500', '--dump-dom',
+                    `--window-size=${width},${height}`,
+                    `file://${fixturePath}`
+                ], { encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024 });
+
+                dom = browser.stdout || '';
+
+                const resultTag = dom.match(/<div\b[^>]*\bid=["']qa-result["'][^>]*>/i)?.[0] || '';
+                if (browser.status === 0 && resultTag) break;
+                if (attempt < 3) {
+                    console.error(`BROWSER_RETRY ${label} attempt ${attempt}`, browser.stderr || 'empty DOM');
+                }
+            }
+
+            const resultTag = dom.match(/<div\b[^>]*\bid=["']qa-result["'][^>]*>/i)?.[0] || '';
+            const resultStatus = resultTag.match(/\bdata-status=["']([^"']+)["']/i)?.[1] || '';
+            const resultBody = dom.match(/<div\b[^>]*\bid=["']qa-result["'][^>]*>(.*?)<\/div>/is)?.[1] || '';
+            check(browser?.status === 0, `Headless Chromium completed at ${label}`);
+            check(resultStatus === 'pass', `responsive/runtime matrix passed at ${label}`);
+            if (!resultTag) {
+                console.error(`BROWSER_STDERR ${label}`, browser?.stderr || '');
                 console.error(`DOM_TAIL ${label}`, dom.slice(-5000));
             }
-            if (dom.includes('id="qa-result" data-status="fail"')) {
-                const match = dom.match(/<div id="qa-result"[^>]*>(.*?)<\/div>/s);
-                failures.push(`browser runtime ${label}: ${match?.[1] || 'unknown failure'}`);
+            if (resultStatus === 'fail') {
+                failures.push(`browser runtime ${label}: ${resultBody || 'unknown failure'}`);
             }
         }
     }
