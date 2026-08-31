@@ -290,10 +290,9 @@ if (process.env.P0W_QA_SKIP_BROWSER === '1') {
 
             // Chromium can occasionally return a successful process status with an
             // empty dump when the first headless renderer is still starting. Retry
-            // those startup-only failures with a fresh profile so the result is
-            // deterministic without weakening any production/runtime assertions.
+            // those startup-only failures without changing the browser profile or
+            // any production/runtime assertions.
             for (let attempt = 1; attempt <= 3; attempt += 1) {
-                const profilePath = resolve(root, `.hyper-sentry-qa-profile-${process.pid}-${width}-${height}-${attempt}`);
                 browser = spawnSync(chromium, [
                     '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
                     '--disable-background-networking', '--disable-component-update',
@@ -301,12 +300,10 @@ if (process.env.P0W_QA_SKIP_BROWSER === '1') {
                     '--host-resolver-rules=MAP * 0.0.0.0',
                     '--allow-file-access-from-files', '--virtual-time-budget=3500', '--dump-dom',
                     `--window-size=${width},${height}`,
-                    `--user-data-dir=${profilePath}`,
                     `file://${fixturePath}`
                 ], { encoding: 'utf8', timeout: 20000, maxBuffer: 8 * 1024 * 1024 });
 
                 dom = browser.stdout || '';
-                await rm(profilePath, { recursive: true, force: true });
 
                 const resultTag = dom.match(/<div\b[^>]*\bid=["']qa-result["'][^>]*>/i)?.[0] || '';
                 if (browser.status === 0 && resultTag) break;
