@@ -62,6 +62,18 @@ sync_theme() {
             log_error "$id source changed without a version bump (still v$version)."
             return 1
         }
+        # The extracted files must match first; this protects against source
+        # changes without a version bump.  Then require the archive itself to
+        # match the canonical deterministic build so ZIP metadata (directory
+        # entries, timestamps and extra fields) cannot silently drift.
+        if ! cmp -s "$candidate" "$destination"; then
+            [[ "$MODE" == '--write' ]] || {
+                log_error "$id v$version package is not the canonical deterministic archive; run --write to rebuild it."
+                return 1
+            }
+            cp -- "$candidate" "$destination"
+            log_info "Rebuilt $id v$version as the canonical deterministic archive."
+        fi
         registered_checksum=$(jq -r --arg version "$version" '.versions[$version].checksum // empty' <<<"$package_data")
         checksum=$(sha256sum "$destination" | awk '{print $1}')
         if [[ "$registered_checksum" != "$checksum" || "$latest" != "$version" ]]; then
@@ -133,6 +145,14 @@ sync_manager() {
             log_error "Theme Manager source changed without a VERSION bump (still v$version)."
             return 1
         }
+        if ! cmp -s "$candidate" "$destination"; then
+            [[ "$MODE" == '--write' ]] || {
+                log_error "Theme Manager v$version package is not the canonical deterministic archive; run --write to rebuild it."
+                return 1
+            }
+            cp -- "$candidate" "$destination"
+            log_info "Rebuilt Theme Manager v$version as the canonical deterministic archive."
+        fi
         checksum=$(sha256sum "$destination" | awk '{print $1}')
         registered_checksum=$(jq -r '.manager.checksum // empty' "$REGISTRY")
         [[ "$registered_checksum" == "$checksum" ]] || {
