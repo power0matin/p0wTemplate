@@ -1,4 +1,4 @@
-# p0wTemplate
+<h1 align="center">p0wTemplate</h1>
 
 <!-- repo-badges:start -->
 <p align="center">
@@ -19,7 +19,6 @@
 
 [English](#installation) | [فارسی](README_FA.md)
 
-
 ## Features
 
 - 6 premium themes, each with a unique visual identity
@@ -29,7 +28,6 @@
 - Mobile-first responsive design
 - QR code generation for config imports
 - Quick Actions: copy subscription link, import to V2RayNG / Shadowrocket / v2rayN
-
 
 ## Available Themes
 
@@ -41,7 +39,6 @@
 | **Neo Glass** | iOS/VisionOS | Heavy frosted glassmorphism over colorful gradient blobs |
 | **Neo Minimal** | Widget | Ultra-clean widget-style layout inspired by mobile OS battery widgets |
 | **Neo Default** | Classic | Clean, modern, and lightweight — the reliable all-rounder |
-
 
 ## Installation
 
@@ -72,7 +69,6 @@ The installer verifies the published Theme Manager archive against the SHA-256 c
 
 Your subscription links will now use the new theme.
 
-
 ## Screenshots
 
 <details>
@@ -95,7 +91,6 @@ Your subscription links will now use the new theme.
 
 </details>
 
-
 ## Project Structure
 
 ```
@@ -111,7 +106,6 @@ p0wTemplate/
 └── theme-starter/       # Starter template for creating new themes
 ```
 
-
 ## Creating a Theme
 
 Use the `theme-starter` directory as a starting point:
@@ -122,7 +116,6 @@ Use the `theme-starter` directory as a starting point:
 4. Update `index.html` and `sub.html` with your layout
 
 See the [custom subscription templates docs](theme-manager/docs/custom-subscription-templates.md) for details.
-
 
 ## Publishing Theme Updates
 
@@ -141,7 +134,6 @@ bash theme-manager/qa.sh
 
 Use `--write` instead of `--check` when preparing release artifacts locally. Theme Manager releases use the same workflow and require a version bump in `theme-manager/VERSION`.
 
-
 ## Support
 
 If you find this project helpful, consider:
@@ -149,6 +141,35 @@ If you find this project helpful, consider:
 - Sharing it with others
 - Contributing improvements
 
-
 Maintained by [power0matin](https://github.com/power0matin)
 *Built for the 3x-ui community.*
+
+## Contact
+
+**Matin Shahabadi**
+
+- Website: [matinshahabadi.ir](https://matinshahabadi.ir)
+- Email: [me@matinshahabadi.ir](mailto:me@matinshahabadi.ir)
+- GitHub: [power0matin](https://github.com/power0matin)
+- LinkedIn: [matin-shahabadi](https://www.linkedin.com/in/matin-shahabadi)
+
+<p align="center">
+  <b>If this helped you, consider giving it a star!</b><br>
+  <sub>Your support keeps the project alive and helps others find it.</sub>
+</p>
+
+<!-- Copy-paste in your Readme.md file -->
+<p align="center">
+  <a href="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history?repo_id=1290813228" target="_blank" style="display: block" align="center">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=1290813228&amp;image_size=auto&amp;color_scheme=dark" width="721" height="auto">
+      <img alt="Star History of power0matin/p0wTemplate" src="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=1290813228&amp;image_size=auto&amp;color_scheme=light" width="721" height="auto">
+    </picture>
+  </a>
+</p>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+
+<p align="center">
+  Created by <a href="https://github.com/power0matin">power0matin</a>
+</p>
